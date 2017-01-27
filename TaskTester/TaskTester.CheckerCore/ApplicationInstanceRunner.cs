@@ -14,7 +14,7 @@ namespace TaskTester.CheckerCore
             new StringBuilder(), stdOutBuilder = new StringBuilder();
         public string ExecutablePath { get; private set; }
         public string StdIn { get; set; }
-        
+
         public TimeSpan MaxRuntime { get; set; }
 
         public ApplicationInstanceRunner(string executablePath)
@@ -24,65 +24,12 @@ namespace TaskTester.CheckerCore
 
         public async Task<ProcessRunResult> GoAsync()
         {
-            process = StartProcess();
-            process.OutputDataReceived += Process_OutputDataReceived;
-            process.ErrorDataReceived += Process_ErrorDataReceived;
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
+            StartProcess();
+            AttachProcessEvents();
 
-            bool timelyExit = true;
-            bool crashed = false;
-
-            await
-                Task.WhenAny(
-                Task.Delay(MaxRuntime),
-                Task.Run(EnterInputAndWaitForExitAsync))
-                .ContinueWith(x =>
-                {
-                    if (!process.HasExited)
-                    {
-                        //process hasn't exited in time:
-                        //A: it's too slow
-                        //B: it has crashed and is saving an error report
-                        if (!process.WaitForExit(1))
-                        {
-                            //give it some time in case it's saving an error report
-                            process.Kill();
-                        }
-                        timelyExit = false;
-                    }
-                    else timelyExit = true;
-                });
-
-            CrashReport report=null;
-            if (process.ExitCode != 0)
-            {
-                //something fishy here, check for crashes
-                var crashReportFinder = new CrashReportFinder(processID) {
-                    ExecutablePath = ExecutablePath,
-                    MaxReportCount = 1
-                };
-                report = (await crashReportFinder.FindAsync()).FirstOrDefault();
-                if (report != null) crashed = true;
-            }
-
-            ProcessExitType exitType;
-            if(timelyExit && !crashed)
-            {
-                exitType = ProcessExitType.Graceful;
-            }
-            else if(crashed)
-            {
-                exitType = ProcessExitType.Crashed;
-            }
-            else if(!timelyExit)
-            {
-                exitType = ProcessExitType.Forced;
-            }
-            else
-            {
-                exitType = ProcessExitType.UnknownImpossibleForbiddenWhatTheHell;
-            }
+            bool timelyExit = await WaitForTimelyExit();
+            CrashReport report = await GetCrashReportIfNecessary();
+            bool crashed = report != null;
 
             return new ProcessRunResult() {
                 ExitCode = process.ExitCode,
@@ -90,13 +37,11 @@ namespace TaskTester.CheckerCore
                 StdErr = stdErrBuilder.ToString(),
                 StdOut = stdOutBuilder.ToString(),
                 CrashReport = report,
-                ExitType = exitType
+                ExitType = DeduceExitType(crashed, timelyExit)
             };
-
-            throw new NotImplementedException();
         }
 
-        private Process StartProcess()
+        private void StartProcess()
         {
             ProcessStartInfo startInfo = new ProcessStartInfo(ExecutablePath) {
                 UseShellExecute = false,
@@ -107,26 +52,74 @@ namespace TaskTester.CheckerCore
                 ErrorDialog = false
             };
 
-            var process = ProcessParent.Instance.StartProcess(startInfo);
+            process = ProcessParent.Instance.StartProcess(startInfo);
             processID = process.Id;
             Debug.WriteLine($"Started process {process.Id}");
-            return process;
         }
 
-        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        void AttachProcessEvents()
         {
-            stdErrBuilder.Append(e.Data);
+            process.OutputDataReceived += ((sender, e) => stdOutBuilder.Append(e.Data));
+            process.ErrorDataReceived += ((sender, e) => stdErrBuilder.Append(e.Data));
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
         }
 
-        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            stdOutBuilder.AppendLine(e.Data);
-        }
-
-        public async Task EnterInputAndWaitForExitAsync()
+        private async Task EnterInputAndWaitForExitAsync()
         {
             await process.StandardInput.WriteLineAsync(StdIn);
             process.WaitForExit();
+        }
+
+        private async Task<bool> WaitForTimelyExit()
+        {
+            bool timelyExit = true;
+
+            await
+            Task.WhenAny(
+            Task.Delay(MaxRuntime),
+            Task.Run(EnterInputAndWaitForExitAsync))
+            .ContinueWith(x =>
+            {
+                if (!process.HasExited)
+                {
+                    //process hasn't exited in time:
+                    //A: it's too slow
+                    //B: it has crashed and is saving an error report
+                    if (!process.WaitForExit(1))
+                    {
+                        //give it some time in case it's saving an error report
+                        process.Kill();
+                    }
+                    timelyExit = false;
+                }
+                else timelyExit = true;
+            });
+
+            return timelyExit;
+        }
+
+        private async Task<CrashReport> GetCrashReportIfNecessary()
+        {
+            CrashReport report = null;
+            if (process.ExitCode != 0)
+            {
+                //something fishy with this exit code, check for crashes
+                var crashReportFinder = new CrashReportFinder(processID) {
+                    ExecutablePath = ExecutablePath,
+                    MaxReportCount = 1
+                };
+                report = (await crashReportFinder.FindAsync()).FirstOrDefault();
+            }
+            return report;
+        }
+
+        private ProcessExitType DeduceExitType(bool crashed, bool timelyExit)
+        {
+            if (timelyExit && !crashed) return ProcessExitType.Graceful;
+            else if (crashed) return ProcessExitType.Crashed;
+            else if (!timelyExit) return ProcessExitType.Forced;
+            else return ProcessExitType.UnknownImpossibleForbiddenWhatTheHell;
         }
     }
 }
