@@ -59,6 +59,7 @@ namespace TaskTester.CheckerCore.Tests
             };
             var result = runner.Run();
             Assert.AreEqual(result.ExitType, ProcessExitType.Crashed);
+            Assert.IsNotNull(result.CrashReport);
             ;
         }
 
