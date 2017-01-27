@@ -20,7 +20,7 @@ namespace TaskTester.CheckerCore.Tests
                 StdIn = "wait 200 sum 1 5   wait 10000  exit 0"
             };
             var result = runner.Run();
-            Assert.IsFalse(result.TimelyExit);
+            Assert.AreEqual(result.ExitType, ProcessExitType.Forced);
             Assert.IsTrue(result.StdOut.Contains("6"));
         }
 
@@ -32,7 +32,7 @@ namespace TaskTester.CheckerCore.Tests
                 StdIn = "wait 200 sum 1 5   wait 200  exit 0"
             };
             var result = runner.Run();
-            Assert.IsTrue(result.TimelyExit);
+            Assert.AreEqual(result.ExitType, ProcessExitType.Graceful);
             Assert.IsTrue(result.StdOut.Contains("6"));
             ;
         }
@@ -47,20 +47,18 @@ namespace TaskTester.CheckerCore.Tests
             var result = runner.Run();
 
             Assert.AreEqual(result.ExitCode, 3);
-            Assert.IsTrue(result.TimelyExit);
-            Assert.IsTrue(result.GracefulExit);
+            Assert.AreEqual(result.ExitType, ProcessExitType.Graceful);
         }
 
         [TestMethod]
         public void TestCrash()
         {
             ApplicationRunner runner = new ApplicationRunner(dummyPath) {
-                MaxRuntime = TimeSpan.FromHours(1),
+                MaxRuntime = TimeSpan.FromSeconds(1),
                 StdIn = "sum 1 2 crash"
             };
             var result = runner.Run();
-            Assert.IsFalse(result.GracefulExit);
-            Assert.IsTrue(result.TimelyExit);
+            Assert.AreEqual(result.ExitType, ProcessExitType.Crashed);
             ;
         }
 
@@ -72,8 +70,7 @@ namespace TaskTester.CheckerCore.Tests
                 StdIn = "sum 1 2 sum 3 5 end"
             };
             var result = runner.Run();
-            Assert.IsTrue(result.GracefulExit);
-            Assert.IsTrue(result.TimelyExit);
+            Assert.AreEqual(result.ExitType, ProcessExitType.Graceful);
             var output = result.StdOut;
             Assert.IsTrue(output.IndexOf('3') != -1 && output.IndexOf('8') > output.IndexOf('3'));
             ;
@@ -87,8 +84,7 @@ namespace TaskTester.CheckerCore.Tests
                 StdIn = "continuity 100000     end"
             };
             var result = runner.Run();
-            Assert.IsTrue(result.GracefulExit);
-            Assert.IsTrue(result.TimelyExit);
+            Assert.AreEqual(result.ExitType, ProcessExitType.Graceful);
             var output = result.StdOut;
             string[] lines = output
                 .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)

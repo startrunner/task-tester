@@ -30,9 +30,8 @@ namespace TaskTester.CheckerCore
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
 
-            var startTime = DateTime.Now;
-
             bool timelyExit = true;
+            bool crashed = false;
 
             await
                 Task.WhenAny(
@@ -56,7 +55,6 @@ namespace TaskTester.CheckerCore
                 });
 
             CrashReport report=null;
-
             if (process.ExitCode != 0)
             {
                 //something fishy here, check for crashes
@@ -65,15 +63,34 @@ namespace TaskTester.CheckerCore
                     MaxReportCount = 1
                 };
                 report = (await crashReportFinder.FindAsync()).FirstOrDefault();
+                if (report != null) crashed = true;
+            }
+
+            ProcessExitType exitType;
+            if(timelyExit && !crashed)
+            {
+                exitType = ProcessExitType.Graceful;
+            }
+            else if(crashed)
+            {
+                exitType = ProcessExitType.Crashed;
+            }
+            else if(!timelyExit)
+            {
+                exitType = ProcessExitType.Forced;
+            }
+            else
+            {
+                exitType = ProcessExitType.UnknownImpossibleForbiddenWhatTheHell;
             }
 
             return new ProcessRunResult() {
                 ExitCode = process.ExitCode,
-                TimelyExit = timelyExit,
                 MemoryUsed = 100.0,
                 StdErr = stdErrBuilder.ToString(),
                 StdOut = stdOutBuilder.ToString(),
-                CrashReport = report
+                CrashReport = report,
+                ExitType = exitType
             };
 
             throw new NotImplementedException();
