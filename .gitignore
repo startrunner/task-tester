@@ -9,3 +9,4 @@
 /TaskTester/TaskTester/publish
 **/.suo
 **/.csproj.user
+/TaskTester/TaskTester.CheckerCore.Tests/Resources/dummy.o
