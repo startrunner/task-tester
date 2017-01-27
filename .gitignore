@@ -1,0 +1,11 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/TaskTester/.vs/
+/TaskTester/*/bin/
+/TaskTester/*/obj/
+/TaskTester/packages/
+/TaskTester/TaskTester/publish
+**/.suo
+**/.csproj.user
