@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TaskTester.CheckerCore.Tests.Properties;
 
@@ -75,6 +76,33 @@ namespace TaskTester.CheckerCore.Tests
             Assert.IsTrue(result.TimelyExit);
             var output = result.StdOut;
             Assert.IsTrue(output.IndexOf('3') != -1 && output.IndexOf('8') > output.IndexOf('3'));
+            ;
+        }
+
+        [TestMethod]
+        public void TestContinuity()
+        {
+            ApplicationRunner runner = new ApplicationRunner(dummyPath) {
+                MaxRuntime = TimeSpan.FromHours(1),
+                StdIn = "continuity 100000     end"
+            };
+            var result = runner.Run();
+            Assert.IsTrue(result.GracefulExit);
+            Assert.IsTrue(result.TimelyExit);
+            var output = result.StdOut;
+            string[] lines = output
+                .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x=>x.Trim())
+                .Where(x=>!string.IsNullOrWhiteSpace(x))
+                .ToArray();
+
+            int prev = int.Parse(lines.First().Split(' ')[0]);
+            for(int i=1;i<lines.Length;i++)
+            {
+                int current = int.Parse(lines[i].Split(' ')[0]);
+                Assert.IsTrue(current == prev + 1);
+                prev = current;
+            }
             ;
         }
 

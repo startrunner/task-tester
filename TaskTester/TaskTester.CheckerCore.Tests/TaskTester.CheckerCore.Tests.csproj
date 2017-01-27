@@ -74,6 +74,10 @@
     <None Include="packages.config" />
     <None Include="Resources\dummy.exe" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dummy - problem.txt" />
+    <None Include="Resources\dummy.cpp" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
