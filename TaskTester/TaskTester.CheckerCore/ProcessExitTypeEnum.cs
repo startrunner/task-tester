@@ -8,8 +8,24 @@ namespace TaskTester.CheckerCore
 {
     public enum ProcessExitType
     {
-        Graceful, Forced, Crashed,
+        /// <summary>
+        /// Process has exited in time without crashing
+        /// </summary>
+        Graceful,
 
-        UnknownImpossibleForbiddenWhatTheHell
+        /// <summary>
+        /// Process' execution has been too slow and it's been killed by the instance runner.
+        /// </summary>
+        Forced,
+
+        /// <summary>
+        /// RiP
+        /// </summary>
+        Crashed,
+
+        /// <summary>
+        /// Fallback value; Should never get assigned
+        /// </summary>
+        Undetermined
     }
 }

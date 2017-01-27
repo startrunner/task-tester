@@ -123,7 +123,7 @@ namespace TaskTester.CheckerCore
             if (timelyExit && !crashed) return ProcessExitType.Graceful;
             else if (crashed) return ProcessExitType.Crashed;
             else if (!timelyExit) return ProcessExitType.Forced;
-            else return ProcessExitType.UnknownImpossibleForbiddenWhatTheHell;
+            else return ProcessExitType.Undetermined;
         }
     }
 }
