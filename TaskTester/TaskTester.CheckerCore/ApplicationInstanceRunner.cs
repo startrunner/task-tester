@@ -83,14 +83,18 @@ namespace TaskTester.CheckerCore
             {
                 if (!process.HasExited)
                 {
-                    //process hasn't exited in time:
+                    /*//process hasn't exited in time:
                     //A: it's too slow
                     //B: it has crashed and is saving an error report
                     if (!process.WaitForExit(1))
                     {
                         //give it some time in case it's saving an error report
                         process.Kill();
-                    }
+                    }*/
+
+                    //EDIT: Error report is saved immediately after the crash, before the WER dialog;
+                    //No need to wait.
+                    process.Kill();
                     timelyExit = false;
                 }
                 else timelyExit = true;
