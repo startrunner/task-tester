@@ -40,9 +40,9 @@
     <Compile Include="CrashReporting\CrashReportFinder.cs" />
     <Compile Include="OutputVerification\DefaultOutputVerifier.cs" />
     <Compile Include="OutputVerification\IOutputVerifier.cs" />
-    <Compile Include="OutputVerification\OutputVerificationResult.cs" />
+    <Compile Include="OutputVerification\IOutputVerificationResult.cs" />
     <Compile Include="OutputVerification\OutputVerificationResultTypeEnum.cs" />
-    <Compile Include="OutputVerification\IProcessInterface.cs" />
+    <Compile Include="OutputVerification\IProcessVerificationInfo.cs" />
     <Compile Include="ProcessRunning\ProcessExitTypeEnum.cs" />
     <Compile Include="CrashReporting\CrashIniParser.cs" />
     <Compile Include="ProcessRunning\ProcessParent.cs" />

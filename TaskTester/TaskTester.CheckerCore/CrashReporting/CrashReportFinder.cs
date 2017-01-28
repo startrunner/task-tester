@@ -38,7 +38,7 @@ namespace TaskTester.CheckerCore.CrashReporting
                     if (entry.EntryType != EventLogEntryType.Error) continue;
                     if (entry.InstanceId != 1000) continue;
 
-                    ICrashReport report = CrashReportMutable.Parse(entry.Message);
+                    ICrashReport report = CrashReport.Parse(entry.Message);
                     if ((this.ExecutablePath == null || NormalizePath(report.ExecutablePath).ToLower() == NormalizePath(ExecutablePath).ToLower())
                         && report.ProcessID == ProcessID)
                     {

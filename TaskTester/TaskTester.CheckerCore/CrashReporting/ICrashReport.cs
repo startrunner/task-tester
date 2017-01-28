@@ -15,13 +15,17 @@ namespace TaskTester.CheckerCore.CrashReporting
         long ProcessID { get; }
     }
 
-    public class CrashReportMutable:ICrashReport
+    public class CrashReportMutable : ICrashReport
     {
         public string ExecutablePath { get; set; }
         public string ExceptionCode { get; set; }
         public string ExceptionMessage { get; set; }
         public long ProcessID { get; set; }
+    }
 
+
+    public static class CrashReport
+    {
         static internal ICrashReport Parse(string eventLogText)// => new CrashReportBuilder(CrashIniParser.Instance.Parse(ini.ToLower()));
         {
             var dic = CrashIniParser.Instance.Parse(eventLogText.ToLower());

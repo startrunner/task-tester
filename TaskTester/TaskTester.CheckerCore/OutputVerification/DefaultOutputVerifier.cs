@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskTester.CheckerCore.Common;
 
 namespace TaskTester.CheckerCore.OutputVerification
 {
@@ -14,11 +11,30 @@ namespace TaskTester.CheckerCore.OutputVerification
         public bool UsesStdErr => false;
         public bool UsesStdIn => false;
 
+        private static IEnumerable<string> Normalize(string text) =>
+            text
+            .Split(null as char[], StringSplitOptions.RemoveEmptyEntries)
+            .Where(x => !string.IsNullOrWhiteSpace(x));
 
-        public OutputVerificationResult Verify(IProcessInterface processInterface)
+        public IOutputVerificationResult Verify(IProcessVerificationInfo info)
         {
-            //TODO: Implement checking
-            throw new NotImplementedException();
+            var output = Normalize(info.StandardOutput.Str);
+            var solution = Normalize(info.SolFile.Str);
+
+            if (Enumerable.SequenceEqual(output, solution))
+            {
+                return new OutputVerificationResultMutable() {
+                    Score = 1,
+                    Type = OutputVerificationType.CorrectAnswer
+                };
+            }
+            else
+            {
+                return new OutputVerificationResultMutable() {
+                    Score = 0,
+                    Type = OutputVerificationType.WrongAnswer
+                };
+            }
         }
     }
 }

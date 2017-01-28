@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace TaskTester.CheckerCore.OutputVerification
 {
-    public class OutputVerificationResult
+    public interface IOutputVerificationResult
+    {
+        OutputVerificationType Type { get; }
+        double Score { get; }
+    }
+
+    public class OutputVerificationResultMutable:IOutputVerificationResult
     {
         public OutputVerificationType Type { get; set; }
         public double Score { get; set; }
