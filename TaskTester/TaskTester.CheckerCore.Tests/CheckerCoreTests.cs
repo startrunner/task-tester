@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TaskTester.CheckerCore.ProcessRunning;
 using TaskTester.CheckerCore.Tests.Properties;
 
 namespace TaskTester.CheckerCore.Tests

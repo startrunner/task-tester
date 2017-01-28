@@ -3,8 +3,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskTester.CheckerCore.CrashReporting;
 
-namespace TaskTester.CheckerCore
+namespace TaskTester.CheckerCore.ProcessRunning
 {
     internal class ApplicationInstanceRunner
     {

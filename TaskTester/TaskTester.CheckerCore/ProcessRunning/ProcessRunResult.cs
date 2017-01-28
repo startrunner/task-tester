@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using TaskTester.CheckerCore.CrashReporting;
+using TaskTester.CheckerCore.ProcessRunning;
 
-namespace TaskTester.CheckerCore
+namespace TaskTester.CheckerCore.ProcessRunning
 {
     public class ProcessRunResult
     {

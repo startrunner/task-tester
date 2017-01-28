@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TaskTester.CheckerCore
+namespace TaskTester.CheckerCore.ProcessRunning
 {
     public enum ProcessExitType
     {

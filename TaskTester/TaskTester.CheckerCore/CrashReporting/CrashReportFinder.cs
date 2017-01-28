@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TaskTester.CheckerCore
+namespace TaskTester.CheckerCore.CrashReporting
 {
     public class CrashReportFinder
     {

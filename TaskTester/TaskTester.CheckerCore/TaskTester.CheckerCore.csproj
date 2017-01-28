@@ -33,14 +33,14 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrashReport.cs" />
-    <Compile Include="CrashReportFinder.cs" />
-    <Compile Include="ProcessExitTypeEnum.cs" />
-    <Compile Include="WerIniParser %28static%29.cs" />
-    <Compile Include="ProcessParent.cs" />
-    <Compile Include="ApplicationInstanceRunner.cs" />
-    <Compile Include="ApplicationRunner.cs" />
-    <Compile Include="ProcessRunResult.cs" />
+    <Compile Include="CrashReporting\CrashReport.cs" />
+    <Compile Include="CrashReporting\CrashReportFinder.cs" />
+    <Compile Include="ProcessRunning\ProcessExitTypeEnum.cs" />
+    <Compile Include="CrashReporting\WerIniParser %28static%29.cs" />
+    <Compile Include="ProcessRunning\ProcessParent.cs" />
+    <Compile Include="ProcessRunning\ApplicationInstanceRunner.cs" />
+    <Compile Include="ProcessRunning\ApplicationRunner.cs" />
+    <Compile Include="ProcessRunning\ProcessRunResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

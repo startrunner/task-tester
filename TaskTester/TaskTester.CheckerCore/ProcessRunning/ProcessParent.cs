@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-namespace TaskTester.CheckerCore
+namespace TaskTester.CheckerCore.ProcessRunning
 {
     /// <summary>
     /// An object used to store child processes of the current one.
