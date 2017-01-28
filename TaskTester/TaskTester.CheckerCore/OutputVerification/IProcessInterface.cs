@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskTester.CheckerCore.Common;
+﻿using TaskTester.CheckerCore.Common;
 
 namespace TaskTester.CheckerCore.OutputVerification
 {
