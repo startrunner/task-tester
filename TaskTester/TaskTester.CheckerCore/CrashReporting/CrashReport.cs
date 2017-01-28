@@ -10,7 +10,7 @@ namespace TaskTester.CheckerCore.CrashReporting
     public class CrashReport
     {
         #region Static
-        public static readonly IReadOnlyDictionary<string, string> ExceptionsByCode = new Dictionary<string, string>() {
+        private static readonly IReadOnlyDictionary<string, string> ExceptionsByCode = new Dictionary<string, string>() {
             {"0", "STATUS_WAIT_0"},
             {"0x80", "STATUS_ABANDONED_WAIT_0"},
             {"0xc0", "STATUS_USER_APC"},

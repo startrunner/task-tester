@@ -12,8 +12,10 @@ namespace TaskTester.CheckerCore.ProcessRunning
     {
         int processID;
         Process process;
-        StringBuilder stdErrBuilder =
-            new StringBuilder(), stdOutBuilder = new StringBuilder();
+        bool used = false;//Object is single-use
+        StringBuilder stdErrBuilder = new StringBuilder();
+        StringBuilder stdOutBuilder = new StringBuilder();
+
         public string ExecutablePath { get; private set; }
         public StringOrFile StdIn { get; set; }
 
@@ -26,6 +28,11 @@ namespace TaskTester.CheckerCore.ProcessRunning
 
         public async Task<ProcessRunResult> GoAsync()
         {
+            if(used)
+            {
+                throw new InvalidOperationException($"Object of type {nameof(ApplicationInstanceRunner)} are single-use.");
+            }
+            used = true;
             StartProcess();
             AttachProcessEvents();
 
@@ -85,17 +92,6 @@ namespace TaskTester.CheckerCore.ProcessRunning
             {
                 if (!process.HasExited)
                 {
-                    /*//process hasn't exited in time:
-                    //A: it's too slow
-                    //B: it has crashed and is saving an error report
-                    if (!process.WaitForExit(1))
-                    {
-                        //give it some time in case it's saving an error report
-                        process.Kill();
-                    }*/
-
-                    //EDIT: Error report is saved immediately after the crash, before the WER dialog;
-                    //No need to wait.
                     process.Kill();
                     timelyExit = false;
                 }
