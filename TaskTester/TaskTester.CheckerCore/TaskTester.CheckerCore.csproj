@@ -40,7 +40,7 @@
     <Compile Include="OutputVerification\OutputVerificationResult.cs" />
     <Compile Include="OutputVerification\OutputVerificationResultTypeEnum.cs" />
     <Compile Include="ProcessRunning\ProcessExitTypeEnum.cs" />
-    <Compile Include="CrashReporting\WerIniParser %28static%29.cs" />
+    <Compile Include="CrashReporting\CrashIniParser.cs" />
     <Compile Include="ProcessRunning\ProcessParent.cs" />
     <Compile Include="ProcessRunning\ApplicationInstanceRunner.cs" />
     <Compile Include="ProcessRunning\ApplicationRunner.cs" />

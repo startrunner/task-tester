@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace TaskTester.CheckerCore.CrashReporting
 {
-    internal static class WerIniParser
+    internal class CrashIniParser
     {
-        public static IReadOnlyDictionary<string, string> Parse(string ini)
+        public static CrashIniParser Instance { get; private set; } = new CrashIniParser();
+
+        public IReadOnlyDictionary<string, string> Parse(string ini)
         {
             string[] lines = ini
                 .Split('\n')

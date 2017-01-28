@@ -49,9 +49,10 @@ namespace TaskTester.CheckerCore.CrashReporting
 
         string exception = null;
 
-        internal string ExecutablePath { get; private set; }
+        public string ExecutablePath { get; private set; }
         public string ExceptionCode { get; private set; }
         public long ProcessID { get; private set; }
+
         public string Exception
         {
             get
@@ -84,6 +85,6 @@ namespace TaskTester.CheckerCore.CrashReporting
             this.ExecutablePath = executablePath;
         }
 
-        static internal CrashReport Parse(string ini) => new CrashReport(WerIniParser.Parse(ini.ToLower()));
+        static internal CrashReport Parse(string ini) => new CrashReport(CrashIniParser.Instance.Parse(ini.ToLower()));
     }
 }

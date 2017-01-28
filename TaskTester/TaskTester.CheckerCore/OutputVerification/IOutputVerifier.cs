@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TaskTester.CheckerCore.Common;
 
 namespace TaskTester.CheckerCore.OutputVerification
 {
     interface IOutputVerifier
     {
-        //OutputVerificationResult Verify()
+        OutputVerificationResult Verify(StringOrFile input, StringOrFile output, StringOrFile solution);
     }
 }
