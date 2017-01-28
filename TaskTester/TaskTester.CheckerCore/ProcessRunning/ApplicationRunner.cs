@@ -17,7 +17,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
             this.ExecutablePath = executablePath;
         }
 
-        public async Task<ProcessRunResult> RunAsync()
+        public async Task<IProcessRunResult> RunAsync()
         {
             await Task.Yield();
             ApplicationInstanceRunner run;
@@ -32,7 +32,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
             return await run.GoAsync();
         }
 
-        public ProcessRunResult Run() =>
+        public IProcessRunResult Run() =>
             RunAsync().GetAwaiter().GetResult();
 
         #region IDisposable Support

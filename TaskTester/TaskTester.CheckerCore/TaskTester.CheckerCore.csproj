@@ -31,20 +31,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\StringOrFile.cs" />
-    <Compile Include="CrashReporting\CrashReport.cs" />
+    <Compile Include="CrashReporting\Exceptions.cs" />
+    <Compile Include="CrashReporting\ICrashReport.cs" />
     <Compile Include="CrashReporting\CrashReportFinder.cs" />
+    <Compile Include="OutputVerification\DefaultOutputVerifier.cs" />
     <Compile Include="OutputVerification\IOutputVerifier.cs" />
     <Compile Include="OutputVerification\OutputVerificationResult.cs" />
     <Compile Include="OutputVerification\OutputVerificationResultTypeEnum.cs" />
+    <Compile Include="OutputVerification\IProcessInterface.cs" />
     <Compile Include="ProcessRunning\ProcessExitTypeEnum.cs" />
     <Compile Include="CrashReporting\CrashIniParser.cs" />
     <Compile Include="ProcessRunning\ProcessParent.cs" />
     <Compile Include="ProcessRunning\ApplicationInstanceRunner.cs" />
     <Compile Include="ProcessRunning\ApplicationRunner.cs" />
-    <Compile Include="ProcessRunning\ProcessRunResult.cs" />
+    <Compile Include="ProcessRunning\IProcessRunResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

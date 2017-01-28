@@ -4,6 +4,11 @@ namespace TaskTester.CheckerCore.OutputVerification
 {
     interface IOutputVerifier
     {
-        OutputVerificationResult Verify(StringOrFile input, StringOrFile output, StringOrFile solution);
+        bool UsesStdIn { get; }
+        bool UsesStdout { get; }
+        bool UsesStdErr { get; }
+        bool UsesSolution { get; }
+
+        OutputVerificationResult Verify(IProcessInterface processInterface);
     }
 }

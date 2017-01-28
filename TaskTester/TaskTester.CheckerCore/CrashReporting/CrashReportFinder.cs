@@ -24,11 +24,11 @@ namespace TaskTester.CheckerCore.CrashReporting
                        .ToUpperInvariant();
         }
 
-        public async Task<IReadOnlyList<CrashReport>> FindAsync()
+        public async Task<IReadOnlyList<ICrashReport>> FindAsync()
         {
             await Task.Yield();
 
-            List<CrashReport> rt = new List<CrashReport>();
+            List<ICrashReport> rt = new List<ICrashReport>();
 
             using (var log = new EventLog("Application"))
             {
@@ -38,7 +38,7 @@ namespace TaskTester.CheckerCore.CrashReporting
                     if (entry.EntryType != EventLogEntryType.Error) continue;
                     if (entry.InstanceId != 1000) continue;
 
-                    CrashReport report = CrashReport.Parse(entry.Message);
+                    ICrashReport report = CrashReportMutable.Parse(entry.Message);
                     if ((this.ExecutablePath == null || NormalizePath(report.ExecutablePath).ToLower() == NormalizePath(ExecutablePath).ToLower())
                         && report.ProcessID == ProcessID)
                     {
@@ -51,6 +51,6 @@ namespace TaskTester.CheckerCore.CrashReporting
             return rt;
         }
 
-        public IReadOnlyList<CrashReport> Find() => FindAsync().GetAwaiter().GetResult();
+        public IReadOnlyList<ICrashReport> Find() => FindAsync().GetAwaiter().GetResult();
     }
 }

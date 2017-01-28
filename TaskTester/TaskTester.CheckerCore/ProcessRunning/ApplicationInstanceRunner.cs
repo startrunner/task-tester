@@ -26,7 +26,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
             ExecutablePath = executablePath;
         }
 
-        public async Task<ProcessRunResult> GoAsync()
+        public async Task<IProcessRunResult> GoAsync()
         {
             if(used)
             {
@@ -37,10 +37,10 @@ namespace TaskTester.CheckerCore.ProcessRunning
             AttachProcessEvents();
 
             bool timelyExit = await WaitForTimelyExit();
-            CrashReport report = await GetCrashReportIfNecessary();
+            ICrashReport report = await GetCrashReportIfNecessary();
             bool crashed = report != null;
 
-            return new ProcessRunResult() {
+            return new ProcessRunResultMutable() {
                 ExitCode = process.ExitCode,
                 MemoryUsed = 100.0,
                 StdErr = StringOrFile.FromText(stdErrBuilder.ToString()),
@@ -101,9 +101,9 @@ namespace TaskTester.CheckerCore.ProcessRunning
             return timelyExit;
         }
 
-        private async Task<CrashReport> GetCrashReportIfNecessary()
+        private async Task<ICrashReport> GetCrashReportIfNecessary()
         {
-            CrashReport report = null;
+            ICrashReport report = null;
             if (process.ExitCode != 0)
             {
                 //something fishy with this exit code, check for crashes

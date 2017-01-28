@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TaskTester.CheckerCore.CrashReporting
 {
-    public class CrashReport
+    public static class Exceptions
     {
-        #region Static
-        private static readonly IReadOnlyDictionary<string, string> ExceptionsByCode = new Dictionary<string, string>() {
+        public static readonly IReadOnlyDictionary<string, string> ByCode = new Dictionary<string, string>() {
             {"0", "STATUS_WAIT_0"},
             {"0x80", "STATUS_ABANDONED_WAIT_0"},
             {"0xc0", "STATUS_USER_APC"},
@@ -45,46 +43,5 @@ namespace TaskTester.CheckerCore.CrashReporting
             {"0xc000026b", "STATUS_DLL_INIT_FAILED_LOGOFF"},
             {"0x40000015", "std::bad_alloc" }
         };
-        #endregion
-
-        string exception = null;
-
-        public string ExecutablePath { get; private set; }
-        public string ExceptionCode { get; private set; }
-        public long ProcessID { get; private set; }
-
-        public string Exception
-        {
-            get
-            {
-                if(exception==null)
-                {
-                    exception = "n/a";
-                    if(ExceptionCode!=null)
-                    {
-                        ExceptionsByCode.TryGetValue(ExceptionCode, out exception);
-                    }
-                }
-                return exception;
-            }
-        }
-
-        private CrashReport(IReadOnlyDictionary<string, string> dic)
-        {
-            string exceptionCode = "0x0";
-            string processId = "0x0";
-            string executablePath = "0x0";
-
-            dic.TryGetValue("exception code", out exceptionCode);
-            dic.TryGetValue("faulting process id", out processId);
-            dic.TryGetValue("faulting application path", out executablePath);
-            
-
-            this.ExceptionCode = exceptionCode;
-            this.ProcessID = Convert.ToInt64(processId, 16);
-            this.ExecutablePath = executablePath;
-        }
-
-        static internal CrashReport Parse(string ini) => new CrashReport(CrashIniParser.Instance.Parse(ini.ToLower()));
     }
 }
