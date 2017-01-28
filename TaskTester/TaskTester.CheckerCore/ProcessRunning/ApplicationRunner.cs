@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using TaskTester.CheckerCore.Common;
 
 namespace TaskTester.CheckerCore.ProcessRunning
 {
@@ -11,7 +12,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
 
         public string ExecutablePath { get; private set; }
         public TimeSpan MaxRuntime { get; set; } = TimeSpan.MaxValue;
-        public string StdIn { get; set; } = string.Empty;
+        public StringOrFile StdIn { get; set; } = StringOrFile.FromText(string.Empty);
 
         public ApplicationRunner(string executablePath)
         {

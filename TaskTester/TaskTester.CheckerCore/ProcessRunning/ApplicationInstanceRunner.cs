@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.CrashReporting;
 
 namespace TaskTester.CheckerCore.ProcessRunning
@@ -14,7 +15,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
         StringBuilder stdErrBuilder =
             new StringBuilder(), stdOutBuilder = new StringBuilder();
         public string ExecutablePath { get; private set; }
-        public string StdIn { get; set; }
+        public StringOrFile StdIn { get; set; }
 
         public TimeSpan MaxRuntime { get; set; }
 
@@ -35,8 +36,8 @@ namespace TaskTester.CheckerCore.ProcessRunning
             return new ProcessRunResult() {
                 ExitCode = process.ExitCode,
                 MemoryUsed = 100.0,
-                StdErr = stdErrBuilder.ToString(),
-                StdOut = stdOutBuilder.ToString(),
+                StdErr = StringOrFile.FromText(stdErrBuilder.ToString()),
+                StdOut = StringOrFile.FromText(stdOutBuilder.ToString()),
                 CrashReport = report,
                 ExitType = DeduceExitType(crashed, timelyExit)
             };
@@ -68,7 +69,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
 
         private async Task EnterInputAndWaitForExitAsync()
         {
-            await process.StandardInput.WriteLineAsync(StdIn);
+            await process.StandardInput.WriteLineAsync(StdIn.Str);
             process.WaitForExit();
         }
 

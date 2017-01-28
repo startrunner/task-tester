@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.ProcessRunning;
 using TaskTester.CheckerCore.Tests.Properties;
 
@@ -18,11 +19,11 @@ namespace TaskTester.CheckerCore.Tests
         {
             ApplicationRunner runner = new ApplicationRunner(dummyPath) {
                 MaxRuntime = TimeSpan.FromSeconds(1),
-                StdIn = "wait 200 sum 1 5   wait 10000  exit 0"
+                StdIn =StringOrFile.FromText("wait 200 sum 1 5   wait 10000  exit 0")
             };
             var result = runner.Run();
             Assert.AreEqual(result.ExitType, ProcessExitType.Forced);
-            Assert.IsTrue(result.StdOut.Contains("6"));
+            Assert.IsTrue(result.StdOut.ToString().Contains("6"));
         }
 
         [TestMethod]
@@ -30,11 +31,11 @@ namespace TaskTester.CheckerCore.Tests
         {
             ApplicationRunner runner = new ApplicationRunner(dummyPath) {
                 MaxRuntime = TimeSpan.FromSeconds(0.5),
-                StdIn = "wait 200 sum 1 5   wait 200  exit 0"
+                StdIn =  StringOrFile.FromText("wait 200 sum 1 5   wait 200  exit 0")
             };
             var result = runner.Run();
             Assert.AreEqual(result.ExitType, ProcessExitType.Graceful);
-            Assert.IsTrue(result.StdOut.Contains("6"));
+            Assert.IsTrue(result.StdOut.ToString().Contains("6"));
             ;
         }
 
@@ -43,7 +44,7 @@ namespace TaskTester.CheckerCore.Tests
         {
             ApplicationRunner runner = new ApplicationRunner(dummyPath) {
                 MaxRuntime = TimeSpan.FromHours(1),
-                StdIn = "exit 3"
+                StdIn = StringOrFile.FromText("exit 3")
             };
             var result = runner.Run();
 
@@ -56,7 +57,7 @@ namespace TaskTester.CheckerCore.Tests
         {
             ApplicationRunner runner = new ApplicationRunner(dummyPath) {
                 MaxRuntime = TimeSpan.FromSeconds(1),
-                StdIn = "sum 1 2 crash"
+                StdIn = StringOrFile.FromText("sum 1 2 crash")
             };
             var result = runner.Run();
             Assert.AreEqual(result.ExitType, ProcessExitType.Crashed);
@@ -69,12 +70,12 @@ namespace TaskTester.CheckerCore.Tests
         {
             ApplicationRunner runner = new ApplicationRunner(dummyPath) {
                 MaxRuntime = TimeSpan.FromSeconds(0.1),
-                StdIn = "sum 1 2 sum 3 5 end"
+                StdIn = StringOrFile.FromText("sum 1 2 sum 3 5 end")
             };
             var result = runner.Run();
             Assert.AreEqual(result.ExitType, ProcessExitType.Graceful);
             var output = result.StdOut;
-            Assert.IsTrue(output.IndexOf('3') != -1 && output.IndexOf('8') > output.IndexOf('3'));
+            Assert.IsTrue(output.Str.IndexOf('3') != -1 && output.Str.IndexOf('8') > output.Str.IndexOf('3'));
             ;
         }
 
@@ -83,12 +84,12 @@ namespace TaskTester.CheckerCore.Tests
         {
             ApplicationRunner runner = new ApplicationRunner(dummyPath) {
                 MaxRuntime = TimeSpan.FromHours(1),
-                StdIn = "continuity 100000     end"
+                StdIn = StringOrFile.FromText("continuity 100000     end")
             };
             var result = runner.Run();
             Assert.AreEqual(result.ExitType, ProcessExitType.Graceful);
             var output = result.StdOut;
-            string[] lines = output
+            string[] lines = output.Str
                 .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(x=>x.Trim())
                 .Where(x=>!string.IsNullOrWhiteSpace(x))
