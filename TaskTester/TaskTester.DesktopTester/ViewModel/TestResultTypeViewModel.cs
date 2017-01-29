@@ -1,0 +1,40 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using GalaSoft.MvvmLight;
+using TaskTester.DesktopTester.Model;
+
+namespace TaskTester.DesktopTester.ViewModel
+{
+    class TestResultTypeViewModel:ViewModelBase
+    {
+        TestResultType model;
+
+        public string Icon { get; private set; }
+
+        public TestResultTypeViewModel():this(TestResultType.CorrectAnswer) { }
+
+        public TestResultTypeViewModel(TestResultType model)
+        {
+            this.model = model;
+            this.Icon = "StopTime";
+            switch(model)
+            {
+                case TestResultType.CorrectAnswer:
+                    this.Icon = "StatusOK";
+                    break;
+                case TestResultType.ProgramCrashed:
+                    this.Icon = "StatusSecurityWarning";
+                    break;
+                case TestResultType.Timeout:
+                    this.Icon = "StopTime";
+                    break;
+                case TestResultType.WrongAnswer:
+                    this.Icon = "StatusCriticalError";
+                    break;
+            }
+        }
+    }
+}

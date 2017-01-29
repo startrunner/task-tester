@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TaskTester")]
-[assembly: AssemblyCopyright("Copyright © Alexander Ivanov  2015")]
+[assembly: AssemblyCopyright("Copyright © Alexander Ivanov 2015-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

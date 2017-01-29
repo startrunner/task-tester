@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace TaskTester.DesktopTester.View
 {
@@ -12,11 +13,15 @@ namespace TaskTester.DesktopTester.View
         public ProblemView()
         {
             InitializeComponent();
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assembly.Location);
-            string version = fvi.ProductVersion;
+        }
 
-            LabelVersion.Content = version;
+        private void DataGrid_SelectedCellsChanged(object s, System.Windows.Controls.SelectedCellsChangedEventArgs e)
+        {
+            DataGrid sender = s as DataGrid;
+            if (sender.SelectedCells.Count != 0)
+            {
+                sender.UnselectAll();
+            }
         }
     }
 }

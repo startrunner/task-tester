@@ -11,6 +11,7 @@
  <Window.Resources>
   <ResourceDictionary>
    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+   <converters:KeyToResourceConverter x:Key="KeyToResource"/>
    <Style TargetType="Button" x:Key="ButtonStyleLink">
     <Setter Property="Cursor" Value="Hand"/>
     <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
@@ -60,7 +61,7 @@
     <TextBox IsReadOnly="True" Text="{Binding SolutionPaths}"/>
     <Button Grid.Column="1" Content="..." Command="{Binding BrowseSolutions}"/>
    </Grid>
-   
+
    <!--TextBlock Text="Checker Executable" Margin="0,8,0,0"/>
    <Grid>
     <Grid.ColumnDefinitions>
@@ -100,7 +101,41 @@
    <TextBlock Text="Feedback" Margin="0,8,0,0"/>
   </StackPanel>
 
-  <ListView ItemsSource="{Binding Feedback, IsAsync=True}" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Row="1" HorizontalContentAlignment="Stretch">
+  <DataGrid ItemsSource="{Binding Feedback, IsAsync=True}" Grid.Row="1"
+            GridLinesVisibility="None"
+            AutoGenerateColumns="False"
+            IsReadOnly="True"
+            CanUserResizeColumns="False"
+            CanUserResizeRows="False"
+            SelectedCellsChanged="DataGrid_SelectedCellsChanged"
+            RowHeaderWidth="0"
+            Background="Transparent">
+   
+   <DataGrid.Columns>
+    <DataGridTemplateColumn Header="Type">
+     <DataGridTemplateColumn.CellTemplate>
+      <DataTemplate>
+       <Grid Margin="4"
+             Width="16" Height="16"
+             Background="{Binding Converter={StaticResource  KeyToResource}, Path=Type.Icon}"/>
+      </DataTemplate>
+     </DataGridTemplateColumn.CellTemplate>
+    </DataGridTemplateColumn>
+    <DataGridTemplateColumn Header="Details">
+     <DataGridTemplateColumn.CellTemplate>
+      <DataTemplate>
+       <TextBlock>
+        <Hyperlink Command="{Binding ViewDetail}">
+         View Detail
+        </Hyperlink>
+       </TextBlock>
+      </DataTemplate>
+     </DataGridTemplateColumn.CellTemplate>
+    </DataGridTemplateColumn>
+   </DataGrid.Columns>
+  </DataGrid>
+
+  <!--<ListView ItemsSource="{Binding Feedback, IsAsync=True}" ScrollViewer.VerticalScrollBarVisibility="Auto" Grid.Row="1" HorizontalContentAlignment="Stretch">
    <ListView.ItemTemplate>
     <DataTemplate  DataType="ListViewItem">
      <Grid HorizontalAlignment="Stretch">
@@ -113,9 +148,7 @@
      </Grid>
     </DataTemplate>
    </ListView.ItemTemplate>
-  </ListView>
-  <StackPanel Orientation="Horizontal" Grid.Row="2">
-   <Label Name="LabelVersion" Content="123"/>
-  </StackPanel>
+  </ListView>-->
+
  </Grid>
 </Window>
