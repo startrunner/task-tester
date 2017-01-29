@@ -9,7 +9,7 @@ using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.OutputVerification;
 using TaskTester.CheckerCore.ProcessRunning;
 
-namespace TaskTester.Model
+namespace TaskTester.DesktopTester.Model
 {
     partial class Problem
     {

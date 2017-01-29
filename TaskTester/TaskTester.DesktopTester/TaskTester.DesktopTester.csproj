@@ -7,7 +7,7 @@
     <ProjectGuid>{FEFFD43D-A292-40D2-BA33-A5C524F1A802}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TaskTester</RootNamespace>
+    <RootNamespace>TaskTester.DesktopTester</RootNamespace>
     <AssemblyName>TaskTester</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

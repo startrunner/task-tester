@@ -5,11 +5,11 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Microsoft.Win32;
-using TaskTester.Model;
+using TaskTester.DesktopTester.Model;
 using System.IO;
 using System.Collections.ObjectModel;
 
-namespace TaskTester.ViewModel
+namespace TaskTester.DesktopTester.ViewModel
 {
    class ProblemViewModel : ViewModelBase
    {

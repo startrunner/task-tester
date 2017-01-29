@@ -1,8 +1,8 @@
-﻿<Window x:Class="TaskTester.View.ProblemView"
+﻿<Window x:Class="TaskTester.DesktopTester.View.ProblemView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:TaskTester.ViewModel"
-        xmlns:converters="clr-namespace:TaskTester.View.Converters"
+        xmlns:vm="clr-namespace:TaskTester.DesktopTester.ViewModel"
+        xmlns:converters="clr-namespace:TaskTester.DesktopTester.View.Converters"
         Height="741" Width="436" MinWidth="300"
         Title="Task Tester">
  <Window.DataContext>

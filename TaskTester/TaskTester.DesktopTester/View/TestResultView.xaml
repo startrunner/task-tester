@@ -1,11 +1,11 @@
-﻿<Window x:Class="TaskTester.View.TestResultView"
+﻿<Window x:Class="TaskTester.DesktopTester.View.TestResultView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:TaskTester.ViewModel"
+        xmlns:vm="clr-namespace:TaskTester.DesktopTester.ViewModel"
         Title="Test Result" Height="350" Width="830" WindowStyle="SingleBorderWindow">
     <Window.DataContext>
-        <vm:TestResultViewModel/>
-    </Window.DataContext>
+  <vm:TestResultViewModel/>
+ </Window.DataContext>
     <Grid Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

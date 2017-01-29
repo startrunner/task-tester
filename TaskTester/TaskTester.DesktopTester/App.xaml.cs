@@ -6,11 +6,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using TaskTester.Model;
-using TaskTester.View;
-using TaskTester.ViewModel;
+using TaskTester.DesktopTester.Model;
+using TaskTester.DesktopTester.View;
+using TaskTester.DesktopTester.ViewModel;
 
-namespace TaskTester
+namespace TaskTester.DesktopTester
 {
     /// <summary>
     /// Interaction logic for App.xaml

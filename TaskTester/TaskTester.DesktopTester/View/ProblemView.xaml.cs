@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Windows;
 
-namespace TaskTester.View
+namespace TaskTester.DesktopTester.View
 {
     /// <summary>
     /// Interaction logic for TaskView.xaml

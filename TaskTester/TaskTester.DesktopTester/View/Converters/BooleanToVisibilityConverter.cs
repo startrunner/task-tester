@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
-namespace TaskTester.View.Converters
+namespace TaskTester.DesktopTester.View.Converters
 {
    class BooleanToVisibilityConverter : IValueConverter
    {

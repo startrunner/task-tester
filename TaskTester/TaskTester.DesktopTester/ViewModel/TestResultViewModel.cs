@@ -2,9 +2,9 @@
 using System.Windows.Input;
 using System.Windows.Media;
 using GalaSoft.MvvmLight.CommandWpf;
-using TaskTester.Model;
+using TaskTester.DesktopTester.Model;
 
-namespace TaskTester.ViewModel
+namespace TaskTester.DesktopTester.ViewModel
 {
    class TestResultViewModel
    {
