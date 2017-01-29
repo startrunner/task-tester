@@ -6,7 +6,7 @@
 /TaskTester/*/bin/
 /TaskTester/*/obj/
 /TaskTester/packages/
-/TaskTester/TaskTester/publish
+/TaskTester/TaskTester.DesktopTester/publish
 **/.suo
 **/.csproj.user
 /TaskTester/TaskTester.CheckerCore.Tests/Resources/dummy.o
