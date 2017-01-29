@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using TestLib;
+using TaskTester.CheckerCore.Common;
+using TaskTester.CheckerCore.OutputVerification;
+using TaskTester.CheckerCore.ProcessRunning;
 
 namespace TaskTester.Model
 {
@@ -39,15 +42,69 @@ namespace TaskTester.Model
         public static async Task<ExecutionResult> ExecuteTestAsync(FileInfo executable, FileInfo inputFile, FileInfo solutionFile, TimeSpan timeLimit)
         {
             await Task.Yield();
-            var input = inputFile.OpenText().ReadToEnd();
-            var sol = solutionFile.OpenText().ReadToEnd();
-            return new ExecutionResult() {
-                ExecutionTime = TimeSpan.FromSeconds(1),
-                ExpectedAnswer = "1",
-                SolutionAnswer = "1",
-                IdentifierIndex = 1,
-                Type = TestResultType.CorrectAnswer
+
+            ApplicationRunner runner = new ApplicationRunner(executable.FullName) {
+                MaxRuntime = timeLimit,
+                StdIn = StringOrFile.FromFile(inputFile.FullName),
             };
+            IProcessRunResult runResult = await runner.RunAsync();
+
+            if (runResult.ExitType== ProcessExitType.Crashed)
+            {
+                return new ExecutionResult() {
+                    ExecutionTime = runResult.ExecutionTime,
+                    ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
+                    IdentifierIndex = 0,
+                    SolutionAnswer = runResult.StdOut.Str + '\n' + runResult.CrashReport.ExceptionMessage,
+                    Type = TestResultType.ProgramCrashed
+                };
+            }
+            else if (runResult.ExitType == ProcessExitType.Forced)
+            {
+                return new ExecutionResult() {
+                    ExecutionTime = runResult.ExecutionTime,
+                    ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
+                    IdentifierIndex = 0,
+                    SolutionAnswer = runResult.StdOut.Str,
+                    Type = TestResultType.Timeout
+                };
+            }
+            else if (runResult.ExitType== ProcessExitType.Graceful)
+            {
+                IOutputVerifier verifier = new DefaultOutputVerifier();
+
+                var result = verifier.Verify(new ProcessVerificationInfoMutable() {
+                    ExitCode = runResult.ExitCode,
+                    SolFile = StringOrFile.FromFile(solutionFile.FullName),
+                    StandardError = runResult.StdOut,
+                    StandardInput = StringOrFile.FromFile(inputFile.FullName),
+                    StandardOutput = runResult.StdOut,
+                });
+
+                if (result.Type == OutputVerificationType.CorrectAnswer)
+                {
+                    return new ExecutionResult() {
+                        ExecutionTime = runResult.ExecutionTime,
+                        ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
+                        SolutionAnswer = runResult.StdOut.Str,
+                        IdentifierIndex = 0,
+                        Type = TestResultType.CorrectAnswer
+                    };
+                }
+                else
+                {
+                    return new ExecutionResult() {
+                        ExecutionTime = runResult.ExecutionTime,
+                        ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
+                        SolutionAnswer = runResult.StdOut.Str,
+                        IdentifierIndex = 0,
+                        Type = TestResultType.WrongAnswer
+                    };
+                }
+            }
+            else if (runResult.ExitType == ProcessExitType.Undetermined) { throw new InvalidOperationException(); }
+
+            throw new NotImplementedException();
             //return await BinaryExecutor.ExecuteTestAsync(executable, input, sol, timeLimit);
         }
 

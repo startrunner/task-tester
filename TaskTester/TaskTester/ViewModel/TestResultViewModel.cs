@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Media;
 using GalaSoft.MvvmLight.CommandWpf;
-using TestLib;
+using TaskTester.Model;
 
 namespace TaskTester.ViewModel
 {

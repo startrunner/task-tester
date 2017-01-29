@@ -46,7 +46,8 @@ namespace TaskTester.CheckerCore.ProcessRunning
                 StdErr = StringOrFile.FromText(stdErrBuilder.ToString()),
                 StdOut = StringOrFile.FromText(stdOutBuilder.ToString()),
                 CrashReport = report,
-                ExitType = DeduceExitType(crashed, timelyExit)
+                ExitType = DeduceExitType(crashed, timelyExit),
+                ExecutionTime = process.ExitTime - process.StartTime
             };
         }
 
@@ -68,8 +69,8 @@ namespace TaskTester.CheckerCore.ProcessRunning
 
         void AttachProcessEvents()
         {
-            process.OutputDataReceived += ((sender, e) => stdOutBuilder.Append(e.Data));
-            process.ErrorDataReceived += ((sender, e) => stdErrBuilder.Append(e.Data));
+            process.OutputDataReceived += ((sender, e) => stdOutBuilder.AppendLine(e.Data));
+            process.ErrorDataReceived += ((sender, e) => stdErrBuilder.AppendLine(e.Data));
             process.BeginOutputReadLine();
             process.BeginErrorReadLine();
         }

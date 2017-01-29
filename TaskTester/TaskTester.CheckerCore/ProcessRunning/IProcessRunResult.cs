@@ -1,4 +1,5 @@
-﻿using TaskTester.CheckerCore.Common;
+﻿using System;
+using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.CrashReporting;
 
 namespace TaskTester.CheckerCore.ProcessRunning
@@ -7,6 +8,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
     {
         ProcessExitType ExitType { get; }
         ICrashReport CrashReport { get; }
+        TimeSpan ExecutionTime { get; }
         StringOrFile StdOut { get; }
         StringOrFile StdErr { get; }
         double MemoryUsed { get; }
@@ -21,5 +23,6 @@ namespace TaskTester.CheckerCore.ProcessRunning
         public StringOrFile StdErr { get; set; }
         public double MemoryUsed { get; set; }
         public int ExitCode { get; set; }
+        public TimeSpan ExecutionTime { get; set; }
     }
 }
