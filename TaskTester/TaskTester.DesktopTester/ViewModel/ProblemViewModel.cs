@@ -157,14 +157,14 @@ namespace TaskTester.DesktopTester.ViewModel
          problem.AllTestsCompleted += OnAllTestsCompleted;
       }
 
-      private void OnAllTestsCompleted(Problem sender, List<ExecutionResult> results)
+      private void OnAllTestsCompleted(Problem sender, List<IExecutionResult> results)
       {
          RaisePropertyChanged("RunTests");
       }
 
       public ObservableCollection<TestResultViewModel> Feedback { get; set; } = new ObservableCollection<TestResultViewModel>();
 
-      private void OnOneTestCompleted(Problem sender, ExecutionResult result)
+      private void OnOneTestCompleted(Problem sender, IExecutionResult result)
       {
          Feedback.Add(new TestResultViewModel(result));
          //RaisePropertyChanged("Feedback");

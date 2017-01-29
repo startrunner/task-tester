@@ -13,10 +13,10 @@ namespace TaskTester.DesktopTester.Model
 {
     partial class Problem
     {
-        public delegate void OneTestCompletedEventHandler(Problem sender, ExecutionResult result);
+        public delegate void OneTestCompletedEventHandler(Problem sender, IExecutionResult result);
         public event OneTestCompletedEventHandler OneTestCompleted;
 
-        public delegate void AllTestsCompletedEventHandler(Problem sender, List<ExecutionResult> results);
+        public delegate void AllTestsCompletedEventHandler(Problem sender, List<IExecutionResult> results);
         public event AllTestsCompletedEventHandler AllTestsCompleted;
 
         public bool IsInProgress { get; private set; } = false;
@@ -39,7 +39,7 @@ namespace TaskTester.DesktopTester.Model
             }
         }
 
-        public static async Task<ExecutionResult> ExecuteTestAsync(FileInfo executable, FileInfo inputFile, FileInfo solutionFile, TimeSpan timeLimit)
+        public static async Task<IExecutionResult> ExecuteTestAsync(FileInfo executable, FileInfo inputFile, FileInfo solutionFile, TimeSpan timeLimit)
         {
             await Task.Yield();
 
@@ -51,7 +51,7 @@ namespace TaskTester.DesktopTester.Model
 
             if (runResult.ExitType== ProcessExitType.Crashed)
             {
-                return new ExecutionResult() {
+                return new ExecutionResultMutable() {
                     ExecutionTime = runResult.ExecutionTime,
                     ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
                     IdentifierIndex = 0,
@@ -61,7 +61,7 @@ namespace TaskTester.DesktopTester.Model
             }
             else if (runResult.ExitType == ProcessExitType.Forced)
             {
-                return new ExecutionResult() {
+                return new ExecutionResultMutable() {
                     ExecutionTime = runResult.ExecutionTime,
                     ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
                     IdentifierIndex = 0,
@@ -83,7 +83,7 @@ namespace TaskTester.DesktopTester.Model
 
                 if (result.Type == OutputVerificationType.CorrectAnswer)
                 {
-                    return new ExecutionResult() {
+                    return new ExecutionResultMutable() {
                         ExecutionTime = runResult.ExecutionTime,
                         ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
                         SolutionAnswer = runResult.StdOut.Str,
@@ -93,7 +93,7 @@ namespace TaskTester.DesktopTester.Model
                 }
                 else
                 {
-                    return new ExecutionResult() {
+                    return new ExecutionResultMutable() {
                         ExecutionTime = runResult.ExecutionTime,
                         ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
                         SolutionAnswer = runResult.StdOut.Str,
@@ -108,9 +108,9 @@ namespace TaskTester.DesktopTester.Model
             //return await BinaryExecutor.ExecuteTestAsync(executable, input, sol, timeLimit);
         }
 
-        public async Task<IEnumerable<ExecutionResult>> RunTestsAsync()
+        public async Task<IEnumerable<IExecutionResult>> RunTestsAsync()
         {
-            List<ExecutionResult> results = new List<ExecutionResult>();
+            List<IExecutionResult> results = new List<IExecutionResult>();
             Dispatcher uid = Dispatcher.CurrentDispatcher;
 
             if (!IsValidForExecution) throw new InvalidOperationException("You cannot run tests on an invalid problem.");
@@ -129,7 +129,6 @@ namespace TaskTester.DesktopTester.Model
                     {
                          OneTestCompleted?.Invoke(this, result);
                          results.Add(result);
-                         result.IdentifierIndex = i;
                      });
                 }
             });

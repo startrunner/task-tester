@@ -150,8 +150,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\ExecutionResult.cs" />
-    <Compile Include="Model\TestResultTypeEnum.cs" />
+    <Compile Include="Model\IExecutionResult.cs" />
+    <Compile Include="Model\ExecutionResultTypeEnum.cs" />
     <Compile Include="ViewModel\ProblemViewModel.cs" />
     <Compile Include="View\Converters\BooleanToVisibilityConverter.cs" />
     <Compile Include="View\ProblemView.xaml.cs">

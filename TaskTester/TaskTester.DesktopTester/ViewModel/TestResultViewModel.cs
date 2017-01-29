@@ -8,14 +8,13 @@ namespace TaskTester.DesktopTester.ViewModel
 {
    class TestResultViewModel
    {
-      public ExecutionResult Model { get; private set; }
+      public IExecutionResult Model { get; private set; }
       public Brush BackgroundColor
       {
          get
          {
             if (Model.Type == TestResultType.CorrectAnswer) return new SolidColorBrush(Colors.Green);
             else if (Model.Type == TestResultType.ProgramCrashed) return new SolidColorBrush(Colors.Orange);
-            else if (Model.Type == TestResultType.WriteTimeout) return new SolidColorBrush(Colors.Crimson);
             else return new SolidColorBrush(Colors.Red);
          }
       }
@@ -29,8 +28,6 @@ namespace TaskTester.DesktopTester.ViewModel
                case TestResultType.ProgramCrashed: return "Program Crashed";
                case TestResultType.Timeout: return "Time Limit Exceeded";
                case TestResultType.WrongAnswer: return "Wrong Answer";
-               case TestResultType.Skipped: return "Skipped";
-               case TestResultType.WriteTimeout: return "Write Timeout";
             }
             return "Nope";
          }
@@ -56,14 +53,14 @@ namespace TaskTester.DesktopTester.ViewModel
       public ICommand ViewDetail { get; private set; }
       private void ViewDetailExecute() { new View.TestResultView { DataContext = this }.Show(); }
 
-      public TestResultViewModel(ExecutionResult model)
+      public TestResultViewModel(IExecutionResult model)
       {
          Model = model;
          Construct();
       }
       public TestResultViewModel()
       {
-         Model = new ExecutionResult();
+         Model = new ExecutionResultMutable();
          Construct();
       }
 

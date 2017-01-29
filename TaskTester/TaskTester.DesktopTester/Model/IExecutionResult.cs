@@ -6,7 +6,16 @@ using System.Threading.Tasks;
 
 namespace TaskTester.DesktopTester.Model
 {
-    class ExecutionResult
+    internal interface IExecutionResult
+    {
+        TimeSpan? ExecutionTime { get; }
+        string ExpectedAnswer { get; }
+        int IdentifierIndex { get; }
+        string SolutionAnswer { get; }
+        TestResultType Type { get; }
+    }
+
+    class ExecutionResultMutable:IExecutionResult
     {
         public TimeSpan? ExecutionTime { get; internal set; }
         public string ExpectedAnswer { get; internal set; }

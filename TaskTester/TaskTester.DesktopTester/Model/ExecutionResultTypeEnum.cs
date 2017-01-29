@@ -10,9 +10,7 @@ namespace TaskTester.DesktopTester.Model
     {
         CorrectAnswer,
         ProgramCrashed,
-        WriteTimeout,
         WrongAnswer,
-        Timeout,
-        Skipped
+        Timeout
     }
 }
