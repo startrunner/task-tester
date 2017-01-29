@@ -10,11 +10,15 @@ namespace TaskTester.DesktopTester.ViewModel
     {
         public IExecutionResult Model { get; private set; }
 
-        public TestResultTypeViewModel Type
+        public string ExceptionMessage => Model?.CrashReport?.ExceptionMessage;
+        public TestResultTypeViewModel Type => new TestResultTypeViewModel(Model.Type);
+
+        public double Score
         {
             get
             {
-                return new TestResultTypeViewModel(Model.Type);
+                if (Model == null) return 10;
+                return Model.Score;
             }
         }
 
@@ -37,6 +41,9 @@ namespace TaskTester.DesktopTester.ViewModel
                     case TestResultType.ProgramCrashed: return "Program Crashed";
                     case TestResultType.Timeout: return "Time Limit Exceeded";
                     case TestResultType.WrongAnswer: return "Wrong Answer";
+                    case TestResultType.CouldNotBind: return "Couldn't bind checker";
+                    case TestResultType.PartiallyCorrectAnswer: return "Partially correct";
+                    case TestResultType.CheckerCrashed: return "Checker Crashed";
                 }
                 return "Nope";
             }
@@ -60,9 +67,9 @@ namespace TaskTester.DesktopTester.ViewModel
         public int ExecutionNumber => Model.IdentifierIndex;
 
         public ICommand ViewDetail { get; private set; }
-        private void ViewDetailExecute() { new View.TestResultView { DataContext = this }.Show(); }
+        private void ViewDetailExecute() { new View.TestResultView { DataContext = this }.ShowDialog(); }
 
-        public TestResultViewModel(IExecutionResult model)
+        public TestResultViewModel(IExecutionResult model) 
         {
             Model = model;
             Construct();

@@ -11,6 +11,9 @@ namespace TaskTester.DesktopTester.Model
         CorrectAnswer,
         ProgramCrashed,
         WrongAnswer,
-        Timeout
+        Timeout,
+        CouldNotBind,
+        PartiallyCorrectAnswer,
+        CheckerCrashed
     }
 }

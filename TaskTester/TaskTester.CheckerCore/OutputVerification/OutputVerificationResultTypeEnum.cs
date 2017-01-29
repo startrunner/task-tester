@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 
 namespace TaskTester.CheckerCore.OutputVerification
 {
-    public enum OutputVerificationType
+    //[Obsolete]
+    public enum OutputVerificationResultType
     {
         CorrectAnswer,
         PartiallyCorrectAnswer,
         WrongAnswer,
+        CouldNotBind,
+        CheckerCrashed
     }
 }

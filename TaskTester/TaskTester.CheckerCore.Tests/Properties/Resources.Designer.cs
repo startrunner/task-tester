@@ -63,6 +63,36 @@ namespace TaskTester.CheckerCore.Tests.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] checker_cmpfiles {
+            get {
+                object obj = ResourceManager.GetObject("checker_cmpfiles", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] checker_isodd {
+            get {
+                object obj = ResourceManager.GetObject("checker_isodd", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] checker_sum {
+            get {
+                object obj = ResourceManager.GetObject("checker_sum", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] dummy {
             get {
                 object obj = ResourceManager.GetObject("dummy", resourceCulture);

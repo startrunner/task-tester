@@ -1,14 +1,11 @@
-﻿using TaskTester.CheckerCore.Common;
+﻿using System.Threading.Tasks;
+using TaskTester.CheckerCore.Common;
 
 namespace TaskTester.CheckerCore.OutputVerification
 {
     public interface IOutputVerifier
     {
-        bool UsesStdIn { get; }
-        bool UsesStdout { get; }
-        bool UsesStdErr { get; }
-        bool UsesSolution { get; }
-
-        IOutputVerificationResult Verify(IProcessVerificationInfo info);
+        Task<IOutputVerificationResult> VerifyAsync(IOutputVerificationInfo info);
+        IOutputVerificationResult Verify(IOutputVerificationInfo info);
     }
 }

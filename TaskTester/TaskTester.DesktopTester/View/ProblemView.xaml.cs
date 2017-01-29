@@ -17,11 +17,7 @@ namespace TaskTester.DesktopTester.View
 
         private void DataGrid_SelectedCellsChanged(object s, System.Windows.Controls.SelectedCellsChangedEventArgs e)
         {
-            DataGrid sender = s as DataGrid;
-            if (sender.SelectedCells.Count != 0)
-            {
-                sender.UnselectAll();
-            }
+           
         }
     }
 }

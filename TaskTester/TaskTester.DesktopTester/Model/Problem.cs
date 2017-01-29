@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.OutputVerification;
+using TaskTester.CheckerCore.OutputVerification.ResiltBindings;
 using TaskTester.CheckerCore.ProcessRunning;
 
 namespace TaskTester.DesktopTester.Model
@@ -24,6 +25,7 @@ namespace TaskTester.DesktopTester.Model
         public List<FileInfo> InputFiles { get; set; }
         public List<FileInfo> SolutionFiles { get; set; }
         public TimeSpan? TimeLimit { get; set; } = TimeSpan.FromSeconds(1);
+        public Checker Checker { get; set; } = new Checker();
 
         public bool IsValidForExecution
         {
@@ -39,7 +41,7 @@ namespace TaskTester.DesktopTester.Model
             }
         }
 
-        public static async Task<IExecutionResult> ExecuteTestAsync(FileInfo executable, FileInfo inputFile, FileInfo solutionFile, TimeSpan timeLimit)
+        public async Task<IExecutionResult> ExecuteTestAsync(FileInfo executable, FileInfo inputFile, FileInfo solutionFile, TimeSpan timeLimit)
         {
             await Task.Yield();
 
@@ -49,31 +51,27 @@ namespace TaskTester.DesktopTester.Model
             };
             IProcessRunResult runResult = await runner.RunAsync();
 
+            ExecutionResultMutable rt = new ExecutionResultMutable() {
+                ExecutionTime = runResult.ExecutionTime,
+                ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
+                IdentifierIndex = 0,
+                SolutionAnswer = runResult.StdOut.Str,
+                CrashReport = runResult.CrashReport,
+            };
+
             if (runResult.ExitType== ProcessExitType.Crashed)
             {
-                return new ExecutionResultMutable() {
-                    ExecutionTime = runResult.ExecutionTime,
-                    ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
-                    IdentifierIndex = 0,
-                    SolutionAnswer = runResult.StdOut.Str + '\n' + runResult.CrashReport.ExceptionMessage,
-                    Type = TestResultType.ProgramCrashed
-                };
+                rt.Type = TestResultType.ProgramCrashed;
             }
             else if (runResult.ExitType == ProcessExitType.Forced)
             {
-                return new ExecutionResultMutable() {
-                    ExecutionTime = runResult.ExecutionTime,
-                    ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
-                    IdentifierIndex = 0,
-                    SolutionAnswer = runResult.StdOut.Str,
-                    Type = TestResultType.Timeout
-                };
+                rt.Type = TestResultType.Timeout;
             }
             else if (runResult.ExitType== ProcessExitType.Graceful)
             {
-                IOutputVerifier verifier = new DefaultOutputVerifier();
+                IOutputVerifier verifier = GetVerifier();
 
-                var result = verifier.Verify(new ProcessVerificationInfoMutable() {
+                var result = verifier.Verify(new OutputVerificationInfoMutable() {
                     ExitCode = runResult.ExitCode,
                     SolFile = StringOrFile.FromFile(solutionFile.FullName),
                     StandardError = runResult.StdOut,
@@ -81,31 +79,69 @@ namespace TaskTester.DesktopTester.Model
                     StandardOutput = runResult.StdOut,
                 });
 
-                if (result.Type == OutputVerificationType.CorrectAnswer)
+                switch(result.Type)
                 {
-                    return new ExecutionResultMutable() {
-                        ExecutionTime = runResult.ExecutionTime,
-                        ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
-                        SolutionAnswer = runResult.StdOut.Str,
-                        IdentifierIndex = 0,
-                        Type = TestResultType.CorrectAnswer
-                    };
-                }
-                else
-                {
-                    return new ExecutionResultMutable() {
-                        ExecutionTime = runResult.ExecutionTime,
-                        ExpectedAnswer = File.ReadAllText(solutionFile.FullName),
-                        SolutionAnswer = runResult.StdOut.Str,
-                        IdentifierIndex = 0,
-                        Type = TestResultType.WrongAnswer
-                    };
+                    case OutputVerificationResultType.CheckerCrashed:
+                        rt.Score = 0;
+                        rt.Type = TestResultType.CheckerCrashed;
+                        rt.CrashReport = result.CrashReport;
+                        break;
+                    case OutputVerificationResultType.CorrectAnswer:
+                        rt.Type = TestResultType.CorrectAnswer;
+                        rt.Score = result.Score;
+                        break;
+                    case OutputVerificationResultType.WrongAnswer:
+                        rt.Type = TestResultType.WrongAnswer;
+                        break;
+                    case OutputVerificationResultType.PartiallyCorrectAnswer:
+                        rt.Type = TestResultType.PartiallyCorrectAnswer;
+                        rt.Score = result.Score;
+                        break;
+                    case OutputVerificationResultType.CouldNotBind:
+                        rt.Type = TestResultType.CouldNotBind;
+                        break;
                 }
             }
             else if (runResult.ExitType == ProcessExitType.Undetermined) { throw new InvalidOperationException(); }
 
+            return rt;
+
             throw new NotImplementedException();
             //return await BinaryExecutor.ExecuteTestAsync(executable, input, sol, timeLimit);
+        }
+
+        private IOutputVerifier GetVerifier()
+        {
+            if(!string.IsNullOrEmpty(Checker.ExecutablePath) && File.Exists(Checker.ExecutablePath))
+            {
+                IOutputVerifier checker = new ExecutableOutputVerifierMutable {
+                    ExecutablePath = Checker.ExecutablePath,
+                    Arguments = Checker.Args.Select((arg) =>
+                    {
+                        switch (arg.Type)
+                        {
+                            case ArgType.SolFile:
+                                return VerifierArgumentType.FileSolution;
+                            case ArgType.StdinFile:
+                                return VerifierArgumentType.FileStdin;
+                            case ArgType.StdOutFile:
+                                return VerifierArgumentType.FileStdout;
+                            default:
+                            case ArgType.None:
+                                return VerifierArgumentType.None;
+                        }
+                    }).ToArray(),
+                    Bindings = Checker.Bindings.Select(x =>
+                    new StdOutContainsBinding(x.SearchString, new OutputVerificationResultMutable {
+                        Score = x.Score,
+                        Type = x.Type
+                    })).ToArray(),
+                    Stdin = VerifierArgumentType.None
+                };
+                return checker;
+            }
+
+            return new DefaultOutputVerifier();
         }
 
         public async Task<IEnumerable<IExecutionResult>> RunTestsAsync()

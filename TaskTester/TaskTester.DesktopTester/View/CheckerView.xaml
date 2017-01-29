@@ -1,0 +1,65 @@
+﻿<Window x:Class="TaskTester.DesktopTester.View.CheckerView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskTester.DesktopTester.View"
+        xmlns:vm="clr-namespace:TaskTester.DesktopTester.ViewModel"
+        mc:Ignorable="d"
+        Title="Edit Checker - Task Tester" Width="432"
+        Name="Window" Height="455"
+        ResizeMode="NoResize">
+ <Window.DataContext>
+  <vm:CheckerViewModel/>
+ </Window.DataContext>
+ <Grid Margin="8">
+  <StackPanel>
+  <TextBlock Text="Executable"/>
+  <Grid>
+   <Grid.ColumnDefinitions>
+    <ColumnDefinition/>
+    <ColumnDefinition Width="32"/>
+   </Grid.ColumnDefinitions>
+    <TextBox Text="{Binding ExecutablePath, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, IsAsync=True}" IsReadOnly="True"/>
+   <Button Command="{Binding BrowseExecutable}" Grid.Column="1" Content="..."/>
+  </Grid>
+
+  <TextBlock Margin="0,8,0,0" Text="Bindings"/>
+  <DataGrid ItemsSource="{Binding Bindings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+            AutoGenerateColumns="False"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            CanUserSortColumns="False"
+            CanUserReorderColumns="False"
+            CanUserResizeColumns="False"
+            CanUserResizeRows="False"
+            RowHeaderWidth="0"
+            GridLinesVisibility="Vertical">
+   <DataGrid.Columns>
+    <DataGridTextColumn Header="Search Text" Binding="{Binding SearchString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+    <DataGridTextColumn Header="Score" Binding="{Binding Score, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+    <DataGridTemplateColumn Header="Type">
+      <DataGridTemplateColumn.CellTemplate>
+       <DataTemplate>
+        <local:EnumDropDown EnumValue="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+       </DataTemplate>
+      </DataGridTemplateColumn.CellTemplate>
+    </DataGridTemplateColumn>
+    </DataGrid.Columns>
+  </DataGrid>
+
+  <TextBlock Margin="0,8,0,0" Text="Arguments"/>
+  <ListView ItemsSource="{Binding Arguments, Mode=OneWay}">
+   <ListView.ItemTemplate>
+    <DataTemplate>
+      <Grid>
+      <TextBlock Text="arg"/>
+      <local:EnumDropDown EnumValue="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+      </Grid>
+     </DataTemplate>
+   </ListView.ItemTemplate>
+  </ListView>
+  </StackPanel>
+
+ </Grid>
+</Window>

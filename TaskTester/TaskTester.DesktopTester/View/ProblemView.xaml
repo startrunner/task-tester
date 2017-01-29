@@ -29,7 +29,6 @@
   <Grid.RowDefinitions>
    <RowDefinition Height="Auto"/>
    <RowDefinition Height="*"/>
-   <RowDefinition Height="Auto"/>
   </Grid.RowDefinitions>
   <StackPanel>
    <TextBlock Text="Win-32 Console Application"/>
@@ -62,7 +61,7 @@
     <Button Grid.Column="1" Content="..." Command="{Binding BrowseSolutions}"/>
    </Grid>
 
-   <!--TextBlock Text="Checker Executable" Margin="0,8,0,0"/>
+   <TextBlock Margin="0,8,0,0">Checker</TextBlock>
    <Grid>
     <Grid.ColumnDefinitions>
      <ColumnDefinition Width="*"/>
@@ -72,21 +71,9 @@
      <RowDefinition></RowDefinition>
      <RowDefinition></RowDefinition>
     </Grid.RowDefinitions>
-    <TextBox IsReadOnly="True" Text="[checker]"/>
-    <Button Grid.Column="1" Content="..."/>
-    <StackPanel Grid.Row="2" Orientation="Horizontal">
-     <TextBlock Text="Arg 1"/>
-     <ComboBox/>
-     <TextBlock Text="Arg 2"/>
-     <ComboBox/>
-     <TextBlock Text="Arg 3"/>
-     <ComboBox/>
-     <TextBlock Text="Arg 4"/>
-     <ComboBox/>
-     <TextBlock Text="Result"/>
-     <ComboBox/>
-    </StackPanel>
-   </Grid-->
+    <TextBox IsReadOnly="True" Text="{Binding Checker.ExecutablePath}"/>
+    <Button Command="{Binding EditChecker}" Grid.Column="1" Content="..."/>
+   </Grid>
 
 
    <TextBlock Text="Time Limit (in seconds)" Margin="0,8,0,0"/>
@@ -109,7 +96,8 @@
             CanUserResizeRows="False"
             SelectedCellsChanged="DataGrid_SelectedCellsChanged"
             RowHeaderWidth="0"
-            Background="Transparent">
+            Background="Transparent"
+            CanUserSortColumns="True">
    
    <DataGrid.Columns>
     <DataGridTemplateColumn Header="Type">
@@ -121,6 +109,13 @@
       </DataTemplate>
      </DataGridTemplateColumn.CellTemplate>
     </DataGridTemplateColumn>
+    <DataGridTemplateColumn Header="Message">
+     <DataGridTemplateColumn.CellTemplate>
+      <DataTemplate>
+       <TextBlock Margin="8,0" Text="{Binding Message}"/>
+      </DataTemplate>
+     </DataGridTemplateColumn.CellTemplate>
+    </DataGridTemplateColumn>
     <DataGridTemplateColumn Header="Details">
      <DataGridTemplateColumn.CellTemplate>
       <DataTemplate>
@@ -129,6 +124,20 @@
          View Detail
         </Hyperlink>
        </TextBlock>
+      </DataTemplate>
+     </DataGridTemplateColumn.CellTemplate>
+    </DataGridTemplateColumn>
+    <DataGridTemplateColumn Header="Score">
+     <DataGridTemplateColumn.CellTemplate>
+      <DataTemplate>
+       <TextBlock Margin="8, 0" Text="{Binding Score}"/>
+      </DataTemplate>
+     </DataGridTemplateColumn.CellTemplate>
+    </DataGridTemplateColumn>
+    <DataGridTemplateColumn Header="Crash Message">
+     <DataGridTemplateColumn.CellTemplate>
+      <DataTemplate>
+       <TextBlock Text="{Binding ExceptionMessage}" Margin="8,0"/>
       </DataTemplate>
      </DataGridTemplateColumn.CellTemplate>
     </DataGridTemplateColumn>

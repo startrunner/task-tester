@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskTester.CheckerCore.CrashReporting;
 
 namespace TaskTester.DesktopTester.Model
 {
@@ -13,14 +14,18 @@ namespace TaskTester.DesktopTester.Model
         int IdentifierIndex { get; }
         string SolutionAnswer { get; }
         TestResultType Type { get; }
+        ICrashReport CrashReport { get; }
+        double Score { get; }
     }
 
-    class ExecutionResultMutable:IExecutionResult
+    class ExecutionResultMutable : IExecutionResult
     {
-        public TimeSpan? ExecutionTime { get; internal set; }
-        public string ExpectedAnswer { get; internal set; }
-        public int IdentifierIndex { get; internal set; }
-        public string SolutionAnswer { get; internal set; }
-        public TestResultType Type { get; internal set; }
+        public ICrashReport CrashReport { get; set; }
+        public TimeSpan? ExecutionTime { get; set; }
+        public string ExpectedAnswer { get; set; }
+        public int IdentifierIndex { get; set; }
+        public string SolutionAnswer { get; set; }
+        public TestResultType Type { get; set; }
+        public double Score { get; set; } = 0;
     }
 }

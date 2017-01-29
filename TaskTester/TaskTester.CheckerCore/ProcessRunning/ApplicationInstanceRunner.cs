@@ -20,6 +20,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
         public StringOrFile StdIn { get; set; }
 
         public TimeSpan MaxRuntime { get; set; }
+        public string ProcessArguments { get; internal set; }
 
         public ApplicationInstanceRunner(string executablePath)
         {
@@ -59,7 +60,8 @@ namespace TaskTester.CheckerCore.ProcessRunning
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true,
-                ErrorDialog = false
+                ErrorDialog = false,
+                Arguments=ProcessArguments
             };
 
             process = ProcessParent.Instance.StartProcess(startInfo);

@@ -25,6 +25,7 @@ namespace TaskTester.DesktopTester.ViewModel
                 case TestResultType.CorrectAnswer:
                     this.Icon = "StatusOK";
                     break;
+                case TestResultType.CheckerCrashed:
                 case TestResultType.ProgramCrashed:
                     this.Icon = "StatusSecurityWarning";
                     break;
@@ -32,7 +33,13 @@ namespace TaskTester.DesktopTester.ViewModel
                     this.Icon = "StopTime";
                     break;
                 case TestResultType.WrongAnswer:
-                    this.Icon = "StatusCriticalError";
+                    this.Icon = "Cancel";
+                    break;
+                case TestResultType.CouldNotBind:
+                    this.Icon = "Settings";
+                    break;
+                case TestResultType.PartiallyCorrectAnswer:
+                    this.Icon = "HideMember";
                     break;
             }
         }

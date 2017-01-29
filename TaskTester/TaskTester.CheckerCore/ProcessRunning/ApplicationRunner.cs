@@ -11,6 +11,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
         public string ExecutablePath { get; private set; }
         public TimeSpan MaxRuntime { get; set; } = TimeSpan.MaxValue;
         public StringOrFile StdIn { get; set; } = StringOrFile.FromText(string.Empty);
+        public string ProcessArguments { get; set; } = "";
 
         public ApplicationRunner(string executablePath)
         {
@@ -26,6 +27,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
                 run = new ApplicationInstanceRunner(ExecutablePath) {
                     StdIn = StdIn,
                     MaxRuntime = MaxRuntime,
+                    ProcessArguments=ProcessArguments
                 };
             }
 

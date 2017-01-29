@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="CheckerCoreTests.cs" />
     <Compile Include="CrashAnalyzerTests.cs" />
+    <Compile Include="OutputVerifierTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -77,6 +78,21 @@
   <ItemGroup>
     <None Include="Resources\dummy - problem.txt" />
     <None Include="Resources\dummy.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\checker_cmpfiles.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\checker_sum.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\checker_isodd.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\checkers.txt" />
+    <Content Include="Resources\checker_cmpfiles.cpp" />
+    <Content Include="Resources\checker_isodd.cpp" />
+    <Content Include="Resources\checker_sum.cpp" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
