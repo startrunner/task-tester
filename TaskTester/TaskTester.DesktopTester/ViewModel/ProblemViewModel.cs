@@ -8,7 +8,6 @@ using Microsoft.Win32;
 using TaskTester.DesktopTester.Model;
 using System.IO;
 using System.Collections.ObjectModel;
-using TaskTester.DesktopTester.View;
 
 namespace TaskTester.DesktopTester.ViewModel
 {

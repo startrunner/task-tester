@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TaskTester.CheckerCore.CrashReporting;
 
 namespace TaskTester.DesktopTester.Model
