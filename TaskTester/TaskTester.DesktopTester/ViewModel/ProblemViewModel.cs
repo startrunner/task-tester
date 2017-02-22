@@ -15,22 +15,8 @@ namespace TaskTester.DesktopTester.ViewModel
     class ProblemViewModel : ViewModelBase
     {
         public Problem Model { get; private set; }
-        public int CompletedTestsCount
-        {
-            get
-            {
-                if (Model == null) return 3;
-                return Feedback.Count;
-            }
-        }
-        public int AllTestsCount
-        {
-            get
-            {
-                if (Model == null || Model.InputFiles == null) return 10;
-                return Model.InputFiles.Count;
-            }
-        }
+        public int CompletedTestsCount => Feedback?.Count ?? 3;
+        public int AllTestsCount => Model?.InputFiles?.Count ?? 10;
 
         public string ExecutablePath { get; private set; }
         public string InputPaths { get; private set; }
@@ -71,13 +57,6 @@ namespace TaskTester.DesktopTester.ViewModel
             BrowseInputs = new RelayCommand(BrowseInputsExecute);
             BrowseSolutions = new RelayCommand(BrowseSolutionsExecute);
             RunTests = new RelayCommand(RunTestsExecute, RunTestsCanExecute);
-            EditChecker = new RelayCommand(EditCheckerExecute);
-        }
-
-        private void EditCheckerExecute()
-        {
-            var view = new CheckerView() { DataContext = Checker };
-            view.ShowDialog();
         }
 
         private bool RunTestsCanExecute()

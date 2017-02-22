@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 using System.Windows.Media;
-using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Command;
 using TaskTester.DesktopTester.Model;
 
 namespace TaskTester.DesktopTester.ViewModel
@@ -66,23 +66,10 @@ namespace TaskTester.DesktopTester.ViewModel
         }
         public int ExecutionNumber => Model.IdentifierIndex;
 
-        public ICommand ViewDetail { get; private set; }
-        private void ViewDetailExecute() { new View.TestResultView { DataContext = this }.ShowDialog(); }
-
         public TestResultViewModel(IExecutionResult model) 
         {
             Model = model;
-            Construct();
         }
-        public TestResultViewModel()
-        {
-            Model = new ExecutionResultMutable();
-            Construct();
-        }
-
-        private void Construct()
-        {
-            ViewDetail = new RelayCommand(ViewDetailExecute);
-        }
+        public TestResultViewModel() : this(new ExecutionResultMutable()) { }
     }
 }

@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
 using TaskTester.DesktopTester.Model;
-using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Win32;
-using TaskTester.CheckerCore.OutputVerification;
-using System.Collections.Generic;
 
 namespace TaskTester.DesktopTester.ViewModel
 {

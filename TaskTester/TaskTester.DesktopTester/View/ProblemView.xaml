@@ -72,7 +72,7 @@
      <RowDefinition></RowDefinition>
     </Grid.RowDefinitions>
     <TextBox IsReadOnly="True" Text="{Binding Checker.ExecutablePath}"/>
-    <Button Command="{Binding EditChecker}" Grid.Column="1" Content="..."/>
+    <Button DataContext="{Binding Checker}" Name="xButtonEditChecker" Grid.Column="1" Content="..." Click="xButtonEditChecker_Click"/>
    </Grid>
 
 
@@ -120,7 +120,7 @@
      <DataGridTemplateColumn.CellTemplate>
       <DataTemplate>
        <TextBlock>
-        <Hyperlink Command="{Binding ViewDetail}">
+        <Hyperlink Name="xHyperlinkViewDetail" Click="xHyperlinkViewDetail_Click">
          View Detail
         </Hyperlink>
        </TextBlock>
