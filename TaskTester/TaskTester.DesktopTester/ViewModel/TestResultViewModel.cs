@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Windows.Input;
 using System.Windows.Media;
-using GalaSoft.MvvmLight.Command;
 using TaskTester.DesktopTester.Model;
 
 namespace TaskTester.DesktopTester.ViewModel
