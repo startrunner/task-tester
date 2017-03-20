@@ -14,6 +14,8 @@ namespace TaskTester.CheckerCore.OutputVerification
 
         public IOutputVerificationResult Verify(IOutputVerificationInfo info) => VerifyAsync(info).GetAwaiter().GetResult();
 
+        public double PointsPerTest { get; set; } = 1;
+
         public async Task<IOutputVerificationResult> VerifyAsync(IOutputVerificationInfo info)
         {
             await Task.Yield();
@@ -23,7 +25,7 @@ namespace TaskTester.CheckerCore.OutputVerification
             if (Enumerable.SequenceEqual(output, solution))
             {
                 return new OutputVerificationResultMutable() {
-                    Score = 1,
+                    Score = PointsPerTest,
                     Type = OutputVerificationResultType.CorrectAnswer
                 };
             }

@@ -19,7 +19,7 @@ namespace TaskTester.CheckerCore.CrashReporting
 
         private static string NormalizePath(string path)
         {
-            return Path.GetFullPath(new Uri(path).LocalPath)
+            return Path.GetFullPath(/*new Uri(path).LocalPath*/path)
                        .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                        .ToUpperInvariant();
         }

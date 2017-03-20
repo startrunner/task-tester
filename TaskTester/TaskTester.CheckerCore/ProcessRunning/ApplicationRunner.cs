@@ -12,6 +12,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
         public TimeSpan MaxRuntime { get; set; } = TimeSpan.MaxValue;
         public StringOrFile StdIn { get; set; } = StringOrFile.FromText(string.Empty);
         public string ProcessArguments { get; set; } = "";
+        public bool AllowCrashReports { get; set; } = true;
 
         public ApplicationRunner(string executablePath)
         {
@@ -24,10 +25,12 @@ namespace TaskTester.CheckerCore.ProcessRunning
             ApplicationInstanceRunner run;
             lock (thisLock)
             {
-                run = new ApplicationInstanceRunner(ExecutablePath) {
+                run = new ApplicationInstanceRunner(ExecutablePath)
+                {
                     StdIn = StdIn,
                     MaxRuntime = MaxRuntime,
-                    ProcessArguments=ProcessArguments
+                    ProcessArguments = ProcessArguments,
+                    AllowCrashReports = AllowCrashReports
                 };
             }
 
@@ -35,7 +38,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
         }
 
         public IProcessRunResult Run() =>
-            RunAsync().GetAwaiter().GetResult();
+            RunAsync().Result;
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls

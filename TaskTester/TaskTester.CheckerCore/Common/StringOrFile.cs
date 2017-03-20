@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace TaskTester.CheckerCore.Common
@@ -6,6 +7,7 @@ namespace TaskTester.CheckerCore.Common
     public class StringOrFile
     {
         object thisLock = new object();
+        static Dictionary<string, StringOrFile> repo = new Dictionary<string, StringOrFile>();
         bool fileIsTemporary = false;
         string text = null;
         string filePath = null;
@@ -14,7 +16,16 @@ namespace TaskTester.CheckerCore.Common
         public string FilePath => GetFilePath();
 
         public static StringOrFile FromText(string text) => new StringOrFile(text, false);
-        public static StringOrFile FromFile(string path) => new StringOrFile(path, true);
+        public static StringOrFile FromFile(string path)
+        {
+            if(repo.ContainsKey(path))
+            {
+                return repo[path];
+            }
+            var rt=new StringOrFile(path, true);
+            repo[path] = rt;
+            return rt;
+        }
         public override string ToString() => GetText();
 
         private string GetText()
@@ -63,6 +74,7 @@ namespace TaskTester.CheckerCore.Common
                     if (filePath == null || !File.Exists(filePath))
                     {
                         filePath = Path.GetTempFileName();
+                        repo[filePath] = this;
                         File.WriteAllText(filePath, text);
                     }
                 }
