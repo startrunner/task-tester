@@ -27,10 +27,10 @@ namespace TaskTester.Noi2Evaluator
             int evaluatedCount = 0;
             double averageEvalTime = -1;
 
-            foreach(var competitorInfo in competitors)
+            foreach(CompetitorInfo competitorInfo in competitors)
             {
                 CompetitorEvaluator evaluator = new CompetitorEvaluator(competitionInfo, competitorInfo);
-                var result = evaluator.Evaluate();
+                CompetitorResult result = evaluator.Evaluate();
                 rt.CompetitorResults.Add(result);
 
                 if(evaluatedCount==0)

@@ -16,6 +16,19 @@ namespace TaskTester.Noi2Evaluator
 
         static void Init()
         {
+            if(!File.Exists("info.json"))
+            {
+                File.WriteAllText("info.json", JsonConvert.SerializeObject(new CompetitionInfo()));
+            }
+            if(!Directory.Exists("tests"))
+            {
+                Directory.CreateDirectory("tests");
+            }
+            if(!Directory.Exists("works"))
+            {
+                Directory.CreateDirectory("works");
+            }
+
             string batchText = File.ReadAllText("info.json");
             competitionInfo = JsonConvert.DeserializeObject<CompetitionInfo>(batchText);
 

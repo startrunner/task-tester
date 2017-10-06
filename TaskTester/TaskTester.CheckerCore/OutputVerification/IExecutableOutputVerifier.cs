@@ -11,7 +11,7 @@ namespace TaskTester.CheckerCore.OutputVerification
     {
         string ExecutablePath { get; }
         IReadOnlyList<VerifierArgumentType> Arguments { get; }
-        IReadOnlyList<IVerifierResultBinding> Bindings { get; }
+        IReadOnlyList<IVerifierResultBinder> Bindings { get; }
         VerifierArgumentType Stdin { get; }
     }
 
@@ -19,10 +19,10 @@ namespace TaskTester.CheckerCore.OutputVerification
     {
         public string ExecutablePath { get; set; }
         public IReadOnlyList<VerifierArgumentType> Arguments { get; set; } = new VerifierArgumentType[0];
-        public IReadOnlyList<IVerifierResultBinding> Bindings { get; set; } = new IVerifierResultBinding[0];
+        public IReadOnlyList<IVerifierResultBinder> Bindings { get; set; } = new IVerifierResultBinder[0];
         public VerifierArgumentType Stdin { get; set; } = VerifierArgumentType.None;
 
-        private StringOrFile GetThing(IOutputVerificationInfo info, VerifierArgumentType thing)
+        private StringOrFile GetVerifierArgument(OutputVerificationInfo info, VerifierArgumentType thing)
         {
             switch(thing)
             {
@@ -50,48 +50,50 @@ namespace TaskTester.CheckerCore.OutputVerification
             }
         }
 
-        public async Task<IOutputVerificationResult> VerifyAsync(IOutputVerificationInfo info)
+        public async Task<OutputVerificationResult> VerifyAsync(OutputVerificationInfo info)
         {
             StringBuilder argBuilder = new StringBuilder();
-            foreach(var arg in Arguments)
+            foreach(VerifierArgumentType arg in Arguments)
             {
-                argBuilder.Append($" \"{GetThing(info, arg)}\"");
+                argBuilder.Append($" \"{GetVerifierArgument(info, arg)}\"");
             }
-            ApplicationRunner runner = new ApplicationRunner(ExecutablePath) {
-                MaxRuntime = TimeSpan.FromSeconds(60),
-                StdIn = GetThing(info, Stdin),
-                ProcessArguments = argBuilder.ToString().TrimEnd()
-            };
+            ApplicationRunner runner = new ApplicationRunner();
 
-            IProcessRunResult checkerRun = await runner.RunAsync();
+            ProcessRunResult checkerRun = await runner.RunAsync(
+                ExecutablePath,
+                TimeSpan.FromSeconds(60),
+                GetVerifierArgument(info, Stdin),
+                argBuilder.ToString().TrimEnd()
+            );
             ;
             if (checkerRun.ExitType == ProcessExitType.Crashed)
             {
-                return new OutputVerificationResultMutable {
-                    Score = 0,
-                    Type = OutputVerificationResultType.CheckerCrashed,
-                    CrashReport = checkerRun.CrashReport
-                };
+                return new OutputVerificationResult (
+                    OutputVerificationResultType.CheckerCrashed,
+                    checkerRun.CrashReport,
+                    0
+                );
             }
 
-            IOutputVerificationResult result = null;
+            OutputVerificationResult result = null;
 
-            foreach(var binding in Bindings)
+            foreach(IVerifierResultBinder binding in Bindings)
             {
                 if (binding.TryBind(checkerRun, out result)) break;
             }
 
             if (result == null)
             {
-                result = new OutputVerificationResultMutable {
-                    Score = 0,
-                    Type = OutputVerificationResultType.CouldNotBind
-                };
+                result = new OutputVerificationResult (
+                    OutputVerificationResultType.CouldNotBind,
+                    null,
+                    0
+                );
             }
 
             return result;
         }
 
-        public IOutputVerificationResult Verify(IOutputVerificationInfo info) => VerifyAsync(info).GetAwaiter().GetResult();
+        public OutputVerificationResult Verify(OutputVerificationInfo info) => VerifyAsync(info).GetAwaiter().GetResult();
     }
 }

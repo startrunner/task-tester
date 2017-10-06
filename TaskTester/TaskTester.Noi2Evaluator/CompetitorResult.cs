@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.OutputVerification;
-using TaskTester.CheckerCore.OutputVerification.ResiltBindings;
+using TaskTester.CheckerCore.OutputVerification.ResultBinders;
 using TaskTester.CheckerCore.ProcessRunning;
 using TaskTester.Noi2Evaluator.Infos;
 

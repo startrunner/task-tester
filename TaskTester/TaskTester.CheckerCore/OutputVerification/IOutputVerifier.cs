@@ -4,7 +4,7 @@ namespace TaskTester.CheckerCore.OutputVerification
 {
     public interface IOutputVerifier
     {
-        Task<IOutputVerificationResult> VerifyAsync(IOutputVerificationInfo info);
-        IOutputVerificationResult Verify(IOutputVerificationInfo info);
+        Task<OutputVerificationResult> VerifyAsync(OutputVerificationInfo info);
+        OutputVerificationResult Verify(OutputVerificationInfo info);
     }
 }

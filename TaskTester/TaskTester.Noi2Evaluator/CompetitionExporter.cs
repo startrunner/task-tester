@@ -24,14 +24,14 @@ namespace TaskTester.Noi2Evaluator
         public void Export(string filename)
         {
             var workbook = new XLWorkbook();
-            var sheet = workbook.AddWorksheet("Results");
+            IXLWorksheet sheet = workbook.AddWorksheet("Results");
             ;
 
             sheet.Cell("A1").Value = "Rank";
             sheet.Cell("B1").Value = "Name";
             sheet.Cell("C1").Value = "Directory";
             int i = 0;
-            foreach(var problem in competitionInfo.Problems)
+            foreach(ProblemInfo problem in competitionInfo.Problems)
             {
                 sheet.Cell($"{(char)('D' + i)}1").Value = $"Problem: {problem.Name}";
                 i++;
@@ -40,7 +40,7 @@ namespace TaskTester.Noi2Evaluator
 
 
             i = 0;
-            foreach(var competitor in results)
+            foreach(CompetitorResult competitor in results)
             {
                 sheet.Cell($"A{i + 2}").Value = i + 1;
                 sheet.Cell($"B{i + 2}").Value = competitor.Name;

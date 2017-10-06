@@ -8,13 +8,15 @@ namespace TaskTester.CheckerCore.CrashReporting
 {
     public class CrashReportFinder
     {
-        public long ProcessID { get; private set; }
-        public string ExecutablePath { get;  set; }
-        public int MaxReportCount { get; set; }
+        public long ProcessID { get; }
+        public string ExecutablePath { get; }
+        public int MaxReportCount { get; }
 
-        public CrashReportFinder(long processID)
+        public CrashReportFinder(long processID, string executablePath, int maxReportCount = 10000)
         {
             ProcessID = processID;
+            ExecutablePath = executablePath;
+            MaxReportCount = maxReportCount;
         }
 
         private static string NormalizePath(string path)
@@ -24,11 +26,11 @@ namespace TaskTester.CheckerCore.CrashReporting
                        .ToUpperInvariant();
         }
 
-        public async Task<IReadOnlyList<ICrashReport>> FindAsync()
+        public async Task<IReadOnlyList<CrashReport>> FindAsync()
         {
             await Task.Yield();
 
-            List<ICrashReport> rt = new List<ICrashReport>();
+            List<CrashReport> rt = new List<CrashReport>();
 
             using (var log = new EventLog("Application"))
             {
@@ -38,7 +40,7 @@ namespace TaskTester.CheckerCore.CrashReporting
                     if (entry.EntryType != EventLogEntryType.Error) continue;
                     if (entry.InstanceId != 1000) continue;
 
-                    ICrashReport report = CrashReport.Parse(entry.Message);
+                    CrashReport report = CrashReport.Parse(entry.Message);
                     if ((this.ExecutablePath == null || NormalizePath(report.ExecutablePath).ToLower() == NormalizePath(ExecutablePath).ToLower())
                         && report.ProcessID == ProcessID)
                     {
@@ -51,6 +53,6 @@ namespace TaskTester.CheckerCore.CrashReporting
             return rt;
         }
 
-        public IReadOnlyList<ICrashReport> Find() => FindAsync().GetAwaiter().GetResult();
+        public IReadOnlyList<CrashReport> Find() => FindAsync().GetAwaiter().GetResult();
     }
 }

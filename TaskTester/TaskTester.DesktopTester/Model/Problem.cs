@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Threading;
 using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.OutputVerification;
-using TaskTester.CheckerCore.OutputVerification.ResiltBindings;
+using TaskTester.CheckerCore.OutputVerification.ResultBinders;
 using TaskTester.CheckerCore.ProcessRunning;
 
 namespace TaskTester.DesktopTester.Model
@@ -44,11 +44,12 @@ namespace TaskTester.DesktopTester.Model
         {
             await Task.Yield();
 
-            ApplicationRunner runner = new ApplicationRunner(executable.FullName) {
-                MaxRuntime = timeLimit,
-                StdIn = StringOrFile.FromFile(inputFile.FullName),
-            };
-            IProcessRunResult runResult = await runner.RunAsync();
+            ApplicationRunner runner = new ApplicationRunner();
+            ProcessRunResult runResult = await runner.RunAsync(
+                executable.FullName,
+                timeLimit,
+                StringOrFile.FromFile(inputFile.FullName)
+            );
 
             ExecutionResultMutable rt = new ExecutionResultMutable() {
                 ExecutionTime = runResult.ExecutionTime,
@@ -70,13 +71,13 @@ namespace TaskTester.DesktopTester.Model
             {
                 IOutputVerifier verifier = GetVerifier();
 
-                var result = verifier.Verify(new OutputVerificationInfoMutable() {
-                    ExitCode = runResult.ExitCode,
-                    SolFile = StringOrFile.FromFile(solutionFile.FullName),
-                    StandardError = runResult.StdOut,
-                    StandardInput = StringOrFile.FromFile(inputFile.FullName),
-                    StandardOutput = runResult.StdOut,
-                });
+                OutputVerificationResult result = verifier.Verify(new OutputVerificationInfo(
+                    runResult.ExitCode,
+                    runResult.StdOut,
+                    StringOrFile.FromFile(inputFile.FullName),
+                    runResult.StdOut,
+                    StringOrFile.FromFile(solutionFile.FullName)
+                ));
 
                 switch(result.Type)
                 {
@@ -131,10 +132,11 @@ namespace TaskTester.DesktopTester.Model
                         }
                     }).ToArray(),
                     Bindings = Checker.Bindings.Select(x =>
-                    new StdOutContainsBinding(x.SearchString, new OutputVerificationResultMutable {
-                        Score = x.Score,
-                        Type = x.Type
-                    })).ToArray(),
+                    new StdOutContainsBinder(x.SearchString, new OutputVerificationResult (
+                        x.Type,
+                        null,
+                        x.Score
+                    ))).ToArray(),
                     Stdin = VerifierArgumentType.None
                 };
                 return checker;
@@ -154,12 +156,12 @@ namespace TaskTester.DesktopTester.Model
             await Task.Run(async () =>
             {
 
-                var ins = InputFiles.OrderBy(f => f.Name).ToArray();
+                FileInfo[] ins = InputFiles.OrderBy(f => f.Name).ToArray();
                 var sols = SolutionFiles.OrderBy(x => x.Name).ToList();
 
                 for (int i = 0; i < InputFiles.Count; i++)
                 {
-                    var result = await ExecuteTestAsync(ExecutableFile, ins[i], sols[i], TimeLimit.GetValueOrDefault());
+                    IExecutionResult result = await ExecuteTestAsync(ExecutableFile, ins[i], sols[i], TimeLimit.GetValueOrDefault());
                     uid.Invoke(() =>
                     {
                          OneTestCompleted?.Invoke(this, result);

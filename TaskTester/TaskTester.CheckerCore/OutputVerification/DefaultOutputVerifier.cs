@@ -12,11 +12,11 @@ namespace TaskTester.CheckerCore.OutputVerification
             .Split(null as char[], StringSplitOptions.RemoveEmptyEntries)
             .Where(x => !string.IsNullOrWhiteSpace(x));
 
-        public IOutputVerificationResult Verify(IOutputVerificationInfo info) => VerifyAsync(info).GetAwaiter().GetResult();
+        public OutputVerificationResult Verify(OutputVerificationInfo info) => VerifyAsync(info).GetAwaiter().GetResult();
 
         public double PointsPerTest { get; set; } = 1;
 
-        public async Task<IOutputVerificationResult> VerifyAsync(IOutputVerificationInfo info)
+        public async Task<OutputVerificationResult> VerifyAsync(OutputVerificationInfo info)
         {
             await Task.Yield();
             var output = Normalize(info.StandardOutput.Str);
@@ -24,17 +24,19 @@ namespace TaskTester.CheckerCore.OutputVerification
 
             if (Enumerable.SequenceEqual(output, solution))
             {
-                return new OutputVerificationResultMutable() {
-                    Score = PointsPerTest,
-                    Type = OutputVerificationResultType.CorrectAnswer
-                };
+                return new OutputVerificationResult(
+                    OutputVerificationResultType.CorrectAnswer,
+                    null,
+                    PointsPerTest
+                );
             }
             else
             {
-                return new OutputVerificationResultMutable() {
-                    Score = 0,
-                    Type = OutputVerificationResultType.WrongAnswer
-                };
+                return new OutputVerificationResult(
+                    OutputVerificationResultType.WrongAnswer,
+                    null,
+                    0
+                );
             }
         }
     }

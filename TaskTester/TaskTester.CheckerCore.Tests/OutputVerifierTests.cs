@@ -3,7 +3,7 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.OutputVerification;
-using TaskTester.CheckerCore.OutputVerification.ResiltBindings;
+using TaskTester.CheckerCore.OutputVerification.ResultBinders;
 using TaskTester.CheckerCore.Tests.Properties;
 
 namespace TaskTester.CheckerCore.Tests
@@ -24,15 +24,17 @@ namespace TaskTester.CheckerCore.Tests
             string checker = ExtractExe(Resources.checker_sum);
             IExecutableOutputVerifier verifier = new ExecutableOutputVerifierMutable {
                 ExecutablePath= checker,
-                Bindings = new IVerifierResultBinding[] {
-                    new StdOutContainsBinding("1", new OutputVerificationResultMutable {
-                         Score=1,
-                          Type= OutputVerificationResultType.CorrectAnswer
-                    }),
-                    new StdOutContainsBinding("0", new OutputVerificationResultMutable {
-                        Score=0,
-                         Type= OutputVerificationResultType.WrongAnswer
-                    })
+                Bindings = new IVerifierResultBinder[] {
+                    new StdOutContainsBinder("1", new OutputVerificationResult (
+                          OutputVerificationResultType.CorrectAnswer,
+                          null,
+                            1
+                    )),
+                    new StdOutContainsBinder("0", new OutputVerificationResult (
+                        OutputVerificationResultType.WrongAnswer,
+                         null,
+                        0
+                    ))
                 },
                 Arguments=new VerifierArgumentType[] {
                      VerifierArgumentType.Solution,//number A
@@ -40,11 +42,13 @@ namespace TaskTester.CheckerCore.Tests
                 },
                  Stdin= VerifierArgumentType.ExitCode//number C
             };
-            IOutputVerificationInfo info = new OutputVerificationInfoMutable {
-                ExitCode = 5,//C
-                SolFile = StringOrFile.FromText("3"),//A
-                StandardOutput = StringOrFile.FromText("2")//B
-            };
+            OutputVerificationInfo info = new OutputVerificationInfo (
+                5,//C
+                null,
+                null,
+                StringOrFile.FromText("2"),//B
+                StringOrFile.FromText("3")//A
+            );
             var result = verifier.Verify(info);
             Assert.AreEqual(result.Type, OutputVerificationResultType.CorrectAnswer);
             ;
@@ -62,23 +66,28 @@ namespace TaskTester.CheckerCore.Tests
                 IOutputVerifier verifier = new ExecutableOutputVerifierMutable {
                     ExecutablePath = checker,
                     Stdin = VerifierArgumentType.Stdout,//number
-                    Bindings = new IVerifierResultBinding[] {
-                        new ExitCodeBinding(1, new OutputVerificationResultMutable {
-                             Score=1,
-                             Type= OutputVerificationResultType.CorrectAnswer
-                        }),
-                        new ExitCodeBinding(0, new OutputVerificationResultMutable {
-                            Score=0,
-                            Type= OutputVerificationResultType.CorrectAnswer
-                        })
+                    Bindings = new IVerifierResultBinder[] {
+                        new ExitCodeBinder(1, new OutputVerificationResult (
+                             OutputVerificationResultType.CorrectAnswer,
+                             null,
+                             1
+                        )),
+                        new ExitCodeBinder(0, new OutputVerificationResult (
+                            OutputVerificationResultType.CorrectAnswer,
+                            null,
+                            0
+                        ))
                     }
                 };
-                IOutputVerificationInfo info = new OutputVerificationInfoMutable {
-                    StandardOutput = StringOrFile.FromText(number.ToString()),
-                    ExitCode = 0
-                };
+                OutputVerificationInfo info = new OutputVerificationInfo (
+                    0,
+                    null,
+                    null,
+                    StringOrFile.FromText(number.ToString()),
+                    null
+                );
 
-                IOutputVerificationResult result = verifier.Verify(info);
+                OutputVerificationResult result = verifier.Verify(info);
                 Assert.AreEqual(result.Type, OutputVerificationResultType.CorrectAnswer);
                 Assert.AreEqual(result.Score, number % 2);
             }
@@ -113,22 +122,27 @@ namespace TaskTester.CheckerCore.Tests
                 Arguments = new VerifierArgumentType[] {
                     VerifierArgumentType.FileStdout,
                     VerifierArgumentType.FileSolution },
-                Bindings = new IVerifierResultBinding[] {
-                    new StdOutContainsBinding("OK", new OutputVerificationResultMutable {
-                         Score=1,
-                         Type= OutputVerificationResultType.CorrectAnswer
-                    }),
-                    new StdOutContainsBinding("NO", new OutputVerificationResultMutable {
-                        Score=0,
-                        Type= OutputVerificationResultType.WrongAnswer
-                    })
+                Bindings = new IVerifierResultBinder[] {
+                    new StdOutContainsBinder("OK", new OutputVerificationResult (
+                         OutputVerificationResultType.CorrectAnswer,
+                         null,
+                         1
+                    )),
+                    new StdOutContainsBinder("NO", new OutputVerificationResult (
+                        OutputVerificationResultType.WrongAnswer,
+                        null,
+                        0
+                    ))
                 },
                 Stdin = VerifierArgumentType.None
             };
-            IOutputVerificationInfo info = new OutputVerificationInfoMutable {
-                StandardOutput = StringOrFile.FromFile(file1),
-                SolFile = StringOrFile.FromFile(file2)
-            };
+            OutputVerificationInfo info = new OutputVerificationInfo(
+                0,
+                null,
+                null,
+                StringOrFile.FromFile(file1),
+                StringOrFile.FromFile(file2)
+            );
             var result = verifier.Verify(info);
 
             if (okay)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using TaskTester.CheckerCore.CrashReporting;
 
 namespace TaskTester.CheckerCore.Tests
@@ -9,8 +10,8 @@ namespace TaskTester.CheckerCore.Tests
         [TestMethod]
         public void TestCrashReportFinder()
         {
-            CrashReportFinder finder = new CrashReportFinder(7748);
-            var finds = finder.Find();
+            CrashReportFinder finder = new CrashReportFinder(7748, null, 1);
+            IReadOnlyList<CrashReport> finds = finder.Find();
             ;
         }
     }

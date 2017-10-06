@@ -10,13 +10,13 @@ namespace TaskTester.DesktopTester.Model
         int IdentifierIndex { get; }
         string SolutionAnswer { get; }
         TestResultType Type { get; }
-        ICrashReport CrashReport { get; }
+        CrashReport CrashReport { get; }
         double Score { get; }
     }
 
     class ExecutionResultMutable : IExecutionResult
     {
-        public ICrashReport CrashReport { get; set; }
+        public CrashReport CrashReport { get; set; }
         public TimeSpan? ExecutionTime { get; set; }
         public string ExpectedAnswer { get; set; }
         public int IdentifierIndex { get; set; }

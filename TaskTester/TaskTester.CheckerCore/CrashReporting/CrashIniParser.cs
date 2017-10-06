@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TaskTester.CheckerCore.CrashReporting
 {
     internal class CrashIniParser
     {
-        public static CrashIniParser Instance { get; private set; } = new CrashIniParser();
+        static Lazy<CrashIniParser> instanceLazy = new Lazy<CrashIniParser>(() => new CrashIniParser());
+        public static CrashIniParser Instance => instanceLazy.Value;
 
         public IReadOnlyDictionary<string, string> Parse(string ini)
         {

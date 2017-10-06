@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.OutputVerification;
-using TaskTester.CheckerCore.OutputVerification.ResiltBindings;
+using TaskTester.CheckerCore.OutputVerification.ResultBinders;
 using TaskTester.CheckerCore.ProcessRunning;
 using TaskTester.Noi2Evaluator.Infos;
 
@@ -54,14 +54,15 @@ namespace TaskTester.Noi2Evaluator
 
         static double TestProblemForSingleTest(string exeDir, StringOrFile input, StringOrFile solution, double maxScore, double maxRuntime, IOutputVerifier verifier)
         {
-            ApplicationRunner runner = new ApplicationRunner(exeDir)
-            {
-                MaxRuntime = TimeSpan.FromSeconds(maxRuntime),
-                StdIn = input,
-                AllowCrashReports = false
-            };
+            ApplicationRunner runner = new ApplicationRunner();
 
-            IProcessRunResult runResult = runner.Run();
+            ProcessRunResult runResult = runner.Run(
+                exeDir,
+                TimeSpan.FromSeconds(maxRuntime),
+                input,
+                processArguments: null,
+                allowCrashReports: false
+            );
 
             switch (runResult.ExitType)
             {
@@ -75,15 +76,14 @@ namespace TaskTester.Noi2Evaluator
                     break;
             }
 
-            IOutputVerificationInfo verificationInfo = new OutputVerificationInfoMutable
-            {
-                StandardError = runResult.StdErr,
-                StandardOutput = runResult.StdOut,
-                StandardInput = input,
-                ExitCode = runResult.ExitCode,
-                SolFile = solution
-            };
-            IOutputVerificationResult verificationResult = verifier.Verify(verificationInfo);
+            OutputVerificationInfo verificationInfo = new OutputVerificationInfo(
+                runResult.ExitCode,
+                runResult.StdErr,
+                input,
+                runResult.StdOut,
+                solution
+            );
+            OutputVerificationResult verificationResult = verifier.Verify(verificationInfo);
 
             return verificationResult.Score;
         }
@@ -109,11 +109,14 @@ namespace TaskTester.Noi2Evaluator
             };
             if (problemInfo.CheckerBindings != null && problemInfo.CheckerBindings.Count != 0)
             {
-                verifier = new ExecutableOutputVerifierMutable
-                {
+                verifier = new ExecutableOutputVerifierMutable {
                     ExecutablePath = Path.GetFullPath(Path.Combine("tests", problemInfo.Name, "checker.exe")),
                     Bindings = problemInfo.CheckerBindings
-                     .Select(x => new StdOutContainsBinding(x.SearchText, new OutputVerificationResultMutable() { Score = x.Points, Type = OutputVerificationResultType.CouldNotBind }))
+                     .Select(x => new StdOutContainsBinder(x.SearchText, new OutputVerificationResult(
+                         OutputVerificationResultType.CouldNotBind,
+                         null,
+                         x.Points
+                     )))
                      .ToArray(),
                     Arguments = new VerifierArgumentType[] {
                           VerifierArgumentType.FileStdin,
@@ -135,7 +138,7 @@ namespace TaskTester.Noi2Evaluator
             {
                 var groupMap = new Dictionary<int, int>();
                 //GROUP ID, COUNT
-                foreach (var group in testGroups)
+                foreach (int group in testGroups)
                 {
                     if (!groupMap.ContainsKey(group)) groupMap[group] = 1;
                     else groupMap[group]++;

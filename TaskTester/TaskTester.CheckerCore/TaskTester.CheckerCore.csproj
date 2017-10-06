@@ -45,24 +45,25 @@
   <ItemGroup>
     <Compile Include="Common\StringOrFile.cs" />
     <Compile Include="CrashReporting\Exceptions.cs" />
-    <Compile Include="CrashReporting\ICrashReport.cs" />
+    <Compile Include="CrashReporting\CrashReport.cs" />
     <Compile Include="CrashReporting\CrashReportFinder.cs" />
     <Compile Include="OutputVerification\DefaultOutputVerifier.cs" />
     <Compile Include="OutputVerification\IExecutableOutputVerifier.cs" />
-    <Compile Include="OutputVerification\IVerifierResultBinding.cs" />
-    <Compile Include="OutputVerification\ResiltBindings\ExitCodeBinding.cs" />
-    <Compile Include="OutputVerification\ResiltBindings\StdOutContainsBinding.cs" />
+    <Compile Include="OutputVerification\IVerifierResultBinder.cs" />
+    <Compile Include="OutputVerification\ResultBinders\ExitCodeBinder.cs" />
+    <Compile Include="OutputVerification\ResultBinders\StdOutContainsBinder.cs" />
     <Compile Include="OutputVerification\VerifierArgumentTypeEnum.cs" />
     <Compile Include="OutputVerification\IOutputVerifier.cs" />
-    <Compile Include="OutputVerification\IOutputVerificationResult.cs" />
+    <Compile Include="OutputVerification\OutputVerificationResult.cs" />
     <Compile Include="OutputVerification\OutputVerificationResultTypeEnum.cs" />
-    <Compile Include="OutputVerification\IOutputVerificationInfo.cs" />
+    <Compile Include="OutputVerification\OutputVerificationInfo.cs" />
+    <Compile Include="ProcessRunning\ApplicationRunArguments.cs" />
     <Compile Include="ProcessRunning\ProcessExitTypeEnum.cs" />
     <Compile Include="CrashReporting\CrashIniParser.cs" />
     <Compile Include="ProcessRunning\ProcessParent.cs" />
-    <Compile Include="ProcessRunning\ApplicationInstanceRunner.cs" />
+    <Compile Include="ProcessRunning\ApplicationRunnerContext.cs" />
     <Compile Include="ProcessRunning\ApplicationRunner.cs" />
-    <Compile Include="ProcessRunning\IProcessRunResult.cs" />
+    <Compile Include="ProcessRunning\ProcessRunResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

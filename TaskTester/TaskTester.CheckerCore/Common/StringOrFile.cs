@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
+using System.IO;    
 
 namespace TaskTester.CheckerCore.Common
 {
     public class StringOrFile
     {
-        object thisLock = new object();
+        class Locker { public object locker = new object(); }
+        static Locker staticLocker = new Locker();
+
         static Dictionary<string, StringOrFile> repo = new Dictionary<string, StringOrFile>();
+
+
+        object thisLock = new object();
         bool fileIsTemporary = false;
         string text = null;
         string filePath = null;
@@ -18,13 +23,16 @@ namespace TaskTester.CheckerCore.Common
         public static StringOrFile FromText(string text) => new StringOrFile(text, false);
         public static StringOrFile FromFile(string path)
         {
-            if(repo.ContainsKey(path))
+            lock (staticLocker.locker)
             {
-                return repo[path];
+                if (repo.ContainsKey(path))
+                {
+                    return repo[path];
+                }
+                var rt = new StringOrFile(path, true);
+                repo[path] = rt;
+                return rt;
             }
-            var rt=new StringOrFile(path, true);
-            repo[path] = rt;
-            return rt;
         }
         public override string ToString() => GetText();
 
@@ -59,21 +67,24 @@ namespace TaskTester.CheckerCore.Common
 
         void FetchText()
         {
-            if(text==null)
+            if (text != null) return;
+            lock (thisLock)
             {
-                text = File.ReadAllText(filePath);
+                if (text == null) { text = File.ReadAllText(filePath); }
             }
         }
 
         void FetchFile()
         {
-            if (filePath == null || !File.Exists(filePath))
+            if (filePath != null && File.Exists(filePath)) return;
+
+            lock (thisLock)
             {
-                lock (thisLock)
+                if (filePath == null || !File.Exists(filePath))
                 {
-                    if (filePath == null || !File.Exists(filePath))
+                    filePath = Path.GetTempFileName();
+                    lock (staticLocker.locker)
                     {
-                        filePath = Path.GetTempFileName();
                         repo[filePath] = this;
                         File.WriteAllText(filePath, text);
                     }
@@ -81,14 +92,11 @@ namespace TaskTester.CheckerCore.Common
             }
         }
 
-        public void PersistFile()
-        {
-            fileIsTemporary = false;
-        }
+        public void PersistFile() { fileIsTemporary = false; }
 
         ~StringOrFile()
         {
-            if(fileIsTemporary && filePath!=null && File.Exists(filePath))
+            if (fileIsTemporary && filePath != null && File.Exists(filePath))
             {
                 File.Delete(filePath);
             }
