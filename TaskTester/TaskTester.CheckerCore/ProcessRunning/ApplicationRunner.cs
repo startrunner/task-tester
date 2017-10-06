@@ -9,7 +9,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
 {
     public class ApplicationRunner : IDisposable
     {
-        public async Task<ProcessRunResult> RunAsync(
+        public Task<ProcessRunResult> RunAsync(
             string executablePath,
             TimeSpan maxRuntime,
             StringOrFile stdIn,
@@ -25,13 +25,14 @@ namespace TaskTester.CheckerCore.ProcessRunning
                 allowCrashReports
             );
 
-            using (ApplicationRunnerContext context = await PrepareContextAsync(args))
-            { return await RunAsync(args, context); }
+            return RunAsync(args);
         }
 
 
-        private async Task<ProcessRunResult> RunAsync(ApplicationRunArguments args, ApplicationRunnerContext context)
+        private async Task<ProcessRunResult> RunAsync(ApplicationRunArguments args)
         {
+            ApplicationRunnerContext context = await StartProcessAndCreateContextAsync(args);
+
             bool timelyExit = await TryWaitForTimelyExitAsync(context.process, args);
             CrashReport report = await GetCrashReportIfNecessary(context.process, context.processID, args);
             bool crashed = report != null;
@@ -64,7 +65,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
             => RunAsync(executablePath, maxRuntime, stdIn, processArguments, allowCrashReports).Result;
 
 
-        private async Task<ApplicationRunnerContext> PrepareContextAsync(ApplicationRunArguments args)
+        private async Task<ApplicationRunnerContext> StartProcessAndCreateContextAsync(ApplicationRunArguments args)
         {
             Process process = await StartProcessAsync(args);
 
