@@ -37,9 +37,8 @@ namespace TaskTester.CheckerCore.ProcessRunning
             CrashReport report = await GetCrashReportIfNecessary(context.process, context.processID, args);
             bool crashed = report != null;
 
-            string stdErr, stdOut;
-            lock (context.outLock) { stdOut = context.GetStandardOutput(); }
-            lock (context.errLock) { stdErr = context.GetStandardError(); }
+            string stdOut = context.GetStandardOutput(); 
+            string stdErr = context.GetStandardError(); 
 
             Process process = context.process;
 
@@ -62,7 +61,8 @@ namespace TaskTester.CheckerCore.ProcessRunning
             string processArguments = null,
             bool allowCrashReports = true
         )
-            => RunAsync(executablePath, maxRuntime, stdIn, processArguments, allowCrashReports).Result;
+            => 
+            RunAsync(executablePath, maxRuntime, stdIn, processArguments, allowCrashReports).Result;
 
 
         private async Task<ApplicationRunnerContext> StartProcessAndCreateContextAsync(ApplicationRunArguments args)
@@ -95,32 +95,33 @@ namespace TaskTester.CheckerCore.ProcessRunning
             return ProcessParent.Instance.StartProcess(startInfo);
         }
 
-        private async Task EnterInputAndWaitForExitAsync(Process contextPorcess, ApplicationRunArguments args)
+        private async Task EnterInputAndWaitForExitAsync(Process process, ApplicationRunArguments args)
         {
-            await contextPorcess.StandardInput.WriteLineAsync(args.StandardInput.Str);
+            await process.StandardInput.WriteLineAsync(args.StandardInput.Str);
 
-            try { contextPorcess.StandardInput.Close(); }
+            try { process.StandardInput.Close(); }
             catch { }
 
-            contextPorcess.WaitForExit();
+            process.WaitForExit();
         }
 
-        private async Task<bool> TryWaitForTimelyExitAsync(Process contextProcess, ApplicationRunArguments args)
+        private async Task<bool> TryWaitForTimelyExitAsync(Process process, ApplicationRunArguments args)
         {
             bool timelyExit = true;
 
             await
             Task.WhenAny(
-            Task.Delay(args.MaxRuntime),
-            Task.Run(() => EnterInputAndWaitForExitAsync(contextProcess, args)))
+                Task.Delay(args.MaxRuntime),
+                Task.Run(() => EnterInputAndWaitForExitAsync(process, args))
+            )
             .ContinueWith(x =>
             {
-                if (!contextProcess.HasExited)
+                if (!process.HasExited)
                 {
-                    contextProcess.Kill();
+                    process.Kill();
                     timelyExit = false;
                 }
-                else timelyExit = true;
+                else { timelyExit = true; }
             });
 
             return timelyExit;
@@ -142,10 +143,17 @@ namespace TaskTester.CheckerCore.ProcessRunning
 
         private ProcessExitType DeduceExitType(bool crashed, bool timelyExit)
         {
-            if (timelyExit && !crashed) return ProcessExitType.Graceful;
-            else if (crashed) return ProcessExitType.Crashed;
-            else if (!timelyExit) return ProcessExitType.Forced;
-            else return ProcessExitType.Undetermined;
+            if (timelyExit && !crashed)
+            { return ProcessExitType.Graceful; }
+
+            else if (crashed)
+            { return ProcessExitType.Crashed; }
+
+            else if (!timelyExit)
+            { return ProcessExitType.Forced; }
+
+            else
+            { return ProcessExitType.Undetermined; }
         }
 
         void IDisposable.Dispose() { }

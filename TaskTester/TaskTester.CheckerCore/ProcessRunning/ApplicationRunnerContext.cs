@@ -8,7 +8,8 @@ namespace TaskTester.CheckerCore.ProcessRunning
     {
         public int processID;
         public Process process;
-        public object
+
+        private object
             errLock = new object(),
             outLock = new object();
         private StringBuilder
@@ -38,5 +39,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
             try { process.Kill(); }
             catch { }
         }
+
+        ~ApplicationRunnerContext() => (this as IDisposable).Dispose();
     }
 }
