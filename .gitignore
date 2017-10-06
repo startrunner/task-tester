@@ -2,11 +2,12 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/TaskTester/.vs/
-/TaskTester/*/bin/
-/TaskTester/*/obj/
-/TaskTester/packages/
+/**/.vs/
+/**/*/bin/
+/**/*/obj/
+/**/packages/
 /TaskTester/TaskTester.DesktopTester/publish
 **/.suo
 **/.csproj.user
-/TaskTester/TaskTester.CheckerCore.Tests/Resources/**.o
+**.o
+/TaskTester/TaskTester.DesktopTester/TaskTester.DesktopTester.csproj.user
