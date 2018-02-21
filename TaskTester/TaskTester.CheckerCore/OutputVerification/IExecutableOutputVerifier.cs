@@ -4,12 +4,13 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.ProcessRunning;
+using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.CheckerCore.OutputVerification
 {
     public interface IExecutableOutputVerifier : IOutputVerifier
     {
-        string ExecutablePath { get; }
+        IConsoleApplication ConsoleApplication { get; }
         IReadOnlyList<VerifierArgumentType> Arguments { get; }
         IReadOnlyList<IVerifierResultBinder> Bindings { get; }
         VerifierArgumentType Stdin { get; }
@@ -17,7 +18,7 @@ namespace TaskTester.CheckerCore.OutputVerification
 
     public class ExecutableOutputVerifierMutable : IExecutableOutputVerifier
     {
-        public string ExecutablePath { get; set; }
+        public IConsoleApplication ConsoleApplication { get; set; }
         public IReadOnlyList<VerifierArgumentType> Arguments { get; set; } = new VerifierArgumentType[0];
         public IReadOnlyList<IVerifierResultBinder> Bindings { get; set; } = new IVerifierResultBinder[0];
         public VerifierArgumentType Stdin { get; set; } = VerifierArgumentType.None;
@@ -29,7 +30,7 @@ namespace TaskTester.CheckerCore.OutputVerification
                 case VerifierArgumentType.ExitCode:
                     return StringOrFile.FromText(info.ExitCode.ToString());
                 case VerifierArgumentType.FileSolution:
-                    return StringOrFile.FromText(info.SolFile.FilePath);
+                    return StringOrFile.FromText(info.ExpectedOutput.FilePath);
                 case VerifierArgumentType.FileStderr:
                     return StringOrFile.FromText(info.StandardError.FilePath);
                 case VerifierArgumentType.FileStdin:
@@ -37,7 +38,7 @@ namespace TaskTester.CheckerCore.OutputVerification
                 case VerifierArgumentType.FileStdout:
                     return StringOrFile.FromText(info.StandardOutput.FilePath);
                 case VerifierArgumentType.Solution:
-                    return info.SolFile;
+                    return info.ExpectedOutput;
                 case VerifierArgumentType.Stderr:
                     return info.StandardError;
                 case VerifierArgumentType.Stdin:
@@ -57,10 +58,9 @@ namespace TaskTester.CheckerCore.OutputVerification
             {
                 argBuilder.Append($" \"{GetVerifierArgument(info, arg)}\"");
             }
-            ApplicationRunner runner = new ApplicationRunner();
 
-            ProcessRunResult checkerRun = await runner.RunAsync(
-                ExecutablePath,
+            ProcessRunResult checkerRun = await ConsoleApplicationRunner.Instance.RunAsync(
+                ConsoleApplication,
                 TimeSpan.FromSeconds(60),
                 GetVerifierArgument(info, Stdin),
                 argBuilder.ToString().TrimEnd()
@@ -70,7 +70,6 @@ namespace TaskTester.CheckerCore.OutputVerification
             {
                 return new OutputVerificationResult (
                     OutputVerificationResultType.CheckerCrashed,
-                    checkerRun.CrashReport,
                     0
                 );
             }
@@ -86,7 +85,6 @@ namespace TaskTester.CheckerCore.OutputVerification
             {
                 result = new OutputVerificationResult (
                     OutputVerificationResultType.CouldNotBind,
-                    null,
                     0
                 );
             }

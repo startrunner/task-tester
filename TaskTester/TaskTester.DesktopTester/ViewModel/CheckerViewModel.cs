@@ -1,69 +1,74 @@
-﻿using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight;
-using TaskTester.DesktopTester.Model;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Windows.Input;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using Microsoft.Win32;
+using TaskTester.CheckerCore.Common;
+using TaskTester.CheckerCore.OutputVerification;
+using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
-    class CheckerViewModel:ViewModelBase
+    public class CheckerViewModel : ViewModelBase
     {
-        public Checker Model { get; private set; }
+        string[] mExecutablePathArray;
 
-        public string ExecutablePath
+        public string[] ExecutablePathArray
         {
-            get { return Model.ExecutablePath; }
+            get => mExecutablePathArray;
             set
             {
-                Model.ExecutablePath = value;
+                mExecutablePathArray = value;
+                RaisePropertyChanged(nameof(ExecutablePathArray));
+                RaisePropertyChanged(nameof(ExecutableFilename));
                 RaisePropertyChanged(nameof(ExecutablePath));
             }
         }
-        public ObservableCollection<CheckerBindingViewModel> Bindings { get; private set; } = new ObservableCollection<CheckerBindingViewModel>();
-        public ObservableCollection<ArgumentViewModel> Arguments { get; private set; } = new ObservableCollection<ArgumentViewModel>();
+        public string ExecutablePath => ExecutablePathArray?.Single();
+        public string ExecutableFilename => ExecutablePathArray?.Select(Path.GetFileName)?.SingleOrDefault();
 
-        public ICommand BrowseExecutable { get; private set; }
+        public ObservableCollection<CheckerBindingViewModel> Bindings { get; } = new ObservableCollection<CheckerBindingViewModel>();
+        public ObservableCollection<EnumViewModel<ArgumentTypeViewModel>> Arguments { get; } = new ObservableCollection<EnumViewModel<ArgumentTypeViewModel>>();
 
-        public CheckerViewModel():this(null)
+        public ICommand AddArgument { get; }
+        public ICommand AddBinding { get; }
+
+        public CheckerViewModel()
         {
-
+            AddArgument = new RelayCommand(AddArgumentExecute);
+            AddBinding = new RelayCommand(AddBindingExecute);
         }
 
-        public CheckerViewModel(Checker model = null)
+        private void AddBindingExecute() => Bindings.Add(new CheckerBindingViewModel());
+        private void AddArgumentExecute() => Arguments.Add(default(ArgumentTypeViewModel));
+
+        public IOutputVerifier CreateModel()
         {
-            this.Model = model;
-
-            BrowseExecutable = new RelayCommand(BrowseExecutableExecute);
-
-            if (model == null) return;
-
-
-
-            foreach(var bind in model.Bindings)
-            {
-                Bindings.Add(new CheckerBindingViewModel(bind));
-            }
-            foreach(var arg in model.Args)
-            {
-                Arguments.Add(new ArgumentViewModel(arg));
-            }
+            if (!File.Exists(ExecutablePath)) return DefaultOutputVerifier.Instance;
+            var model = new ExecutableOutputVerifierMutable {
+                Arguments = Arguments.Select(x => TranslateArgument(x.SelectedValue)).ToArray(),
+                Bindings = Bindings.Select(x => x.CreateModel()).ToArray(),
+                Stdin = VerifierArgumentType.None,
+                ConsoleApplication = new FileSystemConsoleApplication(ExecutablePath)
+            };
+            return model;
         }
-
-        private void BrowseExecutableExecute()
+        private VerifierArgumentType TranslateArgument(ArgumentTypeViewModel selectedValue)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.AddExtension = false;
-            ofd.Multiselect = false;
-            ofd.Filter = "Console Application |*.exe";
-
-            ofd.ShowDialog();
-
-            if (string.IsNullOrEmpty(ofd.FileName) || ofd.CheckFileExists)
+            switch (selectedValue)
             {
-                ExecutablePath = ofd.FileName;
-                RaisePropertyChanged("ExecutablePath");
-                RaisePropertyChanged("RunTests");
+                case ArgumentTypeViewModel.InputFilePath:
+                    return VerifierArgumentType.FileStdin;
+                case ArgumentTypeViewModel.OutputFilePath:
+                    return VerifierArgumentType.FileStdout;
+                case ArgumentTypeViewModel.SolutionFilePath:
+                    return VerifierArgumentType.FileSolution;
+                case ArgumentTypeViewModel.None:
+                    return VerifierArgumentType.None;
+                default:
+                    throw new NotImplementedException();
             }
         }
     }

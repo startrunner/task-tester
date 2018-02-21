@@ -18,12 +18,12 @@ namespace TaskTester.DesktopTester.View
 
         private void EnumValChanged(DependencyPropertyChangedEventArgs args)
         {
-            var type = args.NewValue?.GetType();
-            var oldType = args.OldValue?.GetType();
+            Type type = args.NewValue?.GetType();
+            Type oldType = args.OldValue?.GetType();
             if(type!=null && type.IsEnum && type!=oldType)
             {
                 this.Items.Clear();
-                foreach(var v in Enum.GetValues(type))
+                foreach(object v in Enum.GetValues(type))
                 {
                     this.Items.Add(v);
                 }

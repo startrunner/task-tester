@@ -1,7 +1,7 @@
 ﻿<Window x:Class="TaskTester.DesktopTester.View.CheckerView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskTester.DesktopTester.View"
         xmlns:vm="clr-namespace:TaskTester.DesktopTester.ViewModel"
@@ -9,57 +9,49 @@
         Title="Edit Checker - Task Tester" Width="432"
         Name="Window" Height="455"
         ResizeMode="NoResize">
- <Window.DataContext>
-  <vm:CheckerViewModel/>
- </Window.DataContext>
- <Grid Margin="8">
-  <StackPanel>
-  <TextBlock Text="Executable"/>
-  <Grid>
-   <Grid.ColumnDefinitions>
-    <ColumnDefinition/>
-    <ColumnDefinition Width="32"/>
-   </Grid.ColumnDefinitions>
-    <TextBox Text="{Binding ExecutablePath, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, IsAsync=True}" IsReadOnly="True"/>
-   <Button Command="{Binding BrowseExecutable}" Grid.Column="1" Content="..."/>
-  </Grid>
+    <Window.DataContext>
+        <vm:CheckerViewModel/>
+    </Window.DataContext>
 
-  <TextBlock Margin="0,8,0,0" Text="Bindings"/>
-  <DataGrid ItemsSource="{Binding Bindings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-            AutoGenerateColumns="False"
-            CanUserAddRows="False"
-            CanUserDeleteRows="False"
-            CanUserSortColumns="False"
-            CanUserReorderColumns="False"
-            CanUserResizeColumns="False"
-            CanUserResizeRows="False"
-            RowHeaderWidth="0"
-            GridLinesVisibility="Vertical">
-   <DataGrid.Columns>
-    <DataGridTextColumn Header="Search Text" Binding="{Binding SearchString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-    <DataGridTextColumn Header="Score" Binding="{Binding Score, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-    <DataGridTemplateColumn Header="Type">
-      <DataGridTemplateColumn.CellTemplate>
-       <DataTemplate>
-        <local:EnumDropDown EnumValue="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-       </DataTemplate>
-      </DataGridTemplateColumn.CellTemplate>
-    </DataGridTemplateColumn>
-    </DataGrid.Columns>
-  </DataGrid>
+    <ScrollViewer Margin="8" VerticalScrollBarVisibility="Auto">
+    <StackPanel>
+        <local:BrowseView Label="Checker executable path" FileFilter="Win-32 Executable| *.exe" SelectedPaths="{Binding ExecutablePathArray, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
-  <TextBlock Margin="0,8,0,0" Text="Arguments"/>
-  <ListView ItemsSource="{Binding Arguments, Mode=OneWay}">
-   <ListView.ItemTemplate>
-    <DataTemplate>
-      <Grid>
-      <TextBlock Text="arg"/>
-      <local:EnumDropDown EnumValue="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-      </Grid>
-     </DataTemplate>
-   </ListView.ItemTemplate>
-  </ListView>
-  </StackPanel>
+        <TextBlock Margin="0,8,0,0" Text="Bindings"/>
 
- </Grid>
+        <Button Content="Add Binding" Command="{Binding AddBinding}"/>
+        <DataGrid ItemsSource="{Binding Bindings, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                CanUserDeleteRows="False"
+                CanUserSortColumns="False"
+                CanUserReorderColumns="False"
+                CanUserResizeColumns="False"
+                CanUserResizeRows="False"
+                RowHeaderWidth="0"
+                GridLinesVisibility="Vertical">
+            <DataGrid.Columns>
+                <DataGridTextColumn Width="2*" Header="Search String" Binding="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                <DataGridTemplateColumn Width="*" Header="Type">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding ResultType.Names}" SelectedIndex="{Binding ResultType.SelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Width="*" Header="Score Multiplier" Binding="{Binding ScoreMultiplier, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock Margin="0,8,0,0" Text="Arguments"/>
+        <Button Command="{Binding AddArgument}" Content="Add Argument"/>
+        <ListView ItemsSource="{Binding Arguments, Mode=OneWay}" HorizontalContentAlignment="Stretch">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding  Names}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackPanel>
+    </ScrollViewer>
 </Window>

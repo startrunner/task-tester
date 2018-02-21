@@ -9,11 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TaskTester.DesktopTester</RootNamespace>
     <AssemblyName>TaskTester</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <HockeyAppResourceId>181e1a0e606a4c8b9d978967ea83a2b0</HockeyAppResourceId>
     <PublishUrl>C:\Users\Alexander\Desktop\tt\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -32,6 +33,7 @@
     <CreateDesktopShortcut>true</CreateDesktopShortcut>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -86,6 +88,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <LangVersion>default</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -134,15 +137,36 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.DataGrid, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.DataGrid.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=3.2.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.3.2.0\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -153,33 +177,53 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model\ArgTypeEnum.cs" />
-    <Compile Include="Model\Argument.cs" />
-    <Compile Include="Model\Checker.cs" />
-    <Compile Include="Model\CheckerBinding.cs" />
-    <Compile Include="Model\IExecutionResult.cs" />
-    <Compile Include="Model\ExecutionResultTypeEnum.cs" />
-    <Compile Include="ViewModel\ArgumentViewModel.cs" />
+    <Compile Include="ViewModel\BatchTestCompetitorResultViewModel.cs" />
+    <Compile Include="ViewModel\BatchTestProblemResultViewModel.cs" />
+    <Compile Include="ViewModel\BatchTestProblemViewModel.cs" />
+    <Compile Include="ViewModel\BatchTestProgressViewModel.cs" />
+    <Compile Include="ViewModel\BatchTestTestResultTypeViewModel.cs" />
+    <Compile Include="ViewModel\BatchTestTestResultViewModel.cs" />
+    <Compile Include="ViewModel\BatchTestViewModel.cs" />
+    <Compile Include="ViewModel\PathSetViewModel.cs" />
+    <Compile Include="ViewModel\PrimitiveViewModel.cs" />
+    <Compile Include="ViewModel\SolutionEvaluationViewModel.cs" />
+    <Compile Include="ViewModel\ArgumentTypeViewModel.cs" />
+    <Compile Include="ViewModel\SolutionEvaluationTaskViewModel.cs" />
+    <Compile Include="ViewModel\TestResultTypeViewModel.cs" />
     <Compile Include="ViewModel\CheckerBindingViewModel.cs" />
     <Compile Include="ViewModel\CheckerViewModel.cs" />
     <Compile Include="ViewModel\ProblemViewModel.cs" />
-    <Compile Include="ViewModel\TestResultTypeViewModel.cs" />
+    <Compile Include="ViewModel\EnumViewModel.cs" />
+    <Compile Include="ViewModel\TestResultViewModel.cs" />
+    <Compile Include="View\BatchTestProblemResultView.xaml.cs">
+      <DependentUpon>BatchTestProblemResultView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\BatchTestProblemView.xaml.cs">
+      <DependentUpon>BatchTestProblemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\BatchTestView.xaml.cs">
+      <DependentUpon>BatchTestView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\BrowseView.xaml.cs">
+      <DependentUpon>BrowseView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CheckerView.xaml.cs">
       <DependentUpon>CheckerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Converters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="View\Converters\KeyToResourceConverter.cs" />
+    <Compile Include="View\Converters\IconConverter.cs" />
     <Compile Include="View\EnumDropDown.cs" />
+    <Compile Include="View\SolutionEvalutationView.xaml.cs">
+      <DependentUpon>SolutionEvalutationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\ProblemView.xaml.cs">
       <DependentUpon>ProblemView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModel\TestResultViewModel.cs" />
     <Compile Include="View\TestResultView.xaml.cs">
       <DependentUpon>TestResultView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\Problem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -209,7 +253,27 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="View\BatchTestProblemResultView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\BatchTestProblemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\BatchTestView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\BrowseView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\CheckerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\SolutionEvalutationView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -250,9 +314,25 @@
     <Resource Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TaskTester.BatchEvaluation\TaskTester.BatchEvaluation.csproj">
+      <Project>{41F08A9A-A679-4245-AC6C-7EDA39980B1B}</Project>
+      <Name>TaskTester.BatchEvaluation</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TaskTester.CheckerCore\TaskTester.CheckerCore.csproj">
       <Project>{b547bc51-b1a2-4011-a231-9f1e49df6fd9}</Project>
       <Name>TaskTester.CheckerCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TaskTester.DataExtraction\TaskTester.DataExtraction.csproj">
+      <Project>{9953BE69-01DE-4AAE-BC32-48AEDF1A7D78}</Project>
+      <Name>TaskTester.DataExtraction</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TaskTester.Spreadsheets\TaskTester.Spreadsheets.csproj">
+      <Project>{c2cd83e0-f9bb-4a83-b769-24d8d10beddc}</Project>
+      <Name>TaskTester.Spreadsheets</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TaskTester.Tasking\TaskTester.Tasking.csproj">
+      <Project>{3E976FED-A183-493B-AD9F-D3EB39523FC9}</Project>
+      <Name>TaskTester.Tasking</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -263,6 +343,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

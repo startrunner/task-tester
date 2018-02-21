@@ -5,13 +5,18 @@ namespace TaskTester.CheckerCore.OutputVerification
 {
     public class OutputVerificationInfo 
     {
-        public OutputVerificationInfo(int exitCode, StringOrFile standardError, StringOrFile standardInput, StringOrFile standardOutput, StringOrFile solFile)
+        public OutputVerificationInfo(
+            int exitCode, 
+            StringOrFile standardError,
+            StringOrFile standardInput, 
+            StringOrFile standardOutput,
+            StringOrFile expectedOutput)
         {
             ExitCode = exitCode;
             StandardError = standardError;
             StandardInput = standardInput;
             StandardOutput = standardOutput;
-            SolFile = solFile;
+            ExpectedOutput = expectedOutput;
         }
 
         public int ExitCode { get;  }
@@ -19,6 +24,6 @@ namespace TaskTester.CheckerCore.OutputVerification
         public StringOrFile StandardError { get;  }
         public StringOrFile StandardInput { get;  }
         public StringOrFile StandardOutput { get;  }
-        public StringOrFile SolFile { get;  }
+        public StringOrFile ExpectedOutput { get;  }
     }
 }

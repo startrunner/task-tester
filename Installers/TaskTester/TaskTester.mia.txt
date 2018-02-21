@@ -1,0 +1,297 @@
+Comment: TaskTester Setup Project
+ 
+[DEFINE REGION: Check Application Requirements]
+Get System Setting Windows in 64 bit Mode into CHECKSYSTEM
+if Variable CHECKSYSTEM not Equals TRUE
+  MessageBox: $TITLE$ Setup Error, This product requires at least a 64 bit operating system.$NEWLINE$$NEWLINE$Setup cannot continue.
+  Terminate Installation
+end
+Set x64 - Native 64 bit Windows, AMD64 and EM64T Architectures - installation mode
+Comment: Check system has at least Windows 7
+Get System Setting Windows 7 into CHECKOS
+if Variable CHECKOS not Equals TRUE
+  MessageBox: $TITLE$ Setup Error, This product cannot be installed on versions of Windows older than Windows 7. Please upgrade your operating system and try again.
+  Terminate Installation
+end
+ 
+[END REGION]
+ 
+[DEFINE REGION: Check/Install Application Pre-Requisites]
+ 
+[DEFINE REGION: Check Application Pre-Requisites]
+Comment: Check setup pre-requisites
+Set Variable PREREQ to FALSE
+Set Variable PRELIST to 
+[compiler if Variable BUILDMODE not Equals PATCH]
+if Variable NEEDSUPGRADE Equals TRUE
+  Set Variable PREREQ to TRUE
+  Set Variable PRELIST to $PRELIST$$NEWLINE$Previous Version Uninstallation
+end
+Include Script: checkmsi20
+[compiler end]
+[END REGION]
+ 
+[DEFINE REGION: Install Application Pre-Requisites]
+Comment: Install setup pre-requisites
+if Variable PREREQ not Equals FALSE
+  Display Dialog: prereq, wait for dialog to return (modal)
+  if Variable WIZARD Equals CANCEL
+    Terminate Installation
+  end
+  Display Dialog: progressprereq, use as progress dialog (non-modal)
+  [compiler if Variable BUILDMODE not Equals PATCH]
+  [DEFINE WEB MEDIA Microsoft Windows Installer 2.0]
+  Include Script: setupmsi20
+  [compiler end]
+  Hide Dialog
+end
+[END REGION]
+ 
+[END REGION]
+ 
+[DEFINE REGION: Define Setup Globals]
+Comment: Define Setup Components
+Define Component: Default
+ 
+Comment: Initialize Setup Globals
+Get System Setting Windows NT Kernel (NT4, 2000, XP, 2003, Vista, 2008, 7, 2008 R2, 8, 2012, 8.1, 2012 R2, 10) into ISNT
+Get Folder Location System->Program Files Directory into PROGRAMFILES
+Get Common Folder Location System->Program Files Directory into COMMONFILES
+Get Common Folder Location Start Menu->Programs Group into SHORTCUTFILESALL
+Get Folder Location Start Menu->Programs Group into SHORTCUTFILES
+if Variable SHORTCUTFILESALL Equals 
+  Set Variable SHORTCUTFILESALL to $SHORTCUTFILES$
+end
+Get Folder Location System->Desktop Directory into DESKTOPDIR
+Get Folder Location System->Windows Directory into WINDIR
+Get Folder Location System->System Directory into WINSYSDIR
+Get Folder Location Taskbar->Quick Launch Directory into QUICKLAUNCHDIR
+Get Folder Location WWW->WWWRoot into WWWROOTDIR
+[END REGION]
+ 
+[DEFINE REGION: Setup User Interview]
+if Variable MAINTENANCE Equals TRUE
+  GoTo Label: Maintenance
+else
+  [compiler if Variable BUILDMODE not Equals PATCH]
+  Comment: First Time Install
+  Set Variable TARGETDIR to $PROGRAMFILES$\$TITLE$
+  Set Variable STARTMENU to $TITLE$
+  [compiler end]
+end
+ 
+label: Welcome Dialog
+Display Dialog: welcome, wait for dialog to return (modal)
+if Variable WIZARD Equals CANCEL
+  GoTo Label: Main Install
+end
+[compiler if Variable BUILDMODE not Equals PATCH]
+label: License Check
+Comment: Display Dialog: licensecheck, wait for dialog to return (modal)
+if Variable WIZARD Equals BACK
+  GoTo Label: Welcome Dialog
+else
+  if Variable WIZARD Equals CANCEL
+    GoTo Label: Main Install
+  end
+end
+label: ReadMe Information
+Comment: Display Dialog: readme, wait for dialog to return (modal)
+if Variable WIZARD Equals BACK
+  GoTo Label: License Check
+else
+  if Variable WIZARD Equals CANCEL
+    GoTo Label: Main Install
+  end
+end
+label: User Registration
+Comment: Display Dialog: registration, wait for dialog to return (modal)
+if Variable WIZARD Equals BACK
+  GoTo Label: ReadMe Information
+else
+  if Variable WIZARD Equals CANCEL
+    GoTo Label: Main Install
+  end
+end
+label: Setup Type
+Display Dialog: setuptype, wait for dialog to return (modal)
+if Variable WIZARD Equals BACK
+  GoTo Label: User Registration
+else
+  if Variable WIZARD Equals CANCEL
+    GoTo Label: Main Install
+  end
+end
+Comment: TO-DO: Customize your minimum setup here
+if Variable MINIMUM Equals TRUE
+  Deselect Component: Default
+else
+  if Variable COMPLETE Equals TRUE
+    Select Component: Default
+  end
+end
+label: Custom Setup
+Display Dialog: componentstree (if variable PERSONALIZED is TRUE), wait for dialog to return (modal)
+if Variable WIZARD Equals BACK
+  GoTo Label: Setup Type
+else
+  if Variable WIZARD Equals CANCEL
+    GoTo Label: Main Install
+  end
+end
+label: Destination Directory
+Display Dialog: destination, wait for dialog to return (modal)
+if Variable WIZARD Equals BACK
+  GoTo Label: Custom Setup
+else
+  if Variable WIZARD Equals CANCEL
+    GoTo Label: Main Install
+  end
+end
+label: Start Menu
+Display Dialog: startmenu, wait for dialog to return (modal)
+if Variable WIZARD Equals BACK
+  GoTo Label: Destination Directory
+else
+  if Variable WIZARD Equals CANCEL
+    GoTo Label: Main Install
+  end
+end
+[compiler end]
+label: Start Installation
+Display Dialog: startinstallation, wait for dialog to return (modal)
+if Variable WIZARD Equals BACK
+  [compiler if Variable BUILDMODE not Equals PATCH]
+  GoTo Label: Start Menu
+  [compiler else]
+  GoTo Label: Welcome Dialog
+  [compiler end]
+else
+  GoTo Label: Main Install
+end
+ 
+label: Maintenance
+Comment: Maintenance Install/Uninstall
+Set Variable UNINSTALL to YES
+MessageBox: $TITLE$ Uninstall, Are you sure you want to uninstall the selected application and all of its components?
+if Variable UNINSTALL Equals NO
+  Terminate Installation
+else
+  Set Variable REMOVE to TRUE
+end
+[END REGION]
+ 
+[DEFINE REGION: Process (Un)Installation]
+label: Main Install
+Comment: Exit Setup if Wizard Loop cancelled
+if Variable WIZARD Equals CANCEL
+  Terminate Installation
+end
+ 
+Comment: Prepare to install
+Set Variable PROGRESSTEXT to Installing $TITLE$
+Set Variable SUCCESS to 
+Set Variable LASTERROR to 
+if Variable ALLUSERS Equals TRUE
+  Set Variable SHORTCUTFOLDER to $SHORTCUTFILESALL$\$STARTMENU$
+else
+  Set Variable SHORTCUTFOLDER to $SHORTCUTFILES$\$STARTMENU$
+end
+Display Dialog: progress, use as progress dialog (non-modal)
+ 
+Comment: Modify Target System
+[DEFINE REGION: Perform Uninstallation]
+if Variable REMOVE Equals TRUE
+  Comment: Uninstall product
+  Comment: TO-DO: Insert any additional uninstall commands here
+  Apply Uninstall (get result into variable SUCCESS)
+  Set Variable PROGRESS to 100
+else
+  [END REGION]
+  [DEFINE REGION: Perform First Time or Maintenance Installation]
+  Comment: Install/Re-Install product
+  Create Shortcut $SHORTCUTFOLDER$\Uninstall #TITLE# to $UNINSTALLLINK$
+  [OFFLINE CONTENT]
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\ClosedXML.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\ClosedXML.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\ClosedXML.xml to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\Code7248.word_reader.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\DocumentFormat.OpenXml.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\GalaSoft.MvvmLight.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\GalaSoft.MvvmLight.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\GalaSoft.MvvmLight.Platform.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\GalaSoft.MvvmLight.Platform.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\GalaSoft.MvvmLight.Platform.xml to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\GalaSoft.MvvmLight.xml to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\System.Windows.Interactivity.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.application to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.BatchEvaluation.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.BatchEvaluation.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.CheckerCore.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.DataExtraction.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.DataExtraction.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.exe to $TARGETDIR$
+  Create Shortcut $SHORTCUTFOLDER$\TaskTester to $TARGETDIR$\TaskTester.exe
+  Create Shortcut $DESKTOPDIR$\TaskTester to $TARGETDIR$\TaskTester.exe
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.exe.config to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.exe.manifest to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.Spreadsheets.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.Spreadsheets.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.Tasking.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\TaskTester.Tasking.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\Xceed.Wpf.AvalonDock.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\Xceed.Wpf.AvalonDock.Themes.Aero.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\Xceed.Wpf.AvalonDock.Themes.Metro.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\Xceed.Wpf.AvalonDock.Themes.VS2010.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\Xceed.Wpf.DataGrid.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\x64\Release\Xceed.Wpf.Toolkit.dll to $TARGETDIR$
+  [DEFINE WEB MEDIA Default]
+  Get Component Default Selection State into Variable SELECTED
+  if Variable SELECTED Equals TRUE
+  end
+  [DEFINE WEB MEDIA Download and install the MiniGW Compiler]
+  if Variable SELECTED Equals TRUE
+  end
+  Comment: TO-DO: Insert any additional install commands here
+  [compiler if Variable BUILDMODE Equals PATCH]
+  Apply Patch (get result into variable SUCCESS)
+  [compiler else]
+  if Variable ADVERTISE Equals TRUE
+    Apply Advertised (get result into variable SUCCESS)
+  else
+    Apply Install (get result into variable SUCCESS)
+    if Variable SUCCESS not Equals ERROR
+      if Variable SUCCESS not Equals CANCEL
+        if Variable SELECTED Equals TRUE
+        end
+      end
+    end
+  end
+  [compiler end]
+  Set Variable PROGRESS to 100
+end
+[END REGION]
+[END REGION]
+ 
+[DEFINE REGION: Finish Setup]
+Comment: End of Installation
+Hide Dialog
+Display Dialog: finish, wait for dialog to return (modal)
+if Variable SILENT Equals FALSE
+  if Variable REBOOTCOMPUTER Equals TRUE
+    if Variable SUCCESS Equals REBOOT
+      Reboot Computer
+    end
+  end
+  if Variable RUNAPP Equals TRUE
+    if Variable REMOVE Equals FALSE
+      if Variable SUCCESS Equals COMPLETE
+        Run Program $TARGETDIR$\TaskTester.exe 
+        Comment: TO-DO: Insert command that starts your application here
+      end
+    end
+  end
+end
+[END REGION]
+ 

@@ -29,7 +29,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
         { lock (errLock) { return stdErrBuilder.ToString(); } }
 
         public void AppendStandardOutput(string str)
-        { lock (outLock) { stdOutBuilder.Append(str); } }
+        { lock (outLock) { stdOutBuilder.AppendLine(str); } }
 
         public void AppendStandardError(string str)
         { lock (errLock) { stdErrBuilder.Append(str); } }

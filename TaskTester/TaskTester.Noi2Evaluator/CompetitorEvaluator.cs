@@ -9,6 +9,7 @@ using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.OutputVerification;
 using TaskTester.CheckerCore.OutputVerification.ResultBinders;
 using TaskTester.CheckerCore.ProcessRunning;
+using TaskTester.CheckerCore.SolutionEvalutation;
 using TaskTester.Noi2Evaluator.Infos;
 
 namespace TaskTester.Noi2Evaluator
@@ -30,10 +31,8 @@ namespace TaskTester.Noi2Evaluator
             {
                 foreach (string cmd in competitionInfo.CommandLines.Select(x => string.Format(x, problem)))
                 {
-                    Process cmdProc = new Process()
-                    {
-                        StartInfo = new ProcessStartInfo("cmd.exe")
-                        {
+                    Process cmdProc = new Process() {
+                        StartInfo = new ProcessStartInfo("cmd.exe") {
                             Arguments = $"/c {cmd}",
                             WorkingDirectory = competitorInfo.Directory,
                             UseShellExecute = false,
@@ -54,10 +53,8 @@ namespace TaskTester.Noi2Evaluator
 
         static double TestProblemForSingleTest(string exeDir, StringOrFile input, StringOrFile solution, double maxScore, double maxRuntime, IOutputVerifier verifier)
         {
-            ApplicationRunner runner = new ApplicationRunner();
-
-            ProcessRunResult runResult = runner.Run(
-                exeDir,
+            ProcessRunResult runResult = ConsoleApplicationRunner.Instance.Run(
+                new FileSystemConsoleApplication(exeDir),
                 TimeSpan.FromSeconds(maxRuntime),
                 input,
                 processArguments: null,
@@ -68,7 +65,7 @@ namespace TaskTester.Noi2Evaluator
             {
                 case ProcessExitType.Crashed:
                     return 0;
-                case ProcessExitType.Forced:
+                case ProcessExitType.Timeout:
                     return 0;
                 case ProcessExitType.Undetermined:
                     return 0;
@@ -78,14 +75,14 @@ namespace TaskTester.Noi2Evaluator
 
             OutputVerificationInfo verificationInfo = new OutputVerificationInfo(
                 runResult.ExitCode,
-                runResult.StdErr,
+                runResult.StandardError,
                 input,
-                runResult.StdOut,
+                runResult.Output,
                 solution
             );
             OutputVerificationResult verificationResult = verifier.Verify(verificationInfo);
 
-            return verificationResult.Score;
+            return verificationResult.ScoreMultiplier;
         }
 
         double TestProblem(ProblemInfo problemInfo)
@@ -103,18 +100,14 @@ namespace TaskTester.Noi2Evaluator
 
             double pointsPerTest = 100.0 / inFiles.Length;
 
-            IOutputVerifier verifier = new DefaultOutputVerifier()
-            {
-                PointsPerTest = pointsPerTest
-            };
+            IOutputVerifier verifier = DefaultOutputVerifier.Instance;
             if (problemInfo.CheckerBindings != null && problemInfo.CheckerBindings.Count != 0)
             {
                 verifier = new ExecutableOutputVerifierMutable {
-                    ExecutablePath = Path.GetFullPath(Path.Combine("tests", problemInfo.Name, "checker.exe")),
+                    ConsoleApplication = new FileSystemConsoleApplication(Path.GetFullPath(Path.Combine("tests", problemInfo.Name, "checker.exe"))),
                     Bindings = problemInfo.CheckerBindings
                      .Select(x => new StdOutContainsBinder(x.SearchText, new OutputVerificationResult(
                          OutputVerificationResultType.CouldNotBind,
-                         null,
                          x.Points
                      )))
                      .ToArray(),

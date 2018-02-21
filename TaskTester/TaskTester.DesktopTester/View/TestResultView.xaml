@@ -4,8 +4,8 @@
         xmlns:vm="clr-namespace:TaskTester.DesktopTester.ViewModel"
         Title="Test Result" Height="350" Width="830" WindowStyle="SingleBorderWindow">
     <Window.DataContext>
-  <vm:TestResultViewModel/>
- </Window.DataContext>
+        <vm:TestResultViewModel/>
+    </Window.DataContext>
     <Grid Margin="8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -18,7 +18,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,8,0,8">
                 <TextBlock Text="Execution Time: " HorizontalAlignment="Left"/>
-                <TextBlock Text="{Binding ExecutionTime}"/>
+                <TextBlock Text="{Binding ExecutionTimeFormatted}"/>
             </StackPanel>
         </StackPanel>
         <Grid Grid.Row="1">
@@ -26,10 +26,10 @@
                 <RowDefinition/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <TextBlock Text="Expected Answer" Grid.Row="0"/>
-            <TextBox IsReadOnly="True" Grid.Row="0" Margin="0,16,0,0" Text="{Binding ExpectedAnswer, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-            <TextBlock Text="Solution Answer" Grid.Row="1" Margin="0,8,0,0"/>
-            <TextBox IsReadOnly="True" Grid.Row="1" Margin="0,24,0,0" Text="{Binding SolutionAnswer, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            <TextBlock Text="Expected Output" Grid.Row="0"/>
+            <TextBox IsReadOnly="True" Grid.Row="0" Margin="0,16,0,0" Text="{Binding ExpectedOutput , Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            <TextBlock Text="Solution Output" Grid.Row="1" Margin="0,8,0,0"/>
+            <TextBox IsReadOnly="True" Grid.Row="1" Margin="0,24,0,0" Text="{Binding SolutionOutput, Mode=OneWay}" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
         </Grid>
     </Grid>
 </Window>

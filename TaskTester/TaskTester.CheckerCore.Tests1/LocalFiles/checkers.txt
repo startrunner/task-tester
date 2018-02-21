@@ -1,0 +1,14 @@
+checker_isodd.exe:
+	stdin: an integer, X
+	exit code: X%2
+	
+checker_cmpfiles.exe:
+	arg 0: Path to file A
+	arg 1: Path to gile B
+	stdout: "OK" or "NO", depending on whether or not the files' contents are the same
+
+checker_sum.exe:
+	arg 0: an integer, A
+	arg 1: an integer, B
+	stdin: an integer, C
+	stdout: a boolean(0/1): (A+B==c)

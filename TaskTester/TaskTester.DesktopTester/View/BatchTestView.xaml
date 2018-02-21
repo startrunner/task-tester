@@ -1,0 +1,114 @@
+﻿<Window x:Class="TaskTester.DesktopTester.View.BatchTestView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskTester.DesktopTester.View"
+        xmlns:vm="clr-namespace:TaskTester.DesktopTester.ViewModel"
+        mc:Ignorable="d"
+        Title="BatchTestSetupView" d:DesignHeight="1000"  d:DataContext="{d:DesignInstance vm:BatchTestViewModel}">
+    <Grid Margin="8" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Expander IsExpanded="True">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Title" />
+                <TextBox Text="{Binding Title.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"/>
+
+                <TextBlock Text="Directory Path Criteria" Margin="0,4,0,0"/>
+                <TextBox Text="{Binding FolderPathCriteria.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"/>
+
+                <local:BrowseView SelectedPaths="{Binding RootDirectoy.PathsArray, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Type="Directory" Label="Directory" Margin="0,4"/>
+
+                <TextBlock Text="Command Lines" Margin="0,4,0,0"/>
+                <Button Command="{Binding AddCommandLine}" MinWidth="300" HorizontalAlignment="Left" Content="Add Commnd Line"/>
+                <ListView Margin="0,0,0,4" ItemsSource="{Binding CommandLines}" HorizontalContentAlignment="Stretch">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                <TextBlock Margin="0,0,4,0" HorizontalAlignment="Right"><Hyperlink Command="{Binding Remove}">X</Hyperlink></TextBlock>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <TextBlock Margin="0,4,0,0" Text="Problems"/>
+                <Button HorizontalAlignment="Left" MinWidth="300" Content="Add Problem" Command="{Binding AddProblem}"/>
+                <ScrollViewer HorizontalAlignment="Stretch" Width="Auto"  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Hidden">
+                    <ListView ScrollViewer.CanContentScroll="False" HorizontalAlignment="Stretch" ItemsSource="{Binding Problems}"  Margin="0,0,0,4">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <local:BatchTestProblemView Width="256" DataContext="{Binding  RelativeSource={RelativeSource Self}, Path=DataContext}" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                    </ListView>
+                </ScrollViewer>
+
+            </StackPanel>
+        </Expander>
+        <Button Grid.Row="1" Command="{Binding Progress.Start, IsAsync=True, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" Margin="0,4,0,4" Content="Evaluate Batch"/>
+        <DataGrid 
+            Name="XDataGridResults"
+            ItemsSource="{Binding  Progress.CompetitorResults, IsAsync=True}" Grid.Row="2" 
+            GridLinesVisibility="All"
+            AutoGenerateColumns="False"
+            IsReadOnly="False"
+            CanUserResizeColumns="True"
+            CanUserResizeRows="True"
+            RowHeaderWidth="0"
+            VerticalScrollBarVisibility="Visible"
+            Background="Transparent"
+            CanUserSortColumns="False"
+            CanUserReorderColumns="False">
+
+            <DataGrid.Columns>
+                <DataGridTemplateColumn  Header="Name" CanUserSort="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn  Header="Directory">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DirectoryRelative, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn  Header="Command Lines">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ProgressBar
+                                Maximum="{Binding TotalCommandCount, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, IsAsync=True}"
+                                Value="{Binding ExecutedCommandCount, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, IsAsync=True}"    
+                            />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn  Header="Score">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding TotalResultFormatted, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, IsAsync=True}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn x:Name="XColumnBeforeProblems" Visibility="Collapsed"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Orientation="Horizontal" Grid.Row="3">
+            <Button Content="Export" Command="{Binding Progress.Export, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}"/>
+        </StackPanel>
+    </Grid>
+
+</Window>

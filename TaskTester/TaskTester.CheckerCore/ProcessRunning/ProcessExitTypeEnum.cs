@@ -10,7 +10,7 @@
         /// <summary>
         /// Process' execution has been too slow and it's been killed by the instance runner.
         /// </summary>
-        Forced,
+        Timeout,
 
         /// <summary>
         /// RiP

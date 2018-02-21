@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  tasktester.noi2evaluator:
+    image: tasktester.noi2evaluator
+    build:
+      context: .\TaskTester.Noi2Evaluator
+      dockerfile: Dockerfile

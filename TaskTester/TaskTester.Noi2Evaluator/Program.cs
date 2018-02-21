@@ -11,8 +11,8 @@ namespace TaskTester.Noi2Evaluator
 {
     class Program
     {
-        static List<CompetitorInfo> competitors = null;
-        static CompetitionInfo competitionInfo = null;
+        static List<CompetitorInfo> Competitors = null;
+        static CompetitionInfo CompetitionInfo = null;
 
         static void Init()
         {
@@ -30,12 +30,12 @@ namespace TaskTester.Noi2Evaluator
             }
 
             string batchText = File.ReadAllText("info.json");
-            competitionInfo = JsonConvert.DeserializeObject<CompetitionInfo>(batchText);
+            CompetitionInfo = JsonConvert.DeserializeObject<CompetitionInfo>(batchText);
 
 
-            competitors = Directory
+            Competitors = Directory
             .GetDirectories("works", "*", SearchOption.AllDirectories)
-            .Where(dir=>dir.ToLower().Contains(competitionInfo.FolderCriteria.ToLower()))
+            .Where(dir=>dir.ToLower().Contains(CompetitionInfo.FolderCriteria.ToLower()))
             .Select(dir => CompetitorInfo.Get(dir))
             .ToList();
 
@@ -50,7 +50,7 @@ namespace TaskTester.Noi2Evaluator
 
             if (!File.Exists("results.json"))
             {
-                CompetitionEvaluator evaluator = new CompetitionEvaluator(competitionInfo, competitors);
+                CompetitionEvaluator evaluator = new CompetitionEvaluator(CompetitionInfo, Competitors);
                 result = evaluator.Evaluate();
             }
             else
@@ -59,7 +59,7 @@ namespace TaskTester.Noi2Evaluator
             }
 
 
-            CompetitionExporter exporter = new CompetitionExporter(result, competitionInfo);
+            CompetitionExporter exporter = new CompetitionExporter(result, CompetitionInfo);
             exporter.Export("results");
             ;
         }

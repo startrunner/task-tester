@@ -8,12 +8,12 @@ using System.Windows.Data;
 
 namespace TaskTester.DesktopTester.View.Converters
 {
-   class BooleanToVisibilityConverter : IValueConverter
+   public sealed class BooleanToVisibilityConverter : IValueConverter
    {
       public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
       {
-         if ((bool)value == true) return Visibility.Visible;
-         return Visibility.Hidden;
+         if (value is true) return Visibility.Visible;
+         return Visibility.Collapsed;
       }
 
       public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

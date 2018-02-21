@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using TaskTester.DesktopTester.ViewModel;
 
 namespace TaskTester.DesktopTester.View
 {
@@ -19,9 +20,10 @@ namespace TaskTester.DesktopTester.View
     /// </summary>
     public partial class CheckerView : Window
     {
-        public CheckerView()
+        public CheckerView(object dataContext)
         {
             InitializeComponent();
+            this.DataContext = dataContext ?? DataContext;
             this.KeyUp += CheckerView_KeyUp;
             this.Closing += CheckerView_Closing;
         }
@@ -32,8 +34,14 @@ namespace TaskTester.DesktopTester.View
         }
 
         private void CheckerView_KeyUp(object sender, KeyEventArgs e)
+
         {
             if (e.Key == Key.Escape) this.Close();
+        }
+
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
         }
     }
 }

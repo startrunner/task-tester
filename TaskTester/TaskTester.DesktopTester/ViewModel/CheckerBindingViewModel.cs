@@ -1,46 +1,41 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
 using TaskTester.CheckerCore.OutputVerification;
-using TaskTester.DesktopTester.Model;
+using TaskTester.CheckerCore.OutputVerification.ResultBinders;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
-    class CheckerBindingViewModel:ViewModelBase
+    public sealed class CheckerBindingViewModel
     {
-        public CheckerBinding Model { get; set; }
+        public string SearchText { get; set; }
+        public double ScoreMultiplier { get; set; }
+        public EnumViewModel<TestResultTypeViewModel> ResultType { get; set; } = TestResultTypeViewModel.CouldNotBind;
 
-        
-
-        public OutputVerificationResultType Type
+        internal IVerifierResultBinder CreateModel()
         {
-            get
+            return new StdOutContainsBinder(
+                searchText: SearchText,
+                result: new OutputVerificationResult(
+                    type: TranslateType(ResultType.SelectedValue),
+                    scoreMultiplier: ScoreMultiplier
+                )
+            );
+        }
+
+        private OutputVerificationResultType TranslateType(TestResultTypeViewModel selectedValue)
+        {
+            switch (selectedValue)
             {
-                return Model.Type;
+                case TestResultTypeViewModel.CorrectAnswer:
+                    return OutputVerificationResultType.CorrectAnswer;
+                case TestResultTypeViewModel.WrongAnswer:
+                    return OutputVerificationResultType.WrongAnswer;
+                case TestResultTypeViewModel.PartiallyCorrectAnswer:
+                    return OutputVerificationResultType.PartiallyCorrectAnswer;
+                case TestResultTypeViewModel.CouldNotBind:
+                    return OutputVerificationResultType.CouldNotBind;
+                default:
+                    throw new NotImplementedException();
             }
-            set { Model.Type = value; }
-        }
-
-        public string SearchString
-        {
-            get { return Model?.SearchString??"@@@@"; }
-            set { Model.SearchString = value;  }
-        }
-
-        public string Score
-        {
-            get { return Model.Score.ToString(); }
-            set
-            {
-                double val;
-                if(double.TryParse(value, out val))
-                {
-                    Model.Score = val;
-                }
-            }
-        }
-
-        public CheckerBindingViewModel(CheckerBinding model)
-        {
-            Model = model;
         }
     }
 }

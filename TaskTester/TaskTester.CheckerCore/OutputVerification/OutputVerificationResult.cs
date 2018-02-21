@@ -5,15 +5,13 @@ namespace TaskTester.CheckerCore.OutputVerification
 
     public class OutputVerificationResult
     {
-        public OutputVerificationResult(OutputVerificationResultType type, CrashReport crashReport, double score)
+        public OutputVerificationResult(OutputVerificationResultType type, double scoreMultiplier)
         {
             Type = type;
-            CrashReport = crashReport;
-            Score = score;
+            ScoreMultiplier = scoreMultiplier;
         }
 
         public OutputVerificationResultType Type { get;  }
-        public CrashReport CrashReport { get;  }
-        public double Score { get;  }
+        public double ScoreMultiplier { get;  }
     }
 }

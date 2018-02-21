@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="TaskTester.DesktopTester.View.BatchTestProblemResultView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TaskTester.DesktopTester.View"
+             xmlns:converters="clr-namespace:TaskTester.DesktopTester.View.Converters"
+             xmlns:vm="clr-namespace:TaskTester.DesktopTester.ViewModel"
+             mc:Ignorable="d" 
+             d:DesignHeight="NaN" Height="NaN" d:DesignWidth="300" d:DataContext="{d:DesignInstance vm:BatchTestProblemResultViewModel}">
+    <StackPanel Orientation="Horizontal" Name="XGridMain" Background="Transparent" d:DataContext="{d:DesignInstance vm:BatchTestProblemResultViewModel}">
+        <ListView Background="Transparent" ItemsSource="{Binding TestResults}" BorderThickness="0">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,2,0" Height="14">
+                        <Rectangle Width="14" Fill="{Binding Type, Converter={StaticResource StatusIconConverter}}"/>
+                        <TextBlock FontSize="10px" VerticalAlignment="Center" Visibility="{Binding HasTestGroup, Mode=OneWay, Converter={StaticResource BooleanToVisibility}}" >
+                            <TextBlock Text="("/>
+                            <TextBlock FontWeight="DemiBold" Text="{Binding TestGroup}"/>
+                            <TextBlock Text=")"/>
+                        </TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <TextBlock Visibility="{Binding HasScore, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibility}}" VerticalAlignment="Center" FontSize="8pt">
+            <TextBlock Text=": "/>
+            <TextBlock Text="{Binding ScoreFormatted, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+        </TextBlock>
+    </StackPanel>
+</UserControl>

@@ -8,8 +8,8 @@ namespace TaskTester.CheckerCore.ProcessRunning
     {
         public ProcessExitType ExitType { get; }
         public CrashReport CrashReport { get; }
-        public StringOrFile StdOut { get; }
-        public StringOrFile StdErr { get; }
+        public StringOrFile Output { get; }
+        public StringOrFile StandardError { get; }
         public double MemoryUsed { get; }
         public int ExitCode { get; }
         public TimeSpan ExecutionTime { get; }
@@ -18,8 +18,8 @@ namespace TaskTester.CheckerCore.ProcessRunning
         {
             ExitType = exitType;
             CrashReport = crashReport;
-            StdOut = stdOut;
-            StdErr = stdErr;
+            Output = stdOut;
+            StandardError = stdErr;
             MemoryUsed = memoryUsed;
             ExitCode = exitCode;
             ExecutionTime = executionTime;

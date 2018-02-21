@@ -6,10 +6,11 @@ namespace TaskTester.CheckerCore.Common
 {
     public class StringOrFile
     {
-        class Locker { public object locker = new object(); }
-        static Locker staticLocker = new Locker();
+        public static readonly StringOrFile Empty = StringOrFile.FromText(string.Empty);
 
-        static Dictionary<string, StringOrFile> repo = new Dictionary<string, StringOrFile>();
+        class Locker { public object locker = new object(); }
+        static Locker StaticLock = new Locker();
+        static Dictionary<string, StringOrFile> Repo = new Dictionary<string, StringOrFile>();
 
 
         object thisLock = new object();
@@ -23,14 +24,14 @@ namespace TaskTester.CheckerCore.Common
         public static StringOrFile FromText(string text) => new StringOrFile(text, false);
         public static StringOrFile FromFile(string path)
         {
-            lock (staticLocker.locker)
+            lock (StaticLock.locker)
             {
-                if (repo.ContainsKey(path))
+                if (Repo.ContainsKey(path))
                 {
-                    return repo[path];
+                    return Repo[path];
                 }
                 var rt = new StringOrFile(path, true);
-                repo[path] = rt;
+                Repo[path] = rt;
                 return rt;
             }
         }
@@ -83,9 +84,9 @@ namespace TaskTester.CheckerCore.Common
                 if (filePath == null || !File.Exists(filePath))
                 {
                     filePath = Path.GetTempFileName();
-                    lock (staticLocker.locker)
+                    lock (StaticLock.locker)
                     {
-                        repo[filePath] = this;
+                        Repo[filePath] = this;
                         File.WriteAllText(filePath, text);
                     }
                 }

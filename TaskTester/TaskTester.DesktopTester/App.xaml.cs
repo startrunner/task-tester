@@ -1,18 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Deployment.Application;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 using System.Windows;
-using Microsoft.Win32;
-using TaskTester.DesktopTester.Model;
 using TaskTester.DesktopTester.View;
-using TaskTester.DesktopTester.ViewModel;
 
 namespace TaskTester.DesktopTester
 {
@@ -24,7 +13,8 @@ namespace TaskTester.DesktopTester
 
         public App()
         {
-            new ProblemView() { DataContext = new ProblemViewModel(new Problem()) }.Show();
+            new SolutionEvaluationView()
+            .Show();
         }
 
         private void OnViewClosed(object sender, EventArgs e)

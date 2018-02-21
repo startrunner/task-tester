@@ -1,163 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
-using Microsoft.Win32;
-using TaskTester.DesktopTester.Model;
-using System.IO;
-using System.Collections.ObjectModel;
+using TaskTester.CheckerCore.Common;
+using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
-    class ProblemViewModel : ViewModelBase
+    public sealed class ProblemViewModel
     {
-        public Problem Model { get; private set; }
-        public int CompletedTestsCount => Feedback?.Count ?? 3;
-        public int AllTestsCount => Model?.InputFiles?.Count ?? 10;
+        public PathSetViewModel TestInputFiles { get; } = new PathSetViewModel();
+        public PathSetViewModel TestSolutionFiles { get; } = new PathSetViewModel();
+        public CheckerViewModel Checker { get; } = new CheckerViewModel();
+        public double TimeLimitSeconds { get; set; } = 1.0;
+        public ICommand SelectChecker { get; }
+        public bool SortFilenamesAlphabetically { get; set; } = true;
 
-        public string ExecutablePath { get; private set; }
-        public string InputPaths { get; private set; }
-        public CheckerViewModel Checker { get; set; } = new CheckerViewModel();
-        public string SolutionPaths { get; private set; }
+        public ObservableCollection<PrimitiveViewModel<double>> TestMaxScores { get; } = new ObservableCollection<PrimitiveViewModel<double>>();
+        public ObservableCollection<PrimitiveViewModel<string>> TestGroups { get; } = new ObservableCollection<PrimitiveViewModel<string>>();
 
-        private string _timeLimit;
-        public string TimeLimit
-        {
-            get { return _timeLimit; }
-            set
-            {
-                _timeLimit = value;
-
-                double timeLimit;
-                if (double.TryParse(value, out timeLimit))
-                {
-                    Model.TimeLimit = TimeSpan.FromSeconds(timeLimit);
-                }
-                else
-                {
-                    Model.TimeLimit = null;
-                }
-
-                RaisePropertyChanged("RunTests");
-            }
-        }
-
-        public ICommand BrowseExecutable { get; private set; }
-        public ICommand BrowseInputs { get; private set; }
-        public ICommand BrowseSolutions { get; private set; }
-        public ICommand RunTests { get; private set; }
-        public ICommand EditChecker { get; private set; }
 
         public ProblemViewModel()
         {
-            BrowseExecutable = new RelayCommand(BrowseExecutableExecute);
-            BrowseInputs = new RelayCommand(BrowseInputsExecute);
-            BrowseSolutions = new RelayCommand(BrowseSolutionsExecute);
-            RunTests = new RelayCommand(RunTestsExecute, RunTestsCanExecute);
+            this.TestInputFiles.PropertyChanged += HandleInputFilesPropertyChanged;
         }
 
-        private bool RunTestsCanExecute()
+        private void HandleInputFilesPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (IsInDesignMode) return true;
-            return Model.IsValidForExecution;
+            int testCount = TestInputFiles.PathsArray?.Length ?? 0;
+            while (TestMaxScores.Count > testCount) TestMaxScores.RemoveAt(TestMaxScores.Count - 1);
+            while (TestMaxScores.Count < testCount) TestMaxScores.Add(double.NaN);
+            while (TestGroups.Count > testCount) TestGroups.RemoveAt(TestGroups.Count - 1);
+            while (TestGroups.Count < testCount) TestGroups.Add(string.Empty);
         }
 
-        private void RunTestsExecute()
+        public bool CanCreateTests =>
+            TestInputFiles.PathsArray != null &&
+            TestInputFiles.PathsArray.Length == TestSolutionFiles.PathsArray?.Length;
+        public Problem CreateModel() => new Problem(CreateTestModels());
+
+        public List<SolutionTest> CreateTestModels()
         {
+            if (!CanCreateTests) throw new InvalidOperationException();
+
+            string[] inputs = TestInputFiles.PathsArray.ToArray();
+            string[] expectedOutputs = TestSolutionFiles.PathsArray.ToArray();
+
+            if (SortFilenamesAlphabetically)
+            {
+                Array.Sort<string>(inputs, (x, y) => x.CompareTo(y));
+                Array.Sort<string>(expectedOutputs, (x, y) => x.CompareTo(y));
+            }
             ;
-            Feedback.Clear();
-            RaisePropertyChanged("CompletedTestsCount");
-            RaisePropertyChanged("AllTestsCount");
 
-            RaisePropertyChanged("Feedback");
 
-            Model.RunTestsAsync().GetAwaiter();
-        }
-
-        private void BrowseSolutionsExecute()
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.AddExtension = false;
-            ofd.Multiselect = true;
-            ofd.Filter = "Test Solution File |*.sol; *.out |Any File|*.*";
-
-            ofd.ShowDialog();
-
-            if (ofd.FileNames.Length != 0 && ofd.CheckFileExists)
+            var tests = new List<SolutionTest>();
+            double lastValidTestScore = 100.0 / inputs.Length;
+            for (int i = 0; i < inputs.Length; i++)
             {
-                List<FileInfo> files = ofd.FileNames.Select(x => new FileInfo(x)).ToList();
-                Model.SolutionFiles = files;
+                if(!double.IsNaN(TestMaxScores[i].Value))
+                {
+                    lastValidTestScore = TestMaxScores[i].Value;
+                }
 
-                SolutionPaths = string.Join(";", ofd.FileNames);
-                RaisePropertyChanged("SolutionPaths");
-                RaisePropertyChanged("RunTests");
-            }
-        }
-
-        private void BrowseInputsExecute()
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.AddExtension = false;
-            ofd.Multiselect = true;
-            ofd.Filter = "Test Input File |*.in; *.inp |Any File|*.*";
-
-            ofd.ShowDialog();
-
-            if (ofd.FileNames.Length != 0 && ofd.CheckFileExists)
-            {
-                List<FileInfo> files = ofd.FileNames.Select(x => new FileInfo(x)).ToList();
-                Model.InputFiles = files;
-
-                InputPaths = string.Join(";", ofd.FileNames);
-                RaisePropertyChanged("InputPaths");
-                RaisePropertyChanged("RunTests");
-            }
-        }
-
-        private void BrowseExecutableExecute()
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.AddExtension = false;
-            ofd.Multiselect = false;
-            ofd.Filter = "Console Application |*.exe";
-
-            ofd.ShowDialog();
-
-            if (ofd.FileName != "" && ofd.CheckFileExists)
-            {
-                Model.ExecutableFile = new FileInfo(ofd.FileName);
-                ExecutablePath = ofd.FileName;
-                RaisePropertyChanged("ExecutablePath");
-                RaisePropertyChanged("RunTests");
+                tests.Add(new SolutionTest(
+                    inputFile: StringOrFile.FromFile(inputs[i]),
+                    expectedOutputFile: StringOrFile.FromFile(expectedOutputs[i]),
+                    outputVerifier: Checker.CreateModel(),
+                    processArguments: String.Empty,
+                    timeLimit: TimeSpan.FromSeconds(TimeLimitSeconds),
+                    maxScore: lastValidTestScore,
+                    testGroup: TestGroups[i].Value ?? string.Empty
+                ));
             }
 
-        }
-
-
-
-        public ProblemViewModel(Problem problem) : this()
-        {
-            this.Model = problem;
-            this.Checker = new CheckerViewModel(Model.Checker);
-            this._timeLimit = Model.TimeLimit.GetValueOrDefault().TotalSeconds.ToString();
-            problem.OneTestCompleted += OnOneTestCompleted;
-            problem.AllTestsCompleted += OnAllTestsCompleted;
-        }
-
-        private void OnAllTestsCompleted(Problem sender, List<IExecutionResult> results)
-        {
-            RaisePropertyChanged("RunTests");
-        }
-
-        public ObservableCollection<TestResultViewModel> Feedback { get; set; } = new ObservableCollection<TestResultViewModel>();
-
-        private void OnOneTestCompleted(Problem sender, IExecutionResult result)
-        {
-            Feedback.Add(new TestResultViewModel(result));
-            //RaisePropertyChanged("Feedback");
-            RaisePropertyChanged("CompletedTestsCount");
+            return tests;
         }
     }
 }

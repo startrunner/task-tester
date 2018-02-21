@@ -1,45 +1,63 @@
-﻿using System.Diagnostics;
-using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
 using TaskTester.DesktopTester.ViewModel;
+using Xceed.Wpf.Toolkit;
 
 namespace TaskTester.DesktopTester.View
 {
     /// <summary>
-    /// Interaction logic for TaskView.xaml
+    /// Interaction logic for ProblemView.xaml
     /// </summary>
-    public partial class ProblemView : Window
+    public partial class ProblemView : UserControl
     {
         public ProblemView()
         {
             InitializeComponent();
         }
 
-        private void DataGrid_SelectedCellsChanged(object s, System.Windows.Controls.SelectedCellsChangedEventArgs e)
+        private void XBrowseChecker_OverrideClicked(object sender, RoutedEventArgs e)
         {
-           
+            new CheckerView(XCheckerViewModel.DataContext)
+#if DEBUG
+            .Show();
+#else
+            .ShowDialog();
+#endif
         }
 
-        private void xHyperlinkViewDetail_Click(object s, RoutedEventArgs e)
+        private void XLinkOpenBatchEvaluator_Click(object sender, RoutedEventArgs e)
         {
-            var sender = s as Hyperlink;
-            var view = new TestResultView()
-            {
-                DataContext = sender.DataContext
-            };
-            view.ShowDialog();
+            new BatchTestView().Show();
         }
 
-        private void xButtonEditChecker_Click(object s, RoutedEventArgs e)
+        private void XSpinner_Spin(object sender, SpinEventArgs e)
         {
-            var sender = s as Button;
-            var view = new CheckerView()
+            var spinner = sender as ButtonSpinner;
+            var textBox = spinner.Content as TextBox;
+
+            double delta = e.Direction == SpinDirection.Increase ? 0.3 : -0.3;
+
+            try
             {
-                DataContext = sender.DataContext
-            };
-            view.ShowDialog();
+                double oldValue = double.Parse(textBox.GetValue(TextBox.TextProperty).ToString());
+                double newValue = (!double.IsNaN(oldValue) ? oldValue : 0) + delta;
+                if (newValue < 0) newValue = double.NaN;
+
+                textBox.SetValue(TextBox.TextProperty, newValue.ToString());
+            }
+            catch { }
         }
     }
 }

@@ -1,0 +1,4 @@
+IF (Accept.Checked = True)  THEN  Next.Enabled := True;
+IF (Reject.Checked = True)  THEN  Next.Enabled := False;
+IF (Reject.Checked = False)  THEN  Next.Enabled := True;
+IF (Accept.Checked = False)  THEN  Next.Enabled := False;

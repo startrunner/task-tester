@@ -19,10 +19,11 @@ namespace TaskTester.DesktopTester.View
     /// </summary>
     public partial class TestResultView : Window
     {
-        public TestResultView()
+        public TestResultView(object viewModel)
         {
             InitializeComponent();
             this.KeyUp += TestResultView_KeyUp;
+            this.DataContext = viewModel ?? DataContext;
         }
 
         void TestResultView_KeyUp(object sender, KeyEventArgs e)
