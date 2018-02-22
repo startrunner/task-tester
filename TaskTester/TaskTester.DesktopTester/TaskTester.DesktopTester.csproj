@@ -76,15 +76,16 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <ApplicationIcon>Artboard 1.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup />
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GalaSoft.MvvmLight, Version=5.2.0.37222, Culture=neutral, PublicKeyToken=e7570ab207bcb616, processorArchitecture=MSIL">
@@ -272,12 +273,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\TaskTester.BatchEvaluation\TaskTester.BatchEvaluation.csproj">
       <Project>{41F08A9A-A679-4245-AC6C-7EDA39980B1B}</Project>
       <Name>TaskTester.BatchEvaluation</Name>
@@ -298,15 +293,6 @@
       <Project>{3E976FED-A183-493B-AD9F-D3EB39523FC9}</Project>
       <Name>TaskTester.Tasking</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="hsm_tt.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="AutoTest_16x.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Artboard 1.ico" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\icon.ico" />
