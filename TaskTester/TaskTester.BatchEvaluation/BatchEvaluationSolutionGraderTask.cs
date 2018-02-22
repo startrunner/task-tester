@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Documents;
 using System.Windows.Threading;
@@ -28,21 +29,18 @@ namespace TaskTester.BatchEvaluation
 
         public BatchEvaluationSolutionGraderTask(
             Dispatcher eventDispatcher,
+            CancellationToken cancellationToken,
             BatchEvaluationCompetitor competitor,
             BatchEvaluationProblem problem,
             IReadOnlyList<SolutionEvaluationTestResult> testResults
-        ) : base(eventDispatcher)
+        ) : base(eventDispatcher, cancellationToken)
         {
             mTestResults = testResults;
             mCompetitor = competitor;
             mProblem = problem;
         }
 
-        public override void Start()
-        {
-            MarkAsStarted();
-            ExecutingTask = Task.Run(action: this.Run);
-        }
+        public override void Start() => Start(Run);
 
         private void Run()
         {

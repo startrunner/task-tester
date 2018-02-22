@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using TaskTester.BatchEvaluation;
 using TaskTester.CheckerCore.SolutionEvalutation;
 
@@ -6,10 +7,15 @@ namespace TaskTester.DesktopTester.ViewModel
 {
     public class BatchTestTestResultViewModel
     {
+        
         public BatchTestTestResultTypeViewModel Type { get; }
+        
         public double Score { get; }
+        
         public string TestGroup { get; }
+
         public bool HasTestGroup => !string.IsNullOrEmpty(TestGroup);
+        
         public string CrashMessage { get; } = string.Empty;
 
         public BatchTestTestResultViewModel(CompetitorEvaluationTask.TestEvaluatedEventArgs e)

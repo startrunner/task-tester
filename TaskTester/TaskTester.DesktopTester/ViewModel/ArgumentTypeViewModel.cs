@@ -1,4 +1,6 @@
-﻿namespace TaskTester.DesktopTester.ViewModel
+﻿using Newtonsoft.Json;
+
+namespace TaskTester.DesktopTester.ViewModel
 {
     public enum ArgumentTypeViewModel
     {

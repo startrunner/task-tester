@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Newtonsoft.Json;
 using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.OutputVerification;
 using TaskTester.CheckerCore.SolutionEvalutation;
@@ -13,26 +14,18 @@ namespace TaskTester.DesktopTester.ViewModel
 {
     public class CheckerViewModel : ViewModelBase
     {
-        string[] mExecutablePathArray;
+        
+        public PathSetViewModel ExecutablePath { get; } = new PathSetViewModel();
 
-        public string[] ExecutablePathArray
-        {
-            get => mExecutablePathArray;
-            set
-            {
-                mExecutablePathArray = value;
-                RaisePropertyChanged(nameof(ExecutablePathArray));
-                RaisePropertyChanged(nameof(ExecutableFilename));
-                RaisePropertyChanged(nameof(ExecutablePath));
-            }
-        }
-        public string ExecutablePath => ExecutablePathArray?.Single();
-        public string ExecutableFilename => ExecutablePathArray?.Select(Path.GetFileName)?.SingleOrDefault();
-
+        
         public ObservableCollection<CheckerBindingViewModel> Bindings { get; } = new ObservableCollection<CheckerBindingViewModel>();
+
+        
         public ObservableCollection<EnumViewModel<ArgumentTypeViewModel>> Arguments { get; } = new ObservableCollection<EnumViewModel<ArgumentTypeViewModel>>();
 
+        [JsonIgnore]
         public ICommand AddArgument { get; }
+        [JsonIgnore]
         public ICommand AddBinding { get; }
 
         public CheckerViewModel()
@@ -46,12 +39,12 @@ namespace TaskTester.DesktopTester.ViewModel
 
         public IOutputVerifier CreateModel()
         {
-            if (!File.Exists(ExecutablePath)) return DefaultOutputVerifier.Instance;
+            if (!File.Exists(ExecutablePath.Path)) return DefaultOutputVerifier.Instance;
             var model = new ExecutableOutputVerifierMutable {
                 Arguments = Arguments.Select(x => TranslateArgument(x.SelectedValue)).ToArray(),
                 Bindings = Bindings.Select(x => x.CreateModel()).ToArray(),
                 Stdin = VerifierArgumentType.None,
-                ConsoleApplication = new FileSystemConsoleApplication(ExecutablePath)
+                ConsoleApplication = new FileSystemConsoleApplication(ExecutablePath.Path)
             };
             return model;
         }

@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GalaSoft.MvvmLight;
+using Newtonsoft.Json;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
@@ -12,6 +14,7 @@ namespace TaskTester.DesktopTester.ViewModel
         int mExecutedCommandCount = 0;
         double mTotalResult = 0;
 
+        
         public Dictionary<string, BatchTestProblemResultViewModel> ProblemResults { get; }
             = new Dictionary<string, BatchTestProblemResultViewModel>();
 
@@ -37,7 +40,7 @@ namespace TaskTester.DesktopTester.ViewModel
 
         public string Name
         {
-            get => mName??string.Empty;
+            get => mName ?? string.Empty;
             set
             {
                 mName = value;
@@ -65,7 +68,10 @@ namespace TaskTester.DesktopTester.ViewModel
             }
         }
 
+        [JsonIgnore]
         public string TotalResultFormatted => TotalResult.ToString("0");
+
+        public int TotalResultRounded => (int)Math.Round(TotalResult);
 
         public double TotalResult
         {

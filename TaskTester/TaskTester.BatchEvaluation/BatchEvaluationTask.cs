@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using TaskTester.CheckerCore;
@@ -25,11 +26,12 @@ namespace TaskTester.BatchEvaluation
 
         public BatchEvaluationTask(
             Dispatcher eventDispatcher,
+            CancellationToken cancellationToken,
             string rootDirectory,
             string directoryPathCriteria,
             IReadOnlyList<string> commandLineTemplates,
             IReadOnlyList<BatchEvaluationProblem> problems
-        ) : base(eventDispatcher)
+        ) : base(eventDispatcher, cancellationToken)
         {
             mEventDispatcher = eventDispatcher;
             mRootDirectory = rootDirectory;
@@ -38,18 +40,16 @@ namespace TaskTester.BatchEvaluation
             mProblems = problems;
         }
 
-        public override void Start()
-        {
-            MarkAsStarted();
-            this.ExecutingTask = Task.Run(action: Run);
-        }
+        public override void Start() => Start(Run);
 
         private void Run()
         {
+            mCancellationToken.ThrowIfCancellationRequested();
             var discoveryTask = new CompetitionDataExtractionTask(
-                null,
-                mRootDirectory,
-                mDirectoryPathCriteria
+                eventDispatcher: null,
+                cancellationToken: mCancellationToken,
+                rootDirectory: mRootDirectory,
+                directoryPathCriteria: mDirectoryPathCriteria
             );
             discoveryTask.CompetitorInfoExtracted += HandleCompetitorDiscovered;
             discoveryTask.Start();
@@ -57,6 +57,7 @@ namespace TaskTester.BatchEvaluation
 
             foreach (BatchEvaluationCompetitor competitor in mDiscoveredCompetitors)
             {
+                mCancellationToken.ThrowIfCancellationRequested();
                 RunCompetitor(competitor);
             }
 
@@ -65,11 +66,13 @@ namespace TaskTester.BatchEvaluation
 
         private void RunCompetitor(BatchEvaluationCompetitor competitor)
         {
+            mCancellationToken.ThrowIfCancellationRequested();
             var competitorTask = new CompetitorEvaluationTask(
-                null,
-                competitor,
-                mProblems,
-                mCommandLineTemplates
+                eventDispatcher: null,
+                cancellationToken: mCancellationToken,
+                competitor: competitor,
+                problems: mProblems,
+                commandLineTemplates: mCommandLineTemplates
             );
             competitorTask.CommandRan += HandleCommandLineRan;
             competitorTask.TestEvaluated += CompetitorTask_TestEvaluated;

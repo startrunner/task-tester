@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using TaskTester.CheckerCore;
@@ -18,19 +19,20 @@ namespace TaskTester.DataExtraction
 
         public event EventHandler<CompetitorInfoExtractedEventArgs> CompetitorInfoExtracted;
 
-        public CompetitionDataExtractionTask(Dispatcher eventDispatcher, string rootDirectory, string directoryPathCriteria)
-            :base(eventDispatcher)
+        public CompetitionDataExtractionTask(
+            Dispatcher eventDispatcher,
+            CancellationToken cancellationToken,
+            string rootDirectory, 
+            string directoryPathCriteria
+        )
+            :base(eventDispatcher, cancellationToken)
         {
             mRootDirectory = rootDirectory;
             mDirectoryPathCriteria = directoryPathCriteria;
             mEventDispatcher = eventDispatcher;
         }
 
-        public override void Start()
-        {
-            MarkAsStarted();
-            ExecutingTask = Task.Run(action: Run);
-        }
+        public override void Start() => Start(Run);
 
         private void Run()
         {

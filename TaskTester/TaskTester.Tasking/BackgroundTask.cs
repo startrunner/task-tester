@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
@@ -8,15 +9,23 @@ namespace TaskTester.Tasking
     {
         protected object mLock = new object();
         protected Dispatcher mEventDispatcher;
+        protected CancellationToken mCancellationToken;
         bool mStarted = false;
 
         public event EventHandler Finished;
 
-        public Task ExecutingTask { get; protected set; }
+        public Task ExecutingTask { get; private set; }
 
-        protected BackgroundTask(Dispatcher eventDispatcher)
+        protected void Start(Action action)
+        {
+            MarkAsStarted();
+            ExecutingTask = Task.Run(action).ContinueWith((x) => Notify(Finished, EventArgs.Empty));
+        }
+
+        protected BackgroundTask(Dispatcher eventDispatcher, CancellationToken cancellationToken)
         {
             this.mEventDispatcher = eventDispatcher;
+            this.mCancellationToken = cancellationToken;
         }
 
         protected void NotifyFinished() => Notify(Finished, EventArgs.Empty);
@@ -54,7 +63,7 @@ namespace TaskTester.Tasking
         public abstract void Start();
 
 
-        protected void MarkAsStarted()
+        private void MarkAsStarted()
         {
             bool success = true;
             if (mStarted) success = false;

@@ -4,23 +4,35 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using Newtonsoft.Json;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
     class BatchTestViewModel : ViewModelBase
     {
+        
         public ObservableCollection<BatchTestProblemViewModel> Problems { get; }
             = new ObservableCollection<BatchTestProblemViewModel>();
 
+        
         public ObservableCollection<PrimitiveViewModel<string>> CommandLines { get; }
             = new ObservableCollection<PrimitiveViewModel<string>>();
 
+        
         public PrimitiveViewModel<string> Title { get; set; } = string.Empty;
+
+        
         public PrimitiveViewModel<string> FolderPathCriteria { get; set; } = String.Empty;
+
+        
         public PathSetViewModel RootDirectoy { get; set; } = new PathSetViewModel();
+
+        
         public BatchTestProgressViewModel Progress { get; }
 
+        [JsonIgnore]
         public ICommand AddProblem { get; }
+        [JsonIgnore]
         public ICommand AddCommandLine { get; }
 
         public BatchTestViewModel()

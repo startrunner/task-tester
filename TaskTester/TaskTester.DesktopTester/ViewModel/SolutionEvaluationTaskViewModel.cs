@@ -4,25 +4,35 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Newtonsoft.Json;
 using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
     public class SolutionEvaluationTaskViewModel : ViewModelBase
     {
+        
         private readonly PathSetViewModel mExecutable;
+        
         private readonly ProblemViewModel mProblem;
-        private int mTotalTestCount;
-        private bool mCheckerIdle = true;
 
+        private int mTotalTestCount;
+        
+        private bool mCheckerIdle = true;
+        CancellationTokenSource mCancellationTokenSource;
+
+        [JsonIgnore]
         public ICommand EvaluateSolution { get; }
+        [JsonIgnore]
         public ICommand CancelEvaluation { get; }
 
+        [JsonIgnore]
         public bool CheckerIdle
         {
             get => mCheckerIdle;
@@ -31,7 +41,9 @@ namespace TaskTester.DesktopTester.ViewModel
                 mCheckerIdle = value;
                 RaisePropertyChanged(nameof(CheckerIdle));
                 RaisePropertyChanged(nameof(EvaluateSolution));
+                RaisePropertyChanged(nameof(EvaluateSolutionCanExecute));
                 RaisePropertyChanged(nameof(CancelEvaluation));
+                RaisePropertyChanged(nameof(CancelEvaluationCanExecute));
             }
         }
 
@@ -45,13 +57,15 @@ namespace TaskTester.DesktopTester.ViewModel
             }
 
         }
+
+        
         public ObservableCollection<TestResultViewModel> TestResults { get; }
             = new ObservableCollection<TestResultViewModel>();
 
         public SolutionEvaluationTaskViewModel(PathSetViewModel mExecutable, ProblemViewModel mProblem)
         {
-            EvaluateSolution = new RelayCommand(EvaluateSolutionExecute, EvaluateSolutionCanExecute);
-            CancelEvaluation = new RelayCommand(CancelEvaluationExecute, CancelEvaluationCanExecute);
+            EvaluateSolution = new RelayCommand(EvaluateSolutionExecute, () => EvaluateSolutionCanExecute);
+            CancelEvaluation = new RelayCommand(CancelEvaluationExecute, () => CancelEvaluationCanExecute);
 
             if (mExecutable == null)
                 throw new ArgumentNullException(nameof(mExecutable));
@@ -78,18 +92,19 @@ namespace TaskTester.DesktopTester.ViewModel
             CheckerIdle = false;
             await Task.Yield();
 
-            
-
             IConsoleApplication application = new FileSystemConsoleApplication(mExecutable.Path);
             List<SolutionTest> tests = mProblem.CreateTestModels();
-            SolutionEvaluationTask task = new SolutionEvaluationTask(
-                Dispatcher.CurrentDispatcher,
-                application, 
-                tests
-            );
 
             this.TestResults.Clear();
             this.TotalTestCount = tests.Count;
+            this.mCancellationTokenSource = new CancellationTokenSource();
+
+            SolutionEvaluationTask task = new SolutionEvaluationTask(
+                Dispatcher.CurrentDispatcher,
+                mCancellationTokenSource.Token,
+                application,
+                tests
+            );
 
             task.TestEvaluated += Task_TestEvaluated;
             task.Finished += (sender, e) =>
@@ -139,13 +154,11 @@ namespace TaskTester.DesktopTester.ViewModel
             }
         }
 
-        private void CancelEvaluationExecute()
-        {
-            throw new NotImplementedException();
-        }
+        private void CancelEvaluationExecute() =>
+            mCancellationTokenSource.Cancel();
 
-        private bool CancelEvaluationCanExecute() => !CheckerIdle;
-        private bool EvaluateSolutionCanExecute() =>
+        public bool CancelEvaluationCanExecute => !CheckerIdle;
+        public bool EvaluateSolutionCanExecute =>
             CheckerIdle &&
             mExecutable.Path != null &&
             File.Exists(mExecutable.Path) &&

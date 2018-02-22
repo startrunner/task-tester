@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
@@ -12,9 +13,13 @@ namespace TaskTester.DesktopTester.ViewModel
         private static readonly TEnum[] Values = Enum.GetValues(typeof(TEnum)).OfType<TEnum>().ToArray();
         private static readonly string[] NamesStatic = Values.Select(x => x.ToString()).ToArray();
 
+        [JsonIgnore]
         public IEnumerable<string> Names => NamesStatic;
+
+        [JsonIgnore]
         public int SelectedIndex { get; set; }
 
+        [JsonProperty]
         public TEnum SelectedValue
         {
             get => Values[SelectedIndex];

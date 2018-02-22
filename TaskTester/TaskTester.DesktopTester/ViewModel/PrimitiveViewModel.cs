@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Newtonsoft.Json;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
@@ -10,11 +11,17 @@ namespace TaskTester.DesktopTester.ViewModel
         public static implicit operator PrimitiveViewModel<TPrimitive>(TPrimitive value) =>
             new PrimitiveViewModel<TPrimitive>(value);
 
+        [JsonProperty]
+        private TPrimitive mValue;
+
+
         public event EventHandler RemoveRequested;
         //public event EventHandler ValueSet;
+        [JsonIgnore]
         public ICommand Remove { get; }
 
-        private TPrimitive mValue;
+
+        [JsonIgnore]
         public TPrimitive Value
         {
             get => mValue;

@@ -15,7 +15,7 @@
 
     <ScrollViewer Margin="8" VerticalScrollBarVisibility="Auto">
     <StackPanel>
-        <local:BrowseView Label="Checker executable path" FileFilter="Win-32 Executable| *.exe" SelectedPaths="{Binding ExecutablePathArray, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <local:BrowseView Label="Checker executable path" FileFilter="Win-32 Executable| *.exe" SelectedPaths="{Binding ExecutablePath.PathsArray, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 
         <TextBlock Margin="0,8,0,0" Text="Bindings"/>
 

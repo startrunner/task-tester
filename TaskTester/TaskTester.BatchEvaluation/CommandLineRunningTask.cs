@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using TaskTester.CheckerCore;
 using TaskTester.Tasking;
 
 namespace TaskTester.BatchEvaluation
@@ -28,10 +28,11 @@ namespace TaskTester.BatchEvaluation
 
         public CommandLineRunningTask(
             Dispatcher eventDispatcher,
+            CancellationToken cancellationToken,
             IReadOnlyList<string> commandLineTemplates,
             IReadOnlyList<BatchEvaluationProblem> problems,
             BatchEvaluationCompetitor competitor
-        ) : base(eventDispatcher)
+        ) : base(eventDispatcher, cancellationToken)
         {
             mCommandLineTemplates = commandLineTemplates;
             mProblems = problems;
@@ -41,16 +42,12 @@ namespace TaskTester.BatchEvaluation
         public event EventHandler<StartedEventArgs> Started;
         public event EventHandler<CommandRanEventArgs> CommandRan;
 
-        public override void Start()
-        {
-            MarkAsStarted();
-            this.ExecutingTask =
-                Task.Run(action: Run).ContinueWith(x => NotifyFinished());
-        }
+        public override void Start() => Start(Run);
 
         private void Run()
         {
             NotifyStarted();
+            mCancellationToken.ThrowIfCancellationRequested();
             List<string> commandLines = ExpandCommandLines();
             BatchEvaluationCompetitor competitor = mCompetitor;
 
@@ -63,6 +60,7 @@ namespace TaskTester.BatchEvaluation
 
             foreach (string line in commandLines)
             {
+                mCancellationToken.ThrowIfCancellationRequested();
                 //terminalProcess.StandardInput.WriteLine(line);
                 Process cmdProc = new Process() {
                     StartInfo = new ProcessStartInfo("cmd.exe") {
@@ -96,6 +94,7 @@ namespace TaskTester.BatchEvaluation
 
         private List<string> ExpandCommandLines()
         {
+            mCancellationToken.ThrowIfCancellationRequested();
             var commandLines = new List<string>();
 
             foreach (BatchEvaluationProblem problem in mProblems)

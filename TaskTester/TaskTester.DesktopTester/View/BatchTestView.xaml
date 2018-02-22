@@ -56,7 +56,10 @@
 
             </StackPanel>
         </Expander>
-        <Button Grid.Row="1" Command="{Binding Progress.Start, IsAsync=True, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" Margin="0,4,0,4" Content="Evaluate Batch"/>
+        <Grid Width="NaN" Height="NaN" Grid.Row="1" Margin="0,4">
+            <Button Command="{Binding Progress.Start, IsAsync=True, UpdateSourceTrigger=PropertyChanged,Mode=OneWay}" Content="Evaluate Batch"/>
+            <Button Command="{Binding Progress.Cancel, IsAsync=True, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Content="Cancel!" Visibility="{Binding Progress.CancelCanExecute, UpdateSourceTrigger=PropertyChanged, IsAsync=True, Mode=OneWay, Converter={StaticResource BooleanToVisibility}}"/>
+        </Grid>
         <DataGrid 
             Name="XDataGridResults"
             ItemsSource="{Binding  Progress.CompetitorResults, IsAsync=True}" Grid.Row="2" 

@@ -1,6 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;    
+using System.IO;
 
 namespace TaskTester.CheckerCore.Common
 {
@@ -8,32 +9,34 @@ namespace TaskTester.CheckerCore.Common
     {
         public static readonly StringOrFile Empty = StringOrFile.FromText(string.Empty);
 
-        class Locker { public object locker = new object(); }
-        static Locker StaticLock = new Locker();
-        static Dictionary<string, StringOrFile> Repo = new Dictionary<string, StringOrFile>();
+        //static readonly object StaticLock = new object();
+        static ConcurrentDictionary<string, StringOrFile> Repository =
+            new ConcurrentDictionary<string, StringOrFile>();
 
+        private StringOrFile() { }
 
         object thisLock = new object();
         bool fileIsTemporary = false;
         string text = null;
         string filePath = null;
 
-        public string Str => GetText();
+        public string StringValue => GetText();
         public string FilePath => GetFilePath();
 
         public static StringOrFile FromText(string text) => new StringOrFile(text, false);
         public static StringOrFile FromFile(string path)
         {
-            lock (StaticLock.locker)
+            /*lock (StaticLock)
             {
-                if (Repo.ContainsKey(path))
+                if (Repository.ContainsKey(path))
                 {
-                    return Repo[path];
+                    return Repository[path];
                 }
                 var rt = new StringOrFile(path, true);
-                Repo[path] = rt;
+                Repository[path] = rt;
                 return rt;
-            }
+            }*/
+            return Repository.GetOrAdd(path, (x) => new StringOrFile(path, true));
         }
         public override string ToString() => GetText();
 
@@ -84,11 +87,25 @@ namespace TaskTester.CheckerCore.Common
                 if (filePath == null || !File.Exists(filePath))
                 {
                     filePath = Path.GetTempFileName();
-                    lock (StaticLock.locker)
+                    Repository.AddOrUpdate(
+                        FilePath,
+                        (x) =>
+                        {
+                            File.WriteAllText(FilePath, text);
+                            return this;
+                        },
+                        (x, old) =>
+                        {
+                            File.WriteAllText(FilePath, text);
+                            return this;
+                        }
+                    );
+                    /*
+                    lock (StaticLock)
                     {
-                        Repo[filePath] = this;
+                        Repository[filePath] = this;
                         File.WriteAllText(filePath, text);
-                    }
+                    }*/
                 }
             }
         }

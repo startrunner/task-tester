@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Newtonsoft.Json;
 using TaskTester.BatchEvaluation;
 using TaskTester.DataExtraction;
 using TaskTester.Spreadsheets;
@@ -20,9 +23,16 @@ namespace TaskTester.DesktopTester.ViewModel
         readonly PrimitiveViewModel<string> mDirectoryPathCriteria;
         readonly ObservableCollection<PrimitiveViewModel<string>> mCommandLines;
         readonly ObservableCollection<BatchTestProblemViewModel> mProblems;
-        private readonly PrimitiveViewModel<string> mTitle;
+        readonly PrimitiveViewModel<string> mTitle;
+
+        BatchEvaluationTask mEvaluationTask;
+
+        CancellationTokenSource mCancellationTokenSource;
+
+        [JsonIgnore]
         bool mIsRunning = false;
 
+        [JsonIgnore]
         public bool IsRunning
         {
             get => mIsRunning;
@@ -31,19 +41,24 @@ namespace TaskTester.DesktopTester.ViewModel
                 mIsRunning = value;
                 RaisePropertyChanged(nameof(IsRunning));
                 RaisePropertyChanged(nameof(Start));
+                RaisePropertyChanged(nameof(StartCanExecute));
+                RaisePropertyChanged(nameof(Cancel));
+                RaisePropertyChanged(nameof(CancelCanExecute));
             }
         }
 
+
         public ObservableCollection<BatchTestCompetitorResultViewModel> CompetitorResults { get; } = new ObservableCollection<BatchTestCompetitorResultViewModel>();
 
-        private BatchEvaluationTask mEvaluationTask;
-
+        [JsonIgnore]
         public string SplitterColumnHeader { get; } = nameof(SplitterColumnHeader);
 
+        [JsonIgnore]
         public ICommand Start { get; }
+        public ICommand Cancel { get; }
+        [JsonIgnore]
         public ICommand Export { get; }
         public event EventHandler Starting;
-
 
         public BatchTestProgressViewModel(
             PathSetViewModel rootDirectory,
@@ -53,8 +68,9 @@ namespace TaskTester.DesktopTester.ViewModel
             ObservableCollection<BatchTestProblemViewModel> problems
         )
         {
-            Start = new RelayCommand(StartExecute, StartCanExecute);
+            Start = new RelayCommand(StartExecute, () => StartCanExecute);
             Export = new RelayCommand(ExportExecute, ExportCanExecute);
+            Cancel = new RelayCommand(CancelExecute, () => CancelCanExecute);
 
             mRootDirectory = rootDirectory;
             mDirectoryPathCriteria = directoryPathCriteria;
@@ -65,6 +81,9 @@ namespace TaskTester.DesktopTester.ViewModel
             rootDirectory.PropertyChanged += OnChildPropertyChanged;
             directoryPathCriteria.PropertyChanged += OnChildPropertyChanged;
         }
+
+        private void CancelExecute() =>
+            mCancellationTokenSource?.Cancel();
 
         private void ExportExecute()
         {
@@ -93,13 +112,14 @@ namespace TaskTester.DesktopTester.ViewModel
             if (fileName == null)
                 throw new ArgumentNullException(nameof(fileName));
 
-            Ranking<BatchTestCompetitorResultViewModel> ranking = CompetitorResults.RankBy(x => x.TotalResult);
+            Ranking<BatchTestCompetitorResultViewModel> ranking =
+                CompetitorResults.RankBy(x => x.TotalResultRounded);
 
             var exporter = new SpreadsheetExporter<Tuple<Rank, BatchTestCompetitorResultViewModel>>(mTitle.Value ?? "") {
                 { "Rank", x=>x.Item1.ToString() },
                 { "Name", x=>x.Item2.Name.ToString() },
                 { "Directory", x=>x.Item2.DirectoryRelative },
-                { "Total", x=>x.Item2.TotalResult.ToString("0") }
+                { "Total", x=>x.Item2.TotalResultRounded.ToString() }
             };
 
             foreach (BatchTestProblemViewModel problem in mProblems)
@@ -109,19 +129,17 @@ namespace TaskTester.DesktopTester.ViewModel
 
             foreach (BatchTestProblemViewModel problem in mProblems)
             {
-                exporter.Add(
-                    problem.Identifier,
-                    x => string.Join(
-                        "",
-                        x.Item2.ProblemResults[problem.Identifier].TestResults.Select(
-                            y => TranslateTestResultTypeToText(y)
-                        )
-                    )
-                );
-                exporter.Add(problem.Identifier, x => x.Item2.ProblemResults[problem.Identifier].TestResults.Select(y => TranslateTestResultTypeToText(y)));
+                exporter.Add(problem.Identifier, x => TranslateTestResultTypesToText(x.Item2.ProblemResults[problem.Identifier].TestResults));
             }
 
             exporter.Export(fileName, ranking);
+        }
+
+        private string TranslateTestResultTypesToText(IEnumerable<BatchTestTestResultViewModel> results)
+        {
+            var builder = new StringBuilder();
+            foreach (var x in results) builder.Append(TranslateTestResultTypeToText(x));
+            return builder.ToString();
         }
 
         private string TranslateTestResultTypeToText(BatchTestTestResultViewModel result)
@@ -153,15 +171,17 @@ namespace TaskTester.DesktopTester.ViewModel
 
         private void StartExecute()
         {
-            if (!StartCanExecute()) return;
+            if (!StartCanExecute) return;
             Starting?.Invoke(this, EventArgs.Empty);
 
             IsRunning = true;
+            mCancellationTokenSource = new CancellationTokenSource();
 
             CompetitorResults.Clear();
             mEvaluationTask = new BatchEvaluationTask(
                 Dispatcher.CurrentDispatcher,
                 rootDirectory: mRootDirectory.Path,
+                cancellationToken: mCancellationTokenSource.Token,
                 directoryPathCriteria: mDirectoryPathCriteria.Value,
                 commandLineTemplates: mCommandLines.Select(x => x.Value).ToArray(),
                 problems: mProblems.Select(x => x.BuildModel()).ToArray()
@@ -215,9 +235,11 @@ namespace TaskTester.DesktopTester.ViewModel
             }
         }
 
-        private bool StartCanExecute() =>
+        public bool StartCanExecute =>
             IsRunning == false &&
             mRootDirectory.Path != null &&
             Directory.Exists(mRootDirectory.Path);
+
+        public bool CancelCanExecute => IsRunning;
     }
 }

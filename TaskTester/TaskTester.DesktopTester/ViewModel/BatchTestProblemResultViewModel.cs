@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
+using Newtonsoft.Json;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
@@ -7,6 +8,7 @@ namespace TaskTester.DesktopTester.ViewModel
     {
         double mScore = double.NaN;
 
+        [JsonIgnore]
         public string ScoreFormatted => Score.ToString("0");
 
         public double Score
@@ -21,9 +23,9 @@ namespace TaskTester.DesktopTester.ViewModel
             }
         }
 
+        [JsonIgnore]
         public bool HasScore => !double.IsNaN(Score);
 
-        public string Text => "Kur";
         public ObservableCollection<BatchTestTestResultViewModel> TestResults { get; }
             = new ObservableCollection<BatchTestTestResultViewModel>();
     }

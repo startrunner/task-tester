@@ -38,7 +38,11 @@ namespace TaskTester.Spreadsheets
         public void Export(string path, IEnumerable<TData> data)
         {
             var workbook = new XLWorkbook();
-            IXLWorksheet sheet = workbook.AddWorksheet(Title);
+
+            //Excel will throw an exception when a
+            //worksheet title is longer than 31 characters.
+            string shortTitle = string.Join("", Title.Take(25));
+            IXLWorksheet sheet = workbook.AddWorksheet(shortTitle);
 
             sheet.Row(TitleRow).Style.Font.SetBold();
             sheet.Row(HeaderRow).Style.Font.SetBold();
@@ -99,7 +103,7 @@ namespace TaskTester.Spreadsheets
                 rowNumber++;
             }
 
-            for(int i=0;i<headerColumnSpans.Length;i++)
+            for (int i = 0; i < headerColumnSpans.Length; i++)
             {
                 headerColumnSpans[i] = Math.Max(headerColumnSpans[i], 1);
             }

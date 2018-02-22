@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using Newtonsoft.Json;
 using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.SolutionEvalutation;
 
@@ -10,16 +11,24 @@ namespace TaskTester.DesktopTester.ViewModel
 {
     public sealed class ProblemViewModel
     {
+        
         public PathSetViewModel TestInputFiles { get; } = new PathSetViewModel();
+        [JsonProperty   ]
         public PathSetViewModel TestSolutionFiles { get; } = new PathSetViewModel();
+        
         public CheckerViewModel Checker { get; } = new CheckerViewModel();
+        
         public double TimeLimitSeconds { get; set; } = 1.0;
-        public ICommand SelectChecker { get; }
+        
         public bool SortFilenamesAlphabetically { get; set; } = true;
 
+        
         public ObservableCollection<PrimitiveViewModel<double>> TestMaxScores { get; } = new ObservableCollection<PrimitiveViewModel<double>>();
+        
         public ObservableCollection<PrimitiveViewModel<string>> TestGroups { get; } = new ObservableCollection<PrimitiveViewModel<string>>();
 
+        [JsonIgnore]
+        public ICommand SelectChecker { get; }
 
         public ProblemViewModel()
         {

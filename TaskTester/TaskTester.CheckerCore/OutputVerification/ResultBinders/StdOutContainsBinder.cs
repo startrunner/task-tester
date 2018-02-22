@@ -9,7 +9,7 @@ namespace TaskTester.CheckerCore.OutputVerification.ResultBinders
 
         public bool TryBind(ProcessRunResult checkerRun, out OutputVerificationResult result)
         {
-            if(checkerRun.Output.Str.Contains(SearchText))
+            if(checkerRun.Output.StringValue.Contains(SearchText))
             {
                 result = ResultOnBind;
                 return true;

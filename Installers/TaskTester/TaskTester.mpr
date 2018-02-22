@@ -38,7 +38,10 @@ welcome.dfm.miaf
 wizard.dfm
 wizard.dfm.miaf
 $
+icon.ico
 $
+
+
 
 
 
@@ -339,7 +342,7 @@ $
 $
 $
 1
-0
+6
 TRUE
 
 Alexander Ivanov
@@ -352,7 +355,7 @@ TaskTester
 TaskTester Installation
 Alexander Ivanov
 All rights reserved
-{92B9EFBB-2E22-4A4A-B026-2BD6E8B090AF}
+{A838AF85-7CEE-4186-A624-6F883AF2CDCF}
 Alexander Ivanov
 Alexander Ivanov
 http://www.source.exposed/

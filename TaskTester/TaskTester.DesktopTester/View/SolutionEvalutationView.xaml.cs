@@ -32,7 +32,10 @@ namespace TaskTester.DesktopTester.View
 
         private void XLinkOpenBatchEvaluator_Click(object sender, RoutedEventArgs e)
         {
-            new BatchTestView() { DataContext = new BatchTestViewModel() }.Show();
+            new BatchTestView() {
+                DataContext = 
+                App.Current.ViewModelLocator.GetPersistentSingleton<BatchTestViewModel>()
+            }.Show();
         }
     }
 }

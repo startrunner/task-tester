@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using TaskTester.CheckerCore.OutputVerification;
@@ -21,9 +22,10 @@ namespace TaskTester.CheckerCore.SolutionEvalutation
 
         public SolutionEvaluationTask(
             Dispatcher eventDispatcher,
+            CancellationToken cancellationToken,
             IConsoleApplication mApplication,
             IReadOnlyList<SolutionTest> mTests
-        ) : base(eventDispatcher)
+        ) : base(eventDispatcher, cancellationToken)
         {
             if (mApplication == null)
                 throw new ArgumentNullException(nameof(mApplication));
@@ -34,22 +36,17 @@ namespace TaskTester.CheckerCore.SolutionEvalutation
             this.mTests = mTests;
         }
 
-        public override void Start()
-        {
-            MarkAsStarted();
+        public override void Start() => Start(Run);
 
-            this.ExecutingTask =
-                Task
-                .Run(action: RunAllTests)
-                .ContinueWith(x => NotifyFinished());
-        }
-
-        private void RunAllTests()
+        private void Run()
         {
+            mCancellationToken.ThrowIfCancellationRequested();
+
             SolutionEvaluationTask that = this;
             for (int testIndex = 0, testCount = that.mTests.Count; testIndex < testCount; testIndex++)
             {
                 that.RunTestAndNotify(testIndex);
+                mCancellationToken.ThrowIfCancellationRequested();
             }
         }
 

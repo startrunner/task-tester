@@ -101,7 +101,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
 
         private async Task EnterInputAndWaitForExitAsync(Process process, ProcessRunArguments args)
         {
-            await process.StandardInput.WriteLineAsync(args.StandardInput.Str);
+            await process.StandardInput.WriteLineAsync(args.StandardInput.StringValue);
 
             try { process.StandardInput.Close(); }
             catch { }

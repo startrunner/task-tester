@@ -74,7 +74,7 @@ namespace TaskTester.CheckerCore.Tests
             );
             Assert.AreEqual(result.ExitType, ProcessExitType.Graceful);
             StringOrFile output = result.Output;
-            Assert.IsTrue(output.Str.IndexOf('3') != -1 && output.Str.IndexOf('8') > output.Str.IndexOf('3'));
+            Assert.IsTrue(output.StringValue.IndexOf('3') != -1 && output.StringValue.IndexOf('8') > output.StringValue.IndexOf('3'));
             ;
         }
 
@@ -88,7 +88,7 @@ namespace TaskTester.CheckerCore.Tests
             );
             Assert.AreEqual(result.ExitType, ProcessExitType.Graceful);
             StringOrFile output = result.Output;
-            string[] lines = output.Str
+            string[] lines = output.StringValue
                 .Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => x.Trim())
                 .Where(x => !string.IsNullOrWhiteSpace(x))

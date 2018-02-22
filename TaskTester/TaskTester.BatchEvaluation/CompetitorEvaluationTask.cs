@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using TaskTester.CheckerCore;
@@ -30,23 +31,25 @@ namespace TaskTester.BatchEvaluation
 
         public CompetitorEvaluationTask(
             Dispatcher eventDispatcher,
+            CancellationToken cancellationToken,
             BatchEvaluationCompetitor competitor,
             IReadOnlyList<BatchEvaluationProblem> problems,
             IReadOnlyList<string> commandLineTemplates
-        ) : base(eventDispatcher)
+        ) : base(eventDispatcher, cancellationToken)
         {
             mCompetitor = competitor;
             mProblems = problems;
             mCommandLineTemplates = commandLineTemplates;
         }
 
-        public override void Start() =>
-            this.ExecutingTask = Task.Run(action: Run);
+        public override void Start() => Start(Run);
 
         private void Run()
         {
+            mCancellationToken.ThrowIfCancellationRequested();
             var commandLineTask = new CommandLineRunningTask(
                 null,
+                mCancellationToken,
                 mCommandLineTemplates,
                 mProblems,
                 mCompetitor
@@ -65,12 +68,14 @@ namespace TaskTester.BatchEvaluation
 
         private void RunProblem(BatchEvaluationProblem problem)
         {
+            mCancellationToken.ThrowIfCancellationRequested();
             IReadOnlyList<SolutionEvaluationTestResult> testResults = new SolutionEvaluationTestResult[0];
 
             if (TryGetConsoleApplication(problem, out IConsoleApplication application))
             {
                 var solutionTask = new SolutionEvaluationTask(
                     null,
+                    mCancellationToken,
                     application,
                     problem.Problem.Tests
                 );
@@ -95,8 +100,10 @@ namespace TaskTester.BatchEvaluation
 
         private void GradeProblem(BatchEvaluationProblem problem, IReadOnlyList<SolutionEvaluationTestResult> testResults)
         {
+            mCancellationToken.ThrowIfCancellationRequested();
             var graderTask = new BatchEvaluationSolutionGraderTask(
                 null,
+                mCancellationToken,
                 mCompetitor,
                 problem,
                 testResults
@@ -109,6 +116,8 @@ namespace TaskTester.BatchEvaluation
 
         bool TryGetConsoleApplication(BatchEvaluationProblem problem, out IConsoleApplication application)
         {
+            mCancellationToken.ThrowIfCancellationRequested();
+
             string path = Path.Combine(
                 mCompetitor.Directory,
                 problem.Identifier + ".exe"

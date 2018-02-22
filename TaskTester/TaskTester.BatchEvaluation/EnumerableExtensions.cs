@@ -9,8 +9,8 @@ namespace TaskTester.BatchEvaluation
     {
         public static Ranking<T> RankBy<T, TOrderBy>(this IEnumerable<T> items, Func<T, TOrderBy> rankBy)
         {
-            TOrderBy[] criteria = items.Select(rankBy).ToArray();
             var ranking = new Ranking<T>(items.OrderByDescending(rankBy).ToArray());
+            TOrderBy[] criteria = ranking.Select(x => rankBy(x.Item2)).ToArray();
             int count = ranking.Items.Count;
 
             for (int i = 0; i < count; i++)

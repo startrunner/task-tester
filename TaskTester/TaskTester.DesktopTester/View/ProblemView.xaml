@@ -18,7 +18,7 @@
         <Label Name="XCheckerViewModel" DataContext="{Binding Checker}" Visibility="Collapsed"/>
         <local:BrowseView Label="Test Input Files" MultipleSelect="True" SelectedPaths="{Binding TestInputFiles.PathsArray, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FileFilter="Input Files|*.in; *.inp; *.txt|All Files|*.*" Text="" Margin="0,0,0,4"/>
         <local:BrowseView Label="Test Solution Files" MultipleSelect="True" SelectedPaths="{Binding TestSolutionFiles.PathsArray, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" FileFilter="Solution Files|*.sol; *.out; *.sl; *.txt|All Files|*.*" Text="" Margin="0,4"/>
-        <local:BrowseView x:Name="XBrowseChecker"  OverrideClicked="XBrowseChecker_OverrideClicked" Label="Checker" Text="{Binding Checker.ExecutableFilename, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,4"/>
+        <local:BrowseView x:Name="XBrowseChecker"  OverrideClicked="XBrowseChecker_OverrideClicked" Label="Checker" Text="{Binding Checker.ExecutablePath.Path, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, IsAsync=True}" Margin="0,4"/>
 
         <Grid>
             <Grid.ColumnDefinitions>

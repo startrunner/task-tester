@@ -20,8 +20,8 @@ namespace TaskTester.CheckerCore.OutputVerification
         public async Task<OutputVerificationResult> VerifyAsync(OutputVerificationInfo info)
         {
             await Task.Yield();
-            IEnumerable<string> output = Normalize(info.StandardOutput.Str);
-            IEnumerable<string> solution = Normalize(info.ExpectedOutput.Str);
+            IEnumerable<string> output = Normalize(info.StandardOutput.StringValue);
+            IEnumerable<string> solution = Normalize(info.ExpectedOutput.StringValue);
 
             if (Enumerable.SequenceEqual(output, solution))
             {
