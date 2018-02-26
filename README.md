@@ -2,28 +2,4 @@
 
 [Download Windows Binaries](http://www.mediafire.com/file/ifa9nimidq8jtm8/TaskTester.exe)
 
-### What is this repository for? ###
-
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
-
-### How do I get set up? ###
-
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+[Documentation (In Bulgarian)](http://www.mediafire.com/file/24y5uqieiqqimg8/%D0%A2%D0%B5%D0%BC%D0%B0.pdf)
