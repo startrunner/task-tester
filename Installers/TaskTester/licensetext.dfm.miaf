@@ -1,2 +1,0 @@
-IF (License.Text <> I ACCEPT)  THEN  Next.Enabled := False;
-IF (License.Text = I ACCEPT)  THEN  Next.Enabled := True;
