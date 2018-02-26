@@ -11,20 +11,20 @@ namespace TaskTester.DesktopTester.ViewModel
 {
     public sealed class ProblemViewModel
     {
-        
+
         public PathSetViewModel TestInputFiles { get; } = new PathSetViewModel();
-        [JsonProperty   ]
+        [JsonProperty]
         public PathSetViewModel TestSolutionFiles { get; } = new PathSetViewModel();
-        
+
         public CheckerViewModel Checker { get; } = new CheckerViewModel();
-        
+
         public double TimeLimitSeconds { get; set; } = 1.0;
-        
+
         public bool SortFilenamesAlphabetically { get; set; } = true;
 
-        
+
         public ObservableCollection<PrimitiveViewModel<double>> TestMaxScores { get; } = new ObservableCollection<PrimitiveViewModel<double>>();
-        
+
         public ObservableCollection<PrimitiveViewModel<string>> TestGroups { get; } = new ObservableCollection<PrimitiveViewModel<string>>();
 
         [JsonIgnore]
@@ -39,7 +39,11 @@ namespace TaskTester.DesktopTester.ViewModel
         {
             int testCount = TestInputFiles.PathsArray?.Length ?? 0;
             while (TestMaxScores.Count > testCount) TestMaxScores.RemoveAt(TestMaxScores.Count - 1);
-            while (TestMaxScores.Count < testCount) TestMaxScores.Add(double.NaN);
+            while (TestMaxScores.Count < testCount)
+            {
+                if (TestMaxScores.Count == 0) TestMaxScores.Add(0);
+                else TestMaxScores.Add(double.NaN);
+            }
             while (TestGroups.Count > testCount) TestGroups.RemoveAt(TestGroups.Count - 1);
             while (TestGroups.Count < testCount) TestGroups.Add(string.Empty);
         }
@@ -63,23 +67,32 @@ namespace TaskTester.DesktopTester.ViewModel
             }
             ;
 
+            double totalExplicitScore =
+                TestMaxScores
+                .Where(x => !double.IsNaN(x.Value))
+                .Sum(x => x.Value);
+
+            int autoScoreCount =
+                TestMaxScores
+                .Where(x => double.IsNaN(x.Value))
+                .Count();
+
+            double autoScore = (100.00 - totalExplicitScore) / autoScoreCount;
+
 
             var tests = new List<SolutionTest>();
-            double lastValidTestScore = 100.0 / inputs.Length;
             for (int i = 0; i < inputs.Length; i++)
             {
-                if(!double.IsNaN(TestMaxScores[i].Value))
-                {
-                    lastValidTestScore = TestMaxScores[i].Value;
-                }
-
                 tests.Add(new SolutionTest(
                     inputFile: StringOrFile.FromFile(inputs[i]),
                     expectedOutputFile: StringOrFile.FromFile(expectedOutputs[i]),
                     outputVerifier: Checker.CreateModel(),
                     processArguments: String.Empty,
                     timeLimit: TimeSpan.FromSeconds(TimeLimitSeconds),
-                    maxScore: lastValidTestScore,
+                    maxScore: 
+                        !double.IsNaN(TestMaxScores[i].Value) ?
+                        TestMaxScores[i].Value :
+                        autoScore,
                     testGroup: TestGroups[i].Value ?? string.Empty
                 ));
             }

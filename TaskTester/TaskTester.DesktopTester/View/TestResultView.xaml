@@ -12,14 +12,21 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Status: " HorizontalAlignment="Left"/>
-                <TextBlock Text="{Binding Message}"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,8,0,8">
+
+            <TextBlock>
+                <TextBlock Text="Status: "/>
+                <TextBlock Text="{Binding Type}"/>
+            </TextBlock>
+
+            <TextBlock Margin="0,4">
+                <TextBlock Text="Score: "/>
+                <TextBlock Text="{Binding ScoreRounded}"/>
+            </TextBlock>
+            
+            <TextBlock Margin="0,4">
                 <TextBlock Text="Execution Time: " HorizontalAlignment="Left"/>
                 <TextBlock Text="{Binding ExecutionTimeFormatted}"/>
-            </StackPanel>
+            </TextBlock>
         </StackPanel>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>

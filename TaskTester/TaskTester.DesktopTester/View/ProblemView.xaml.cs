@@ -47,7 +47,7 @@ namespace TaskTester.DesktopTester.View
             var spinner = sender as ButtonSpinner;
             var textBox = spinner.Content as TextBox;
 
-            double delta = e.Direction == SpinDirection.Increase ? 0.3 : -0.3;
+            double delta = e.Direction == SpinDirection.Increase ? 0.5 : -0.5;
 
             try
             {

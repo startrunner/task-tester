@@ -8,8 +8,8 @@ namespace TaskTester.DesktopTester.ViewModel
     {
         
         public TestResultTypeViewModel Type { get; set; }
-        
-        public double ScoreMultiplier { get; set; }
+
+        public double Score { get; set; }
         
         public string CrashMessage { get; set; }
         
@@ -22,5 +22,6 @@ namespace TaskTester.DesktopTester.ViewModel
         public TimeSpan ExecutionTime { get; set; }
 
         public string ExecutionTimeFormatted => $"{ExecutionTime.TotalSeconds:0.000}s";
+        public double ScoreRounded => Math.Round(Score, 2);
     }
 }

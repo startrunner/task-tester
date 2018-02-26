@@ -72,7 +72,7 @@
                 <DataGridTemplateColumn Header="Score">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <TextBlock Margin="8, 0" Text="{Binding ScoreMultiplier}"/>
+                            <TextBlock Margin="8, 0" Text="{Binding ScoreRounded}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>

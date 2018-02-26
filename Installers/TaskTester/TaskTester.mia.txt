@@ -210,13 +210,11 @@ else
   [END REGION]
   [DEFINE REGION: Perform First Time or Maintenance Installation]
   Comment: Install/Re-Install product
-  Create Shortcut $SHORTCUTFOLDER$\Uninstall #TITLE# to $UNINSTALLLINK$
   [OFFLINE CONTENT]
-  Create Shortcut $SHORTCUTFOLDER$\TaskTester to $TARGETDIR$\TaskTester.exe
-  Create Shortcut $DESKTOPDIR$\TaskTester to $TARGETDIR$\TaskTester.exe
-  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\ClosedXML.xml to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.exe.config to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\ClosedXML.dll to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\ClosedXML.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\ClosedXML.xml to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Code7248.word_reader.dll to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\DocumentFormat.OpenXml.dll to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\GalaSoft.MvvmLight.dll to $TARGETDIR$
@@ -228,12 +226,16 @@ else
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Newtonsoft.Json.dll to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Newtonsoft.Json.xml to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\System.Windows.Interactivity.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.application to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.BatchEvaluation.dll to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.BatchEvaluation.pdb to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.CheckerCore.dll to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.DataExtraction.dll to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.DataExtraction.pdb to $TARGETDIR$
-  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.exe.config to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.exe to $TARGETDIR$
+  Create Shortcut $DESKTOPDIR$\TaskTester to $TARGETDIR$\TaskTester.exe
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.exe.manifest to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.pdb to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.Spreadsheets.dll to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.Spreadsheets.pdb to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.Tasking.dll to $TARGETDIR$
@@ -244,10 +246,40 @@ else
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Xceed.Wpf.AvalonDock.Themes.VS2010.dll to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Xceed.Wpf.DataGrid.dll to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Xceed.Wpf.Toolkit.dll to $TARGETDIR$
-  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.application to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.exe to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\ClosedXML.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\ClosedXML.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\ClosedXML.xml to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Code7248.word_reader.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\DocumentFormat.OpenXml.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\GalaSoft.MvvmLight.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\GalaSoft.MvvmLight.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\GalaSoft.MvvmLight.Platform.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\GalaSoft.MvvmLight.Platform.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\GalaSoft.MvvmLight.Platform.xml to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\GalaSoft.MvvmLight.xml to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Newtonsoft.Json.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Newtonsoft.Json.xml to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\System.Windows.Interactivity.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.application to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.BatchEvaluation.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.BatchEvaluation.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.CheckerCore.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.DataExtraction.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.DataExtraction.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.exe.config to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.exe.manifest to $TARGETDIR$
   Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.Spreadsheets.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.Spreadsheets.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.Tasking.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\TaskTester.Tasking.pdb to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Xceed.Wpf.AvalonDock.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Xceed.Wpf.AvalonDock.Themes.Aero.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Xceed.Wpf.AvalonDock.Themes.Metro.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Xceed.Wpf.AvalonDock.Themes.VS2010.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Xceed.Wpf.DataGrid.dll to $TARGETDIR$
+  Install Files C:\Repos\task-tester\TaskTester\TaskTester.DesktopTester\bin\Release\Xceed.Wpf.Toolkit.dll to $TARGETDIR$
   [DEFINE WEB MEDIA Default]
   Get Component Default Selection State into Variable SELECTED
   if Variable SELECTED Equals TRUE

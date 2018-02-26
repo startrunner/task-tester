@@ -122,7 +122,8 @@ namespace TaskTester.DesktopTester.ViewModel
             this.TestResults.Add(new TestResultViewModel {
                 Type = TranslateTestResultType(e.Type),
                 CrashMessage = e.RunResult?.CrashReport?.ExceptionMessage,
-                ScoreMultiplier = e.Score,
+                Score = e.Score,
+                //ScoreMultiplier = e.Score,
                 ExpectedOutput = e.ExpectedOutput,
                 SolutionOutput = e.RunResult.Output,
                 ExecutionTime = e.RunResult.ExecutionTime
