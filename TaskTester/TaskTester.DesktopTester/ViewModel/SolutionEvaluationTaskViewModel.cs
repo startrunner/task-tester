@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using GalaSoft.MvvmLight;
@@ -93,7 +94,14 @@ namespace TaskTester.DesktopTester.ViewModel
             await Task.Yield();
 
             IConsoleApplication application = new FileSystemConsoleApplication(mExecutable.Path);
-            List<SolutionTest> tests = mProblem.CreateTestModels();
+
+            if(!mProblem.TryCreateModel(out Problem problem))
+            {
+                MessageBox.Show("Could not run evaluate. Check selected files.");
+                return;
+            }
+
+            IReadOnlyList<SolutionTest> tests = problem.Tests;
 
             this.TestResults.Clear();
             this.TotalTestCount = tests.Count;

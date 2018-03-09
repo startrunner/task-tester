@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
 using TaskTester.BatchEvaluation;
+using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
@@ -23,9 +24,18 @@ namespace TaskTester.DesktopTester.ViewModel
             Remove = new RelayCommand(() => this.RemoveRequested?.Invoke(this, EventArgs.Empty));
         }
 
-        public BatchEvaluationProblem BuildModel()
+        public bool TryBuildModel(out BatchEvaluationProblem problem)
         {
-            return new BatchEvaluationProblem(Identifier, Problem.CreateModel());
+            if(Problem.TryCreateModel(out Problem prob))
+            {
+                problem = new BatchEvaluationProblem(Identifier, prob);
+                return true;
+            }
+            else
+            {
+                problem = null ;
+                return false;
+            }
         }
     }
 }

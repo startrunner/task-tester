@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:TaskTester.DesktopTester.View.Converters">
     <Application.Resources>
-        <ResourceDictionary x:Key="Merged">
+        <ResourceDictionary>
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
             <converters:IconConverter x:Key="StatusIconConverter"/>
             <ResourceDictionary.MergedDictionaries>

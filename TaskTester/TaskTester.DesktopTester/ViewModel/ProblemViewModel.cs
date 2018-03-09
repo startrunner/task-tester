@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
+using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
-    public sealed class ProblemViewModel
+    public sealed class ProblemViewModel : ViewModelBase
     {
-
         public PathSetViewModel TestInputFiles { get; } = new PathSetViewModel();
         [JsonProperty]
         public PathSetViewModel TestSolutionFiles { get; } = new PathSetViewModel();
@@ -33,6 +35,13 @@ namespace TaskTester.DesktopTester.ViewModel
         public ProblemViewModel()
         {
             this.TestInputFiles.PropertyChanged += HandleInputFilesPropertyChanged;
+            this.TestInputFiles.PropertyChanged += (x, e) => HandlePropertyChanged();
+            this.TestSolutionFiles.PropertyChanged += (x, e) => HandlePropertyChanged();
+        }
+
+        private void HandlePropertyChanged()
+        {
+            RaisePropertyChanged(nameof(CanCreateTests));
         }
 
         private void HandleInputFilesPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -51,11 +60,28 @@ namespace TaskTester.DesktopTester.ViewModel
         public bool CanCreateTests =>
             TestInputFiles.PathsArray != null &&
             TestInputFiles.PathsArray.Length == TestSolutionFiles.PathsArray?.Length;
-        public Problem CreateModel() => new Problem(CreateTestModels());
-
-        public List<SolutionTest> CreateTestModels()
+        public bool TryCreateModel(out Problem problem)
         {
-            if (!CanCreateTests) throw new InvalidOperationException();
+            if(TryCreateTestViewModels(out List<SolutionTest> tests))
+            {
+                problem = new Problem(tests);
+                return true;
+            }
+            else
+            {
+                problem = null;
+                return false;
+            }
+        }
+
+        public bool TryCreateTestViewModels(out List<SolutionTest> tests)
+        {
+            //TODO: Fix this shit because it's ugly Java-ish practice
+            if (!CanCreateTests)
+            {
+                tests = null;
+                return false;
+            }
 
             string[] inputs = TestInputFiles.PathsArray.ToArray();
             string[] expectedOutputs = TestSolutionFiles.PathsArray.ToArray();
@@ -80,7 +106,7 @@ namespace TaskTester.DesktopTester.ViewModel
             double autoScore = (100.00 - totalExplicitScore) / autoScoreCount;
 
 
-            var tests = new List<SolutionTest>();
+            tests = new List<SolutionTest>();
             for (int i = 0; i < inputs.Length; i++)
             {
                 tests.Add(new SolutionTest(
@@ -89,7 +115,7 @@ namespace TaskTester.DesktopTester.ViewModel
                     outputVerifier: Checker.CreateModel(),
                     processArguments: String.Empty,
                     timeLimit: TimeSpan.FromSeconds(TimeLimitSeconds),
-                    maxScore: 
+                    maxScore:
                         !double.IsNaN(TestMaxScores[i].Value) ?
                         TestMaxScores[i].Value :
                         autoScore,
@@ -97,7 +123,7 @@ namespace TaskTester.DesktopTester.ViewModel
                 ));
             }
 
-            return tests;
+            return true;
         }
     }
 }

@@ -103,14 +103,11 @@ namespace TaskTester.DesktopTester.ViewModel
 
                 ExportExecute(dialog.FileName);
             }
-
-
         }
 
         private void ExportExecute(string fileName)
         {
-            if (fileName == null)
-                throw new ArgumentNullException(nameof(fileName));
+            if (fileName == null) ExportExecute();
 
             Ranking<BatchTestCompetitorResultViewModel> ranking =
                 CompetitorResults.RankBy(x => x.TotalResultRounded);
@@ -138,7 +135,10 @@ namespace TaskTester.DesktopTester.ViewModel
         private string TranslateTestResultTypesToText(IEnumerable<BatchTestTestResultViewModel> results)
         {
             var builder = new StringBuilder();
-            foreach (var x in results) builder.Append(TranslateTestResultTypeToText(x));
+            foreach (BatchTestTestResultViewModel x in results)
+            {
+                builder.Append(TranslateTestResultTypeToText(x));
+            }
             return builder.ToString();
         }
 
@@ -172,6 +172,18 @@ namespace TaskTester.DesktopTester.ViewModel
         private void StartExecute()
         {
             if (!StartCanExecute) return;
+
+            var problems = new List<BatchEvaluationProblem>();
+            foreach(BatchTestProblemViewModel problem in mProblems)
+            {
+                if(!problem.TryBuildModel(out BatchEvaluationProblem problemModel))
+                {
+                    MessageBox.Show("Could not evaluate. Check selected files.");
+                    return;
+                }
+                problems.Add(problemModel);
+            }
+
             Starting?.Invoke(this, EventArgs.Empty);
 
             IsRunning = true;
@@ -184,7 +196,7 @@ namespace TaskTester.DesktopTester.ViewModel
                 cancellationToken: mCancellationTokenSource.Token,
                 directoryPathCriteria: mDirectoryPathCriteria.Value,
                 commandLineTemplates: mCommandLines.Select(x => x.Value).ToArray(),
-                problems: mProblems.Select(x => x.BuildModel()).ToArray()
+                problems: problems
             );
 
             mEvaluationTask.TestEvaluated += HandleTestEvaluated;

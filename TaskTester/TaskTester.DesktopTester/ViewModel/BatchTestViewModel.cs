@@ -10,7 +10,7 @@ namespace TaskTester.DesktopTester.ViewModel
 {
     class BatchTestViewModel : ViewModelBase
     {
-        
+        public event EventHandler ProblemPropertyChanged;
         public ObservableCollection<BatchTestProblemViewModel> Problems { get; }
             = new ObservableCollection<BatchTestProblemViewModel>();
 
@@ -61,6 +61,7 @@ namespace TaskTester.DesktopTester.ViewModel
 
         public BatchTestViewModel(IMessenger messenger) : base(messenger)
         {
+
         }
 
         private void AddCommandLines(params string[] lines)
@@ -92,14 +93,20 @@ namespace TaskTester.DesktopTester.ViewModel
             var problem = new BatchTestProblemViewModel {
                 Identifier = $"problem{Problems.Count}"
             };
+
+            problem.Problem.PropertyChanged += Problem_PropertyChanged;
             problem.RemoveRequested += Problem_RemoveRequested;
             Problems.Add(problem);
         }
 
+        private void Problem_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) => ProblemPropertyChanged?.Invoke(this, e);
+
         private void Problem_RemoveRequested(object sender, EventArgs e)
         {
             if (Problems.Count < 2) return;
-            Problems.Remove((BatchTestProblemViewModel)sender);
+            var problem = (BatchTestProblemViewModel)sender;
+            problem.Problem.PropertyChanged -= Problem_PropertyChanged;
+            Problems.Remove(problem);
         }
     }
 }
