@@ -8,6 +8,9 @@ namespace TaskTester.CheckerCore.SolutionEvalutation
 {
     public interface IConsoleApplication
     {
+        [Obsolete]
         string ExecutablePath { get; }
+
+        IConsoleProcess StartProcess(string processArguments);
     }
 }

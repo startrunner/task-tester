@@ -15,11 +15,8 @@ namespace TaskTester.CheckerCore.OutputVerification
             .Split(null as char[], StringSplitOptions.RemoveEmptyEntries)
             .Where(x => !string.IsNullOrWhiteSpace(x));
 
-        public OutputVerificationResult Verify(OutputVerificationInfo info) => VerifyAsync(info).GetAwaiter().GetResult();
-
-        public async Task<OutputVerificationResult> VerifyAsync(OutputVerificationInfo info)
+        public OutputVerificationResult Verify(OutputVerificationInfo info)
         {
-            await Task.Yield();
             IEnumerable<string> output = Normalize(info.StandardOutput.StringValue);
             IEnumerable<string> solution = Normalize(info.ExpectedOutput.StringValue);
 

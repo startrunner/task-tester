@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3E976FED-A183-493B-AD9F-D3EB39523FC9}</ProjectGuid>
+    <ProjectGuid>{7C7BF3BA-DC04-4D8C-A23F-2ECBCADDCA1E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TaskTester.Tasking</RootNamespace>
-    <AssemblyName>TaskTester.Tasking</AssemblyName>
+    <RootNamespace>TaskTester.CheckerCore.Win32</RootNamespace>
+    <AssemblyName>TaskTester.CheckerCore.Win32</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -39,11 +39,21 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BackgroundTask.cs" />
+    <Compile Include="CrashReporting\CrashIniParser.cs" />
+    <Compile Include="CrashReporting\EventLogCrashReport.cs" />
+    <Compile Include="CrashReporting\EventLogCrashReportFinder.cs" />
+    <Compile Include="CrashReporting\Exceptions.cs" />
+    <Compile Include="FileSystemConsoleApplication.cs" />
+    <Compile Include="FileSystemConsoleProcess.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TaskTester.CheckerCore\TaskTester.CheckerCore.csproj">
+      <Project>{b547bc51-b1a2-4011-a231-9f1e49df6fd9}</Project>
+      <Name>TaskTester.CheckerCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

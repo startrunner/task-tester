@@ -17,9 +17,7 @@ namespace TaskTester.DesktopTester.ViewModel
         
         public PathSetViewModel ExecutablePath { get; } = new PathSetViewModel();
 
-        
         public ObservableCollection<CheckerBindingViewModel> Bindings { get; } = new ObservableCollection<CheckerBindingViewModel>();
-
         
         public ObservableCollection<EnumViewModel<ArgumentTypeViewModel>> Arguments { get; } = new ObservableCollection<EnumViewModel<ArgumentTypeViewModel>>();
 

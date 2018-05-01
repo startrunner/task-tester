@@ -277,6 +277,10 @@
       <Project>{41F08A9A-A679-4245-AC6C-7EDA39980B1B}</Project>
       <Name>TaskTester.BatchEvaluation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TaskTester.CheckerCore.Win32\TaskTester.CheckerCore.Win32.csproj">
+      <Project>{7c7bf3ba-dc04-4d8c-a23f-2ecbcaddca1e}</Project>
+      <Name>TaskTester.CheckerCore.Win32</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TaskTester.CheckerCore\TaskTester.CheckerCore.csproj">
       <Project>{b547bc51-b1a2-4011-a231-9f1e49df6fd9}</Project>
       <Name>TaskTester.CheckerCore</Name>

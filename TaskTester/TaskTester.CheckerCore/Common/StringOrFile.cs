@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 
 namespace TaskTester.CheckerCore.Common
@@ -9,7 +8,6 @@ namespace TaskTester.CheckerCore.Common
     {
         public static readonly StringOrFile Empty = StringOrFile.FromText(string.Empty);
 
-        //static readonly object StaticLock = new object();
         static ConcurrentDictionary<string, StringOrFile> Repository =
             new ConcurrentDictionary<string, StringOrFile>();
 
@@ -26,16 +24,6 @@ namespace TaskTester.CheckerCore.Common
         public static StringOrFile FromText(string text) => new StringOrFile(text, false);
         public static StringOrFile FromFile(string path)
         {
-            /*lock (StaticLock)
-            {
-                if (Repository.ContainsKey(path))
-                {
-                    return Repository[path];
-                }
-                var rt = new StringOrFile(path, true);
-                Repository[path] = rt;
-                return rt;
-            }*/
             return Repository.GetOrAdd(path, (x) => new StringOrFile(path, true));
         }
         public override string ToString() => GetText();
@@ -100,12 +88,6 @@ namespace TaskTester.CheckerCore.Common
                             return this;
                         }
                     );
-                    /*
-                    lock (StaticLock)
-                    {
-                        Repository[filePath] = this;
-                        File.WriteAllText(filePath, text);
-                    }*/
                 }
             }
         }

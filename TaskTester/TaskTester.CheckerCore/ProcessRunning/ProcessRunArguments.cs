@@ -4,7 +4,7 @@ using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.CheckerCore.ProcessRunning
 {
-    internal class ProcessRunArguments
+    public class ProcessRunArguments
     {
         public IConsoleApplication Application { get; }
         public StringOrFile StandardInput { get; }

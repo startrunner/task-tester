@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using TaskTester.CheckerCore.ProcessRunning;
 
 namespace TaskTester.CheckerCore.CrashReporting
 {
-    public class CrashReport
+    public class CrashReport: ICrashReport
     {
         public string ExecutablePath { get; }
         public string ExceptionCode { get; }
-        public string ExceptionMessage { get; }
+        public string ErrorMessage { get; }
         public long ProcessID { get; }
 
         public CrashReport(string executablePath, string exceptionCode, string exceptionMessage, long processID)
         {
             ExecutablePath = executablePath;
             ExceptionCode = exceptionCode;
-            ExceptionMessage = exceptionMessage;
+            ErrorMessage = exceptionMessage;
             ProcessID = processID;
         }
 

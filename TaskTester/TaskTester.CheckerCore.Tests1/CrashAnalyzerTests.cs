@@ -10,8 +10,7 @@ namespace TaskTester.CheckerCore.Tests
         [Test]
         public void TestCrashReportFinder()
         {
-            CrashReportFinder finder = new CrashReportFinder(7748, null, 1);
-            IReadOnlyList<CrashReport> finds = finder.Find();
+            IReadOnlyList<CrashReport> finds = CrashReportFinder.Instance.FindAll(7748, null, 1);
             ;
         }
     }

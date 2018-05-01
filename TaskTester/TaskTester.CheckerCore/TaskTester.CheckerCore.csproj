@@ -36,9 +36,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\StringOrFile.cs" />
-    <Compile Include="OutputVerification\ResultBinders\CrashReporting\Exceptions.cs" />
-    <Compile Include="OutputVerification\ResultBinders\CrashReporting\CrashReport.cs" />
-    <Compile Include="OutputVerification\ResultBinders\CrashReporting\CrashReportFinder.cs" />
     <Compile Include="OutputVerification\DefaultOutputVerifier.cs" />
     <Compile Include="OutputVerification\IExecutableOutputVerifier.cs" />
     <Compile Include="OutputVerification\IVerifierResultBinder.cs" />
@@ -49,16 +46,14 @@
     <Compile Include="OutputVerification\OutputVerificationResult.cs" />
     <Compile Include="OutputVerification\OutputVerificationResultType.cs" />
     <Compile Include="OutputVerification\OutputVerificationInfo.cs" />
+    <Compile Include="ProcessRunning\ICrashReport.cs" />
     <Compile Include="ProcessRunning\ProcessRunArguments.cs" />
     <Compile Include="ProcessRunning\ProcessExitTypeEnum.cs" />
-    <Compile Include="OutputVerification\ResultBinders\CrashReporting\CrashIniParser.cs" />
-    <Compile Include="ProcessRunning\ProcessParent.cs" />
-    <Compile Include="ProcessRunning\ApplicationRunnerContext.cs" />
     <Compile Include="ProcessRunning\ConsoleApplicationRunner.cs" />
     <Compile Include="ProcessRunning\ProcessRunResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SolutionEvalutation\FileSystemConsoleApplication.cs" />
     <Compile Include="SolutionEvalutation\IConsoleApplication.cs" />
+    <Compile Include="SolutionEvalutation\IConsoleProcess.cs" />
     <Compile Include="SolutionEvalutation\Problem.cs" />
     <Compile Include="SolutionEvalutation\SolutionEvaluationTask.cs" />
     <Compile Include="SolutionEvalutation\SolutionEvaluationTestResult.cs" />

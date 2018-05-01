@@ -61,7 +61,7 @@ namespace TaskTester.CheckerCore.SolutionEvalutation
             SolutionTest test = mTests[testIndex];
 
             ProcessRunResult runResult = ConsoleApplicationRunner.Instance.Run(
-                consoleApplication: mApplication,
+                application: mApplication,
                 stdIn: test.Input,
                 maxRuntime: test.TimeLimit,
                 processArguments: test.ProcessArguments,

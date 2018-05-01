@@ -1,6 +1,4 @@
-﻿using TaskTester.CheckerCore.CrashReporting;
-
-namespace TaskTester.CheckerCore.OutputVerification
+﻿namespace TaskTester.CheckerCore.OutputVerification
 {
 
     public class OutputVerificationResult

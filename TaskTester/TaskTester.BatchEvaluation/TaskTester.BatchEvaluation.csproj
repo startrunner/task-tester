@@ -58,6 +58,10 @@
     <Compile Include="Ranking.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TaskTester.CheckerCore.Win32\TaskTester.CheckerCore.Win32.csproj">
+      <Project>{7c7bf3ba-dc04-4d8c-a23f-2ecbcaddca1e}</Project>
+      <Name>TaskTester.CheckerCore.Win32</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TaskTester.CheckerCore\TaskTester.CheckerCore.csproj">
       <Project>{B547BC51-B1A2-4011-A231-9F1E49DF6FD9}</Project>
       <Name>TaskTester.CheckerCore</Name>

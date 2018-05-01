@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TaskTester.CheckerCore.ProcessRunning;
 
 namespace TaskTester.CheckerCore.SolutionEvalutation
 {
@@ -16,5 +18,8 @@ namespace TaskTester.CheckerCore.SolutionEvalutation
                 throw new ArgumentNullException(nameof(executablePath));
             ExecutablePath = executablePath;
         }
+
+        public IConsoleProcess StartProcess(string processArguments) =>
+            FileSystemConsoleProcess.Start(ExecutablePath, processArguments);
     }
 }

@@ -23,7 +23,7 @@ namespace TaskTester.DesktopTester.ViewModel
             Type = TranslateType(e.TestResult.Type);
             Score = e.TestResult.Score;
             TestGroup = e.TestResult.TestGroup;
-            CrashMessage = e.TestResult.RunResult?.CrashReport?.ExceptionMessage ?? "";
+            CrashMessage = e.TestResult.RunResult?.CrashReport?.ErrorMessage ?? "";
         }
 
         private static BatchTestTestResultTypeViewModel TranslateType(SolutionEvaluationTestResultType type)

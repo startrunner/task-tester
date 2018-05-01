@@ -51,7 +51,7 @@ namespace TaskTester.CheckerCore.OutputVerification
             }
         }
 
-        public async Task<OutputVerificationResult> VerifyAsync(OutputVerificationInfo info)
+        public OutputVerificationResult Verify(OutputVerificationInfo info)
         {
             StringBuilder argBuilder = new StringBuilder();
             foreach(VerifierArgumentType arg in Arguments)
@@ -59,7 +59,7 @@ namespace TaskTester.CheckerCore.OutputVerification
                 argBuilder.Append($" \"{GetVerifierArgument(info, arg)}\"");
             }
 
-            ProcessRunResult checkerRun = await ConsoleApplicationRunner.Instance.RunAsync(
+            ProcessRunResult checkerRun = ConsoleApplicationRunner.Instance.Run(
                 ConsoleApplication,
                 TimeSpan.FromSeconds(60),
                 GetVerifierArgument(info, Stdin),
@@ -91,7 +91,5 @@ namespace TaskTester.CheckerCore.OutputVerification
 
             return result;
         }
-
-        public OutputVerificationResult Verify(OutputVerificationInfo info) => VerifyAsync(info).GetAwaiter().GetResult();
     }
 }
