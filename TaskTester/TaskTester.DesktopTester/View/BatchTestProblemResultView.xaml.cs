@@ -32,6 +32,7 @@ namespace TaskTester.DesktopTester.View
             this.DataContextChanged += HandleDataContextChanged;
         }
 
+
         private void HandleDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             BatchTestProblemResultViewModel problemResult = ViewModel?[ProblemIdentifier];

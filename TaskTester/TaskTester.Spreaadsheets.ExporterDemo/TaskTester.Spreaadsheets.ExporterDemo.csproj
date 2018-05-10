@@ -45,14 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TaskTester.Imaging\TaskTester.Imaging.csproj">
-      <Project>{CA0E1133-3D2B-444B-9092-1B3E05C06115}</Project>
-      <Name>TaskTester.Imaging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\TaskTester.Spreadsheets\TaskTester.Spreadsheets.csproj">
       <Project>{C2CD83E0-F9BB-4A83-B769-24D8D10BEDDC}</Project>
       <Name>TaskTester.Spreadsheets</Name>

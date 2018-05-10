@@ -60,5 +60,10 @@
       <Name>TaskTester.Tasking</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Code7248.word_reader.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

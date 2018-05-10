@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheckerCoreTests.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="CrashAnalyzerTests.cs" />
     <Compile Include="FileFinder.cs" />
     <Compile Include="OutputVerifierTests.cs" />

@@ -39,7 +39,7 @@
                 Margin="0,4"/>
 
             <TextBlock Text="Test Max Scores" Margin="0,4,0,0"/>
-            <ListView Margin="0,0,0,4" ItemsSource="{Binding TestMaxScores}" MinHeight="20" VerticalContentAlignment="Stretch">
+            <ListView Margin="0,0,0,4" ItemsSource="{Binding Tests}" MinHeight="20" VerticalContentAlignment="Stretch">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"/>
@@ -47,15 +47,21 @@
                 </ListView.ItemsPanel>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <toolkit:ButtonSpinner VerticalAlignment="Stretch" Width="50" Name="XSpinner" Spin="XSpinner_Spin">
-                            <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                        </toolkit:ButtonSpinner>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>
+                                <TextBlock Text="{Binding TestName}"/>
+                                <TextBlock Text=": "/>
+                            </TextBlock>
+                            <toolkit:ButtonSpinner VerticalAlignment="Stretch" Width="50" Name="XSpinner" Spin="XSpinner_Spin">
+                                <TextBox Text="{Binding MaxScore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            </toolkit:ButtonSpinner>
+                        </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
 
             <TextBlock Text="Test Group IDs" Margin="0,4,0,0"/>
-            <ListView Margin="0,0,0,4" ItemsSource="{Binding TestGroups}" MinHeight="20" VerticalContentAlignment="Stretch">
+            <ListView Margin="0,0,0,4" ItemsSource="{Binding Tests}" MinHeight="20" VerticalContentAlignment="Stretch">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"/>
@@ -63,7 +69,13 @@
                 </ListView.ItemsPanel>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBox Width="50" Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>
+                                <TextBlock Text="{Binding TestName}"/>
+                                <TextBlock Text=": "/>
+                            </TextBlock>
+                            <TextBox Width="50" Text="{Binding TestGroup, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

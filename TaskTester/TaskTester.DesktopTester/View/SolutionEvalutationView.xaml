@@ -15,24 +15,25 @@
             <converters:IconConverter x:Key="IconConverter"/>
         </ResourceDictionary>
     </Window.Resources>
-    <Grid Margin="8">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <ContentControl>
+        <Grid Margin="8">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <StackPanel>
-            <local:BrowseView Label="Win-32 Executable" FileFilter="Executable Files| *.exe" SelectedPaths="{Binding Executable.PathsArray, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
-            <local:ProblemView DataContext="{Binding Problem}"/>
-            <Grid Width="NaN" Height="NaN">
-                <Button Name="XButtonTest" Content="Test my solution!" Command="{Binding EvaluationTask.EvaluateSolution, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, IsAsync=True}"/>
-                <Button Name="XButtonCancel" Content="Cancel Evaluation!" Command="{Binding EvaluationTask.CancelEvaluation, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, IsAsync=True}" Visibility="{Binding EvaluationTask.CancelEvaluationCanExecute, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibility}, IsAsync=True}"/>
-            </Grid>
-            <ProgressBar Minimum="0" Maximum="{Binding EvaluationTask.TotalTestCount}"  Value="{Binding EvaluationTask.TestResults.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-        </StackPanel>
+            <StackPanel MinWidth="200">
+                <local:BrowseView Label="Win-32 Executable" FileFilter="Executable Files| *.exe" SelectedPaths="{Binding Executable.PathsArray, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+                <local:ProblemView DataContext="{Binding Problem}"/>
+                <Grid Width="NaN" Height="NaN">
+                    <Button Name="XButtonTest" Content="Test my solution!" Command="{Binding EvaluationTask.EvaluateSolution, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, IsAsync=True}"/>
+                    <Button Name="XButtonCancel" Content="Cancel Evaluation!" Command="{Binding EvaluationTask.CancelEvaluation, UpdateSourceTrigger=PropertyChanged, Mode=OneWay, IsAsync=True}" Visibility="{Binding EvaluationTask.CancelEvaluationCanExecute, Mode=OneWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibility}, IsAsync=True}"/>
+                </Grid>
+                <ProgressBar Minimum="0" Maximum="{Binding EvaluationTask.TotalTestCount}"  Value="{Binding EvaluationTask.TestResults.Count, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
 
-        <DataGrid ItemsSource="{Binding  EvaluationTask.TestResults, IsAsync=True}" Grid.Row="1"
+            <DataGrid ItemsSource="{Binding  EvaluationTask.TestResults, IsAsync=True}" Grid.Row="1"
             GridLinesVisibility="None"
             AutoGenerateColumns="False"
             IsReadOnly="True"
@@ -43,48 +44,49 @@
             Background="Transparent"
             CanUserSortColumns="True">
 
-            <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Type">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Grid Margin="4" Width="16" Height="16" Background="{Binding Type, Converter={StaticResource IconConverter}, IsAsync=True, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Message">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Margin="8,0" Text="{Binding  Type}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Details">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock>
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn Header="Type">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid Margin="4" Width="16" Height="16" Background="{Binding Type, Converter={StaticResource IconConverter}, IsAsync=True, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Message">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="8,0" Text="{Binding  Type}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Details">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock>
                                 <Hyperlink Name="HyperlinkViewDetail" Click="HyperlinkViewDetail_Click">
                                  View Detail
                                 </Hyperlink>
-                            </TextBlock>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Score">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Margin="8, 0" Text="{Binding ScoreRounded}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn Header="Crash Message">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding CrashMessage}" Margin="8,0"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-        <TextBlock VerticalAlignment="Bottom" Grid.Row="2" Margin="0,4"><Hyperlink Name="XLinkOpenBatchEvaluator" Click="XLinkOpenBatchEvaluator_Click">Open Batch Evaluator</Hyperlink></TextBlock>
-    </Grid>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Score">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="8, 0" Text="{Binding ScoreRounded}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Crash Message">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding CrashMessage}" Margin="8,0"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <TextBlock VerticalAlignment="Bottom" Grid.Row="2" Margin="0,4"><Hyperlink Name="XLinkOpenBatchEvaluator" Click="XLinkOpenBatchEvaluator_Click">Open Batch Evaluator</Hyperlink></TextBlock>
+        </Grid>
+    </ContentControl>
 </Window>

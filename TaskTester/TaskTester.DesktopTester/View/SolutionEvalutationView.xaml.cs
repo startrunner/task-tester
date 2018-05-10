@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using TaskTester.DesktopTester.ViewModel;
@@ -13,6 +14,27 @@ namespace TaskTester.DesktopTester.View
         public SolutionEvaluationView()
         {
             InitializeComponent();
+            this.SizeChanged += HandleSizeChanged;
+        }
+
+        private void HandleSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            object content = (this.Content as ContentControl).Content;
+
+            if (e.NewSize.Width < 400 || e.NewSize.Height < 400)
+            {
+                Content = new ScrollViewer() {
+                    Content = content,
+                    HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                    VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+                };
+            }
+            else
+            {
+                Content = new ContentControl() {
+                    Content = content,
+                };
+            }
         }
 
 

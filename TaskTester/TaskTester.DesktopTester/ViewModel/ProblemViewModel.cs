@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -24,10 +25,7 @@ namespace TaskTester.DesktopTester.ViewModel
 
         public bool SortFilenamesAlphabetically { get; set; } = true;
 
-
-        public ObservableCollection<PrimitiveViewModel<double>> TestMaxScores { get; } = new ObservableCollection<PrimitiveViewModel<double>>();
-
-        public ObservableCollection<PrimitiveViewModel<string>> TestGroups { get; } = new ObservableCollection<PrimitiveViewModel<string>>();
+        public ObservableCollection<TestViewModel> Tests { get; } = new ObservableCollection<TestViewModel>();
 
         [JsonIgnore]
         public ICommand SelectChecker { get; }
@@ -47,14 +45,16 @@ namespace TaskTester.DesktopTester.ViewModel
         private void HandleInputFilesPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             int testCount = TestInputFiles.PathsArray?.Length ?? 0;
-            while (TestMaxScores.Count > testCount) TestMaxScores.RemoveAt(TestMaxScores.Count - 1);
-            while (TestMaxScores.Count < testCount)
+
+            while (Tests.Count > testCount) Tests.RemoveAt(Tests.Count - 1);
+            while(Tests.Count < testCount)
             {
-                if (TestMaxScores.Count == 0) TestMaxScores.Add(0);
-                else TestMaxScores.Add(double.NaN);
+                string testName = Path.GetFileNameWithoutExtension(TestInputFiles.PathsArray[Tests.Count]);
+                Tests.Add(new TestViewModel(testName) {
+                    MaxScore = Tests.Count == 0 ? 0 : double.NaN,
+                    TestGroup = string.Empty
+                });
             }
-            while (TestGroups.Count > testCount) TestGroups.RemoveAt(TestGroups.Count - 1);
-            while (TestGroups.Count < testCount) TestGroups.Add(string.Empty);
         }
 
         public bool CanCreateTests =>
@@ -94,13 +94,13 @@ namespace TaskTester.DesktopTester.ViewModel
             ;
 
             double totalExplicitScore =
-                TestMaxScores
-                .Where(x => !double.IsNaN(x.Value))
-                .Sum(x => x.Value);
+                Tests
+                .Where(x => !double.IsNaN(x.MaxScore))
+                .Sum(x => x.MaxScore);
 
             int autoScoreCount =
-                TestMaxScores
-                .Where(x => double.IsNaN(x.Value))
+                Tests
+                .Where(x => double.IsNaN(x.MaxScore))
                 .Count();
 
             double autoScore = (100.00 - totalExplicitScore) / autoScoreCount;
@@ -116,10 +116,10 @@ namespace TaskTester.DesktopTester.ViewModel
                     processArguments: String.Empty,
                     timeLimit: TimeSpan.FromSeconds(TimeLimitSeconds),
                     maxScore:
-                        !double.IsNaN(TestMaxScores[i].Value) ?
-                        TestMaxScores[i].Value :
+                        !double.IsNaN(Tests[i].MaxScore) ?
+                        Tests[i].MaxScore :
                         autoScore,
-                    testGroup: TestGroups[i].Value ?? string.Empty
+                    testGroup: Tests[i].TestGroup ?? string.Empty
                 ));
             }
 

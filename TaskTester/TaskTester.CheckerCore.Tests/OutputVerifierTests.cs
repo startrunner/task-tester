@@ -14,7 +14,7 @@ namespace TaskTester.CheckerCore.Tests
         private static string ExtractExe(byte[] bytes)
         {
             string rt = Path.GetTempFileName() + ".exe";
-            File.WriteAllBytes(rt, bytes);
+            File.WriteAllBytes(rt, bytes);  
             return rt;
         }
 
