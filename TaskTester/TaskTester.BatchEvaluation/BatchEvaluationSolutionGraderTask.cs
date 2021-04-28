@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 using System.Windows.Threading;
-using TaskTester.CheckerCore;
 using TaskTester.CheckerCore.SolutionEvalutation;
-using TaskTester.Tasking;
 
 namespace TaskTester.BatchEvaluation
 {
-    public sealed class BatchEvaluationSolutionGraderTask : BackgroundTask
+    public sealed class BatchEvaluationSolutionGraderTask : CheckerCore.Tasking.TaskTesterJob
     {
         public class SolutionGradedEventArgs
         {
@@ -28,7 +23,7 @@ namespace TaskTester.BatchEvaluation
         public event EventHandler<SolutionGradedEventArgs> SolutionGraded;
 
         public BatchEvaluationSolutionGraderTask(
-            Dispatcher eventDispatcher,
+            Action<Delegate, object[]> eventDispatcher,
             CancellationToken cancellationToken,
             BatchEvaluationCompetitor competitor,
             BatchEvaluationProblem problem,
@@ -81,7 +76,8 @@ namespace TaskTester.BatchEvaluation
                 if (totalTestCount[group] == nonZeroTestCount[group]) finalSCore += scoreSum[group];
             }
 
-            var eventArgs = new SolutionGradedEventArgs {
+            var eventArgs = new SolutionGradedEventArgs
+            {
                 Competitor = mCompetitor,
                 Problem = mProblem,
                 Score = finalSCore

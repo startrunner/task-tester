@@ -4,7 +4,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.ProcessRunning;
-using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.CheckerCore.OutputVerification
 {

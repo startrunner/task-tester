@@ -18,7 +18,7 @@ namespace TaskTester.CheckerCore.Tests
         public void TestSlow()
         {
             ProcessRunResult result = ConsoleApplicationRunner.Instance.Run(
-                new FileSystemConsoleApplication(DummyPath),
+                new FileSystemConsoleApplication(DummyPath, CheckerCore.CrashReporting.CrashReportFinder.Instance),
                 TimeSpan.FromSeconds(1),
                 StringOrFile.FromText("wait 200 sum 1 5   wait 10000  exit 0")
             );
@@ -30,7 +30,7 @@ namespace TaskTester.CheckerCore.Tests
         public void TestAlmostSlow()
         {
             ProcessRunResult result = ConsoleApplicationRunner.Instance.Run(
-                new FileSystemConsoleApplication(DummyPath),
+                new FileSystemConsoleApplication(DummyPath, CheckerCore.CrashReporting.CrashReportFinder.Instance),
                 TimeSpan.FromSeconds(0.5),
                 StringOrFile.FromText("wait 200 sum 1 5   wait 200  exit 0")
             );
@@ -43,7 +43,7 @@ namespace TaskTester.CheckerCore.Tests
         public void TestExit()
         {
             ProcessRunResult result = ConsoleApplicationRunner.Instance.Run(
-                new FileSystemConsoleApplication(DummyPath),
+                new FileSystemConsoleApplication(DummyPath, CheckerCore.CrashReporting.CrashReportFinder.Instance),
                 TimeSpan.FromHours(1),
                 StringOrFile.FromText("exit 3")
             );
@@ -56,7 +56,7 @@ namespace TaskTester.CheckerCore.Tests
         public void TestCrash()
         {
             ProcessRunResult result = ConsoleApplicationRunner.Instance.Run(
-                new FileSystemConsoleApplication(DummyPath),
+                new FileSystemConsoleApplication(DummyPath, CheckerCore.CrashReporting.CrashReportFinder.Instance),
                 TimeSpan.FromSeconds(1),
                 StringOrFile.FromText("sum 1 2 crash")
             );
@@ -68,7 +68,7 @@ namespace TaskTester.CheckerCore.Tests
         public void TestOutput()
         {
             ProcessRunResult result = ConsoleApplicationRunner.Instance.Run(
-                new FileSystemConsoleApplication(DummyPath),
+                new FileSystemConsoleApplication(DummyPath, CheckerCore.CrashReporting.CrashReportFinder.Instance),
                 TimeSpan.FromSeconds(0.1),
                 StringOrFile.FromText("sum 1 2 sum 3 5 end")
             );
@@ -82,7 +82,7 @@ namespace TaskTester.CheckerCore.Tests
         public void TestContinuity()
         {
             ProcessRunResult result = ConsoleApplicationRunner.Instance.Run(
-                new FileSystemConsoleApplication(DummyPath),
+                new FileSystemConsoleApplication(DummyPath, CheckerCore.CrashReporting.CrashReportFinder.Instance),
                 TimeSpan.FromHours(1),
                 StringOrFile.FromText("continuity 100000     end")
             );

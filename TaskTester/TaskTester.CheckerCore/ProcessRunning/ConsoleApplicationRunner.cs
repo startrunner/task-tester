@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using TaskTester.CheckerCore.Common;
-using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.CheckerCore.ProcessRunning
 {
@@ -35,7 +34,7 @@ namespace TaskTester.CheckerCore.ProcessRunning
             IConsoleProcess process = args.Application.StartProcess(args.ProcessArguments);
 
             bool timelyExit = TryWaitForTimelyExitAsync(process, args).GetAwaiter().GetResult();
-            bool crashed = process.HasCrashed(out ICrashReport report);
+            bool crashed = process.TryFindCrashReport(out ICrashReport report);
 
             string stdOut = process.GetStandardOutput();
             string stdErr = process.GetStandardError();

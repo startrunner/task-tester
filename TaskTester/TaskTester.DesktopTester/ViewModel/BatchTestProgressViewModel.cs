@@ -87,7 +87,8 @@ namespace TaskTester.DesktopTester.ViewModel
 
         private void ExportExecute()
         {
-            SaveFileDialog dialog = new SaveFileDialog() {
+            SaveFileDialog dialog = new SaveFileDialog()
+            {
                 Filter = "Excel | *.xlsx",
                 CheckPathExists = true
             };
@@ -174,9 +175,9 @@ namespace TaskTester.DesktopTester.ViewModel
             if (!StartCanExecute) return;
 
             var problems = new List<BatchEvaluationProblem>();
-            foreach(BatchTestProblemViewModel problem in mProblems)
+            foreach (BatchTestProblemViewModel problem in mProblems)
             {
-                if(!problem.TryBuildModel(out BatchEvaluationProblem problemModel))
+                if (!problem.TryBuildModel(out BatchEvaluationProblem problemModel))
                 {
                     MessageBox.Show("Could not evaluate. Check selected files.");
                     return;
@@ -191,7 +192,7 @@ namespace TaskTester.DesktopTester.ViewModel
 
             CompetitorResults.Clear();
             mEvaluationTask = new BatchEvaluationTask(
-                Dispatcher.CurrentDispatcher,
+                (a, e) => Dispatcher.CurrentDispatcher.Invoke(a, e),
                 rootDirectory: mRootDirectory.Path,
                 cancellationToken: mCancellationTokenSource.Token,
                 directoryPathCriteria: mDirectoryPathCriteria.Value,

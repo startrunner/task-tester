@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Windows.Threading;
 using TaskTester.CheckerCore.OutputVerification;
 using TaskTester.CheckerCore.ProcessRunning;
-using TaskTester.Tasking;
+using TaskTester.CheckerCore.Tasking;
 
 namespace TaskTester.CheckerCore.SolutionEvalutation
 {
-    public class SolutionEvaluationTask : BackgroundTask
+    public class SolutionEvaluationTask : TaskTesterJob
     {
         readonly IConsoleApplication mApplication;
         readonly IReadOnlyList<SolutionTest> mTests;
@@ -20,7 +19,7 @@ namespace TaskTester.CheckerCore.SolutionEvalutation
         public event EventHandler<SolutionEvaluationTestResult> TestEvaluated;
 
         public SolutionEvaluationTask(
-            Dispatcher eventDispatcher,
+            Action<Delegate, object[]> eventDispatcher,
             CancellationToken cancellationToken,
             IConsoleApplication mApplication,
             IReadOnlyList<SolutionTest> mTests

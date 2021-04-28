@@ -2,14 +2,11 @@
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using TaskTester.CheckerCore;
-using TaskTester.Tasking;
+using TaskTester.CheckerCore.Tasking;
 
 namespace TaskTester.DataExtraction
 {
-    public sealed class CompetitionDataExtractionTask : BackgroundTask
+    public sealed class CompetitionDataExtractionTask : TaskTesterJob
     {
         readonly string mRootDirectory;
         readonly string mDirectoryPathCriteria;
@@ -20,7 +17,7 @@ namespace TaskTester.DataExtraction
         public event EventHandler<CompetitorInfoExtractedEventArgs> CompetitorInfoExtracted;
 
         public CompetitionDataExtractionTask(
-            Dispatcher eventDispatcher,
+            Action<Delegate, object[]> eventDispatcher,
             CancellationToken cancellationToken,
             string rootDirectory, 
             string directoryPathCriteria
@@ -29,7 +26,6 @@ namespace TaskTester.DataExtraction
         {
             mRootDirectory = rootDirectory;
             mDirectoryPathCriteria = directoryPathCriteria;
-            mEventDispatcher = eventDispatcher;
         }
 
         public override void Start() => Start(Run);

@@ -1,7 +1,6 @@
 ﻿using System;
-using TaskTester.CheckerCore.ProcessRunning;
 
-namespace TaskTester.CheckerCore.SolutionEvalutation
+namespace TaskTester.CheckerCore.ProcessRunning
 {
     public interface IConsoleProcess
     {
@@ -14,6 +13,6 @@ namespace TaskTester.CheckerCore.SolutionEvalutation
         bool HasExited { get; }
         void CloseStandardInput();
         void WaitForExit(int timeLimit = int.MaxValue);
-        bool HasCrashed(out ICrashReport report);
+        bool TryFindCrashReport(out ICrashReport report);
     }
 }

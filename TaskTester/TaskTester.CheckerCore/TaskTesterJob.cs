@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 
-namespace TaskTester.Tasking
+namespace TaskTester.CheckerCore.Tasking
 {
-    public abstract class BackgroundTask
+    public abstract class TaskTesterJob
     {
         protected object mLock = new object();
-        protected Dispatcher mEventDispatcher;
+        //protected Dispatcher mEventDispatcher;
+        private Action<Delegate, object[]> mEventInvokeAction;
         protected CancellationToken mCancellationToken;
         bool mStarted = false;
 
@@ -16,16 +16,17 @@ namespace TaskTester.Tasking
 
         public Task ExecutingTask { get; private set; }
 
+        public abstract void Start();
         protected void Start(Action action)
         {
             MarkAsStarted();
             ExecutingTask = Task.Run(action).ContinueWith((x) => Notify(Finished, EventArgs.Empty));
         }
 
-        protected BackgroundTask(Dispatcher eventDispatcher, CancellationToken cancellationToken)
+        protected TaskTesterJob(Action<Delegate, object[]> eventInvokeAction, CancellationToken cancellationToken)
         {
-            this.mEventDispatcher = eventDispatcher;
-            this.mCancellationToken = cancellationToken;
+            mEventInvokeAction = eventInvokeAction;
+            mCancellationToken = cancellationToken;
         }
 
         protected void NotifyFinished() => Notify(Finished, EventArgs.Empty);
@@ -34,9 +35,9 @@ namespace TaskTester.Tasking
         {
             if (eventReference != null)
             {
-                if (mEventDispatcher != null)
+                if (mEventInvokeAction != null)
                 {
-                    mEventDispatcher.Invoke(eventReference, args: new object[] { this, e });
+                    mEventInvokeAction.Invoke(eventReference, new object[] { this, e });
                 }
                 else
                 {
@@ -49,9 +50,9 @@ namespace TaskTester.Tasking
         {
             if (genericEventReference != null)
             {
-                if (mEventDispatcher != null)
+                if (mEventInvokeAction != null)
                 {
-                    mEventDispatcher.Invoke(genericEventReference, args: new object[] { this, e });
+                    mEventInvokeAction.Invoke(genericEventReference, new object[] { this, e });
                 }
                 else
                 {
@@ -59,9 +60,6 @@ namespace TaskTester.Tasking
                 }
             }
         }
-
-        public abstract void Start();
-
 
         private void MarkAsStarted()
         {

@@ -2,16 +2,15 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using TaskTester.CheckerCore.CrashReporting;
-using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.CheckerCore.ProcessRunning
 {
     internal class FileSystemConsoleProcess : IDisposable, IConsoleProcess
     {
-        string mExecutablePath;
-        int mProcessID;
-        Process mProcess;
+        readonly ICrashReportFinder mCrashReportFinder;
+        readonly string mExecutablePath;
+        readonly int mProcessID;
+        readonly Process mProcess;
 
         private object
             errLock = new object(),
@@ -20,10 +19,12 @@ namespace TaskTester.CheckerCore.ProcessRunning
             stdErrBuilder = new StringBuilder(),
             stdOutBuilder = new StringBuilder();
 
-        public static FileSystemConsoleProcess Start(string executablePath, string processArguments)
+        public static FileSystemConsoleProcess Start(string executablePath, string processArguments, ICrashReportFinder crashReportFinder)
         {
-            Process osProcess = new Process {
-                StartInfo = new ProcessStartInfo(executablePath) {
+            Process osProcess = new Process
+            {
+                StartInfo = new ProcessStartInfo(executablePath)
+                {
                     UseShellExecute = false,
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
@@ -39,15 +40,16 @@ namespace TaskTester.CheckerCore.ProcessRunning
             osProcess.BeginOutputReadLine();
             osProcess.BeginErrorReadLine();
 
-            FileSystemConsoleProcess process = new FileSystemConsoleProcess(executablePath, osProcess);
+            FileSystemConsoleProcess process = new FileSystemConsoleProcess(executablePath, osProcess, crashReportFinder);
             return process;
         }
 
-        private FileSystemConsoleProcess(string executablePath, Process process)
+        private FileSystemConsoleProcess(string executablePath, Process process, ICrashReportFinder crashReportFinder)
         {
             mProcess = process;
             mProcessID = process.Id;
             mExecutablePath = executablePath;
+            mCrashReportFinder = crashReportFinder;
 
             mProcess.ErrorDataReceived += HandleStandardErrorDataReceived;
             mProcess.OutputDataReceived += HandleStandardOutputDataReceived;
@@ -113,14 +115,13 @@ namespace TaskTester.CheckerCore.ProcessRunning
             catch { }
         }
 
-        public bool HasCrashed(out ICrashReport report)
+        public bool TryFindCrashReport(out ICrashReport report)
         {
             if (mProcess.ExitCode != 0)
             {
                 report =
-                    CrashReportFinder
-                    .Instance
-                    .FindAll(mProcessID, mExecutablePath, maxReportCount: 1)
+                    mCrashReportFinder
+                    .FindCrashReports(mProcess, maxReportCount: 1)
                     .FirstOrDefault();
 
                 return report != null;

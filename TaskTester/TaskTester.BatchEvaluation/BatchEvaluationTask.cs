@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using TaskTester.CheckerCore;
-using TaskTester.CheckerCore.SolutionEvalutation;
+using TaskTester.CheckerCore.Tasking;
 using TaskTester.DataExtraction;
-using TaskTester.Tasking;
 
 namespace TaskTester.BatchEvaluation
 {
-    public sealed class BatchEvaluationTask : BackgroundTask
+    public sealed class BatchEvaluationTask : TaskTesterJob
     {
         readonly string mRootDirectory;
         readonly string mDirectoryPathCriteria;
@@ -25,7 +20,7 @@ namespace TaskTester.BatchEvaluation
         public event EventHandler<BatchEvaluationSolutionGraderTask.SolutionGradedEventArgs> SolutionGraded;
 
         public BatchEvaluationTask(
-            Dispatcher eventDispatcher,
+            Action<Delegate, object[]> eventDispatcher,
             CancellationToken cancellationToken,
             string rootDirectory,
             string directoryPathCriteria,
@@ -33,7 +28,7 @@ namespace TaskTester.BatchEvaluation
             IReadOnlyList<BatchEvaluationProblem> problems
         ) : base(eventDispatcher, cancellationToken)
         {
-            mEventDispatcher = eventDispatcher;
+            //mEventDispatcher = eventDispatcher;
             mRootDirectory = rootDirectory;
             mDirectoryPathCriteria = directoryPathCriteria;
             mCommandLineTemplates = commandLineTemplates;

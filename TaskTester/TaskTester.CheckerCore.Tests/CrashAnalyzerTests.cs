@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using TaskTester.CheckerCore.CrashReporting;
+using TaskTester.CheckerCore.ProcessRunning;
 
 namespace TaskTester.CheckerCore.Tests
 {
@@ -10,7 +12,7 @@ namespace TaskTester.CheckerCore.Tests
         [Test]
         public void TestCrashReportFinder()
         {
-            IReadOnlyList<CrashReport> finds = CrashReportFinder.Instance.FindAll(7748, null, 1);
+            IReadOnlyList<ICrashReport> finds = CrashReportFinder.Instance.FindCrashReports(7748, null, 1).ToList();
             ;
         }
     }

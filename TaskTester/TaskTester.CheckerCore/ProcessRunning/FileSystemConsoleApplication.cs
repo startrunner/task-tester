@@ -1,25 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskTester.CheckerCore.ProcessRunning;
 
-namespace TaskTester.CheckerCore.SolutionEvalutation
+namespace TaskTester.CheckerCore.ProcessRunning
 {
     public class FileSystemConsoleApplication : IConsoleApplication
     {
+        public ICrashReportFinder CrashReportFinder { get; }
         public string ExecutablePath { get; }
 
-        public FileSystemConsoleApplication(string executablePath)
+        public FileSystemConsoleApplication(string executablePath, ICrashReportFinder crashReportFinder)
         {
             if (executablePath == null)
                 throw new ArgumentNullException(nameof(executablePath));
+
+            CrashReportFinder = crashReportFinder;
             ExecutablePath = executablePath;
         }
 
         public IConsoleProcess StartProcess(string processArguments) =>
-            FileSystemConsoleProcess.Start(ExecutablePath, processArguments);
+            FileSystemConsoleProcess.Start(ExecutablePath, processArguments, CrashReportFinder);
     }
 }

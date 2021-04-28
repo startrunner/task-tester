@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using TaskTester.Tasking;
+using TaskTester.CheckerCore.Tasking;
 
 namespace TaskTester.BatchEvaluation
 {
-    public sealed class CommandLineRunningTask : BackgroundTask
+    public sealed class CommandLineRunningTask : TaskTesterJob
     {
         #region EventArgs
         public class StartedEventArgs : EventArgs
@@ -27,7 +25,7 @@ namespace TaskTester.BatchEvaluation
         readonly BatchEvaluationCompetitor mCompetitor;
 
         public CommandLineRunningTask(
-            Dispatcher eventDispatcher,
+            Action<Delegate, object[]> eventDispatcher,
             CancellationToken cancellationToken,
             IReadOnlyList<string> commandLineTemplates,
             IReadOnlyList<BatchEvaluationProblem> problems,

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>TaskTester.CheckerCore.Win32</RootNamespace>
     <AssemblyName>TaskTester.CheckerCore.Win32</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -41,12 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CrashReporting\CrashIniParser.cs" />
-    <Compile Include="CrashReporting\EventLogCrashReport.cs" />
-    <Compile Include="CrashReporting\EventLogCrashReportFinder.cs" />
-    <Compile Include="CrashReporting\Exceptions.cs" />
-    <Compile Include="FileSystemConsoleApplication.cs" />
-    <Compile Include="FileSystemConsoleProcess.cs" />
+    <Compile Include="CrashIniParser.cs" />
+    <Compile Include="EventLogCrashReport.cs" />
+    <Compile Include="EventLogCrashReportFinder.cs" />
+    <Compile Include="Exceptions.cs" />
+    <Compile Include="ProcessExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

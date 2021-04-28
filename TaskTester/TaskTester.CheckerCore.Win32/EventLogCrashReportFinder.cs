@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
+using TaskTester.CheckerCore.ProcessRunning;
 
 namespace TaskTester.CheckerCore.CrashReporting
 {
-    public sealed class CrashReportFinder
+    public sealed class CrashReportFinder : ICrashReportFinder
     {
         public static readonly CrashReportFinder Instance = new CrashReportFinder();
         private CrashReportFinder() { }
@@ -18,15 +17,26 @@ namespace TaskTester.CheckerCore.CrashReporting
                        .ToUpperInvariant();
         }
 
-        public IReadOnlyList<CrashReport> FindAll(long processID, string executablePath, int maxReportCount)
+        //public IReadOnlyList<CrashReport> FindCrashReports(long processID, string executablePath, int maxReportCount)
+        public IEnumerable<ICrashReport> FindCrashReports(Process process, int maxReportCount = int.MaxValue)
         {
-            List<CrashReport> rt = new List<CrashReport>();
+            long processID = process.Id;
+            string executablePath = process.GetMainModuleFileName(); //process.MainModule.FileName throws
+            return FindCrashReports(processID, executablePath, maxReportCount);
+        }
+
+        public IEnumerable<ICrashReport> FindCrashReports(long processID, string executablePath, int maxReportCount)
+        {
+
+            //List<CrashReport> rt = new List<CrashReport>();
+            int foundCount = 0;
 
             using (var log = new EventLog("Application"))
             {
                 foreach (EventLogEntry entry in log.Entries)
                 {
-                    if (rt.Count >= maxReportCount) return rt;
+                    if (foundCount >= maxReportCount) yield break;
+                    //if (rt.Count >= maxReportCount) return rt;
                     if (entry.EntryType != EventLogEntryType.Error) continue;
                     if (entry.InstanceId != 1000) continue;
 
@@ -34,13 +44,15 @@ namespace TaskTester.CheckerCore.CrashReporting
                     if ((executablePath == null || NormalizePath(report.ExecutablePath).ToLower() == NormalizePath(executablePath).ToLower())
                         && report.ProcessID == processID)
                     {
-                        rt.Add(report);
+                        //rt.Add(report);
+                        yield return report;
+                        ++foundCount;
                     }
 
                 }
             }
 
-            return rt;
+            //return rt;
         }
     }
 }

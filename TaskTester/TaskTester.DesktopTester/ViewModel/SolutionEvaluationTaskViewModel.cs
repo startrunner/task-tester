@@ -12,19 +12,20 @@ using System.Windows.Threading;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
+using TaskTester.CheckerCore.ProcessRunning;
 using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
     public class SolutionEvaluationTaskViewModel : ViewModelBase
     {
-        
+
         private readonly PathSetViewModel mExecutable;
-        
+
         private readonly ProblemViewModel mProblem;
 
         private int mTotalTestCount;
-        
+
         private bool mCheckerIdle = true;
         CancellationTokenSource mCancellationTokenSource;
 
@@ -59,7 +60,7 @@ namespace TaskTester.DesktopTester.ViewModel
 
         }
 
-        
+
         public ObservableCollection<TestResultViewModel> TestResults { get; }
             = new ObservableCollection<TestResultViewModel>();
 
@@ -93,9 +94,9 @@ namespace TaskTester.DesktopTester.ViewModel
             CheckerIdle = false;
             await Task.Yield();
 
-            IConsoleApplication application = new FileSystemConsoleApplication(mExecutable.Path);
+            IConsoleApplication application = new FileSystemConsoleApplication(mExecutable.Path, CheckerCore.CrashReporting.CrashReportFinder.Instance);
 
-            if(!mProblem.TryCreateModel(out Problem problem))
+            if (!mProblem.TryCreateModel(out Problem problem))
             {
                 MessageBox.Show("Could not run evaluate. Check selected files.");
                 return;
@@ -108,7 +109,7 @@ namespace TaskTester.DesktopTester.ViewModel
             this.mCancellationTokenSource = new CancellationTokenSource();
 
             SolutionEvaluationTask task = new SolutionEvaluationTask(
-                Dispatcher.CurrentDispatcher,
+                (a, e) => Dispatcher.CurrentDispatcher.Invoke(a, e),
                 mCancellationTokenSource.Token,
                 application,
                 tests
@@ -127,7 +128,8 @@ namespace TaskTester.DesktopTester.ViewModel
 
         private void Task_TestEvaluated(object sender, SolutionEvaluationTestResult e)
         {
-            this.TestResults.Add(new TestResultViewModel {
+            this.TestResults.Add(new TestResultViewModel
+            {
                 Type = TranslateTestResultType(e.Type),
                 CrashMessage = e.RunResult?.CrashReport?.ErrorMessage,
                 Score = e.Score,

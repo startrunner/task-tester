@@ -1,14 +1,13 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using Newtonsoft.Json;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using Newtonsoft.Json;
-using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.OutputVerification;
-using TaskTester.CheckerCore.SolutionEvalutation;
+using TaskTester.CheckerCore.ProcessRunning;
 
 namespace TaskTester.DesktopTester.ViewModel
 {
@@ -42,7 +41,7 @@ namespace TaskTester.DesktopTester.ViewModel
                 Arguments = Arguments.Select(x => TranslateArgument(x.SelectedValue)).ToArray(),
                 Bindings = Bindings.Select(x => x.CreateModel()).ToArray(),
                 Stdin = VerifierArgumentType.None,
-                ConsoleApplication = new FileSystemConsoleApplication(ExecutablePath.Path)
+                ConsoleApplication = new FileSystemConsoleApplication(ExecutablePath.Path, CheckerCore.CrashReporting.CrashReportFinder.Instance)
             };
             return model;
         }

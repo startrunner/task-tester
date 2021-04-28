@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Threading;
-using TaskTester.CheckerCore;
+using TaskTester.CheckerCore.ProcessRunning;
+//using TaskTester.CheckerCore.CrashReporting;
 using TaskTester.CheckerCore.SolutionEvalutation;
-using TaskTester.Tasking;
+using TaskTester.CheckerCore.Tasking;
 
 namespace TaskTester.BatchEvaluation
 {
-    public sealed class CompetitorEvaluationTask : BackgroundTask
+    public sealed class CompetitorEvaluationTask : TaskTesterJob
     {
         #region EventArgs
         public class TestEvaluatedEventArgs
@@ -30,7 +29,7 @@ namespace TaskTester.BatchEvaluation
         public event EventHandler<BatchEvaluationSolutionGraderTask.SolutionGradedEventArgs> SolutionGraded;
 
         public CompetitorEvaluationTask(
-            Dispatcher eventDispatcher,
+            Action<Delegate, object[]> eventDispatcher,
             CancellationToken cancellationToken,
             BatchEvaluationCompetitor competitor,
             IReadOnlyList<BatchEvaluationProblem> problems,
@@ -129,7 +128,7 @@ namespace TaskTester.BatchEvaluation
                 return false;
             }
 
-            application = new FileSystemConsoleApplication(path);
+            application = new FileSystemConsoleApplication(path, CheckerCore.CrashReporting.CrashReportFinder.Instance);
             return true;
         }
 

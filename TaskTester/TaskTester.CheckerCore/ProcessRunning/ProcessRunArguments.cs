@@ -1,6 +1,5 @@
 ﻿using System;
 using TaskTester.CheckerCore.Common;
-using TaskTester.CheckerCore.SolutionEvalutation;
 
 namespace TaskTester.CheckerCore.ProcessRunning
 {

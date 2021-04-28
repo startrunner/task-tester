@@ -1,10 +1,10 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
 using System.IO;
-using NUnit.Framework;
 using TaskTester.CheckerCore.Common;
 using TaskTester.CheckerCore.OutputVerification;
 using TaskTester.CheckerCore.OutputVerification.ResultBinders;
-using TaskTester.CheckerCore.SolutionEvalutation;
+using TaskTester.CheckerCore.ProcessRunning;
 
 namespace TaskTester.CheckerCore.Tests
 {
@@ -23,7 +23,7 @@ namespace TaskTester.CheckerCore.Tests
         {
             string checker = Path.GetFullPath("checker_sum.exe".GetLocalFilePath());
             IExecutableOutputVerifier verifier = new ExecutableOutputVerifierMutable {
-                ConsoleApplication = new FileSystemConsoleApplication(checker),
+                ConsoleApplication = new FileSystemConsoleApplication(checker, CheckerCore.CrashReporting.CrashReportFinder.Instance),
                 Bindings = new IVerifierResultBinder[] {
                     new StdOutContainsBinder("1", new OutputVerificationResult (
                           OutputVerificationResultType.CorrectAnswer,
@@ -62,7 +62,7 @@ namespace TaskTester.CheckerCore.Tests
                 int number = r.Next();
 
                 IOutputVerifier verifier = new ExecutableOutputVerifierMutable {
-                    ConsoleApplication = new FileSystemConsoleApplication(checker),
+                    ConsoleApplication = new FileSystemConsoleApplication(checker, CheckerCore.CrashReporting.CrashReportFinder.Instance),
                     Stdin = VerifierArgumentType.Stdout,//number
                     Bindings = new IVerifierResultBinder[] {
                         new ExitCodeBinder(1, new OutputVerificationResult (
@@ -114,7 +114,7 @@ namespace TaskTester.CheckerCore.Tests
             }
 
             IOutputVerifier verifier = new ExecutableOutputVerifierMutable {
-                ConsoleApplication = new FileSystemConsoleApplication(checker),
+                ConsoleApplication = new FileSystemConsoleApplication(checker, CheckerCore.CrashReporting.CrashReportFinder.Instance),
                 Arguments = new VerifierArgumentType[] {
                     VerifierArgumentType.FileStdout,
                     VerifierArgumentType.FileSolution },
